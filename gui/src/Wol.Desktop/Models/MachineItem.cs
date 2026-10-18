@@ -175,6 +175,11 @@ public sealed partial class MachineItem : ObservableObject
         Strings.Format(State == MachineState.TimedOut ? "Row_Retry_Name" : "Row_Wake_Name", Name);
 
     /// <summary>
+    /// Automation name of the More button.
+    /// </summary>
+    public string MoreName => Strings.Format("Row_More_Name", Name);
+
+    /// <summary>
     /// Visibility of the standard button: Wake when unknown or in error, Cancel while waking.
     /// </summary>
     public Visibility StandardWakeVisibility =>

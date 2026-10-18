@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Add / Edit machine (design/specs/layout.md, "Add / Edit machine"): Name, Group, Network
+    interfaces, Advanced. Interface rows are built in code.
+-->
+<ContentDialog
+    x:Class="Wol.Desktop.Views.MachineDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    DefaultButton="Primary"
+    PrimaryButtonClick="Dialog_PrimaryButtonClick"
+    Style="{StaticResource DefaultContentDialogStyle}">
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">548</x:Double>
+    </ContentDialog.Resources>
+
+    <ScrollViewer Width="500" VerticalScrollBarVisibility="Auto">
+        <StackPanel Padding="0,0,12,0" Spacing="16">
+            <StackPanel Spacing="4">
+                <TextBox
+                    x:Name="NameBox"
+                    x:Uid="MachineDialog_NameBox"
+                    LostFocus="NameBox_LostFocus"
+                    MaxLength="64"
+                    TextChanged="Field_TextChanged" />
+                <StackPanel x:Name="NameMessage" AutomationProperties.LiveSetting="Assertive" />
+            </StackPanel>
+
+            <StackPanel Spacing="4">
+                <ComboBox
+                    x:Name="GroupBox"
+                    x:Uid="MachineDialog_GroupBox"
+                    HorizontalAlignment="Stretch"
+                    IsEditable="True"
+                    SelectionChanged="GroupBox_SelectionChanged"
+                    TextSubmitted="GroupBox_TextSubmitted" />
+                <StackPanel x:Name="GroupMessage" AutomationProperties.LiveSetting="Assertive" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <StackPanel Spacing="2">
+                    <TextBlock
+                        x:Uid="MachineDialog_InterfacesHeader"
+                        AutomationProperties.HeadingLevel="Level2"
+                        Style="{StaticResource BodyStrongTextBlockStyle}" />
+                    <TextBlock
+                        x:Uid="MachineDialog_InterfacesDescription"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="148" />
+                        <ColumnDefinition Width="32" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="MachineDialog_MacHeader" Style="{StaticResource CaptionTextBlockStyle}" />
+                    <TextBlock
+                        x:Uid="MachineDialog_LabelHeader"
+                        Grid.Column="1"
+                        Style="{StaticResource CaptionTextBlockStyle}" />
+                </Grid>
+                <StackPanel x:Name="InterfacesPanel" Spacing="8" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="AddInterfaceButton" Click="AddInterface_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontSize="14" Glyph="&#xE710;" />
+                            <TextBlock x:Uid="MachineDialog_AddInterface" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="AddFromNetworkButton" x:Uid="MachineDialog_AddFromNetwork">
+                        <Button.Flyout>
+                            <Flyout x:Name="NetworkFlyout" Opening="NetworkFlyout_Opening">
+                                <StackPanel Width="288" Spacing="8">
+                                    <StackPanel Spacing="2">
+                                        <TextBlock x:Uid="Discovery_Title" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                        <TextBlock
+                                            x:Uid="Discovery_Subtitle"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <ListView
+                                        x:Name="DevicesList"
+                                        MaxHeight="280"
+                                        IsItemClickEnabled="True"
+                                        ItemClick="DevicesList_ItemClick"
+                                        SelectionMode="None" />
+                                    <StackPanel
+                                        x:Name="ScanningPanel"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                        <ProgressRing
+                                            Width="16"
+                                            Height="16"
+                                            MinWidth="16"
+                                            MinHeight="16"
+                                            IsActive="True" />
+                                        <TextBlock x:Uid="Discovery_Scanning" Style="{StaticResource CaptionTextBlockStyle}" />
+                                    </StackPanel>
+                                    <TextBlock
+                                        x:Name="DiscoveryMessage"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        TextWrapping="Wrap"
+                                        Visibility="Collapsed" />
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <Expander
+                x:Name="AdvancedExpander"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                <Expander.Header>
+                    <StackPanel Padding="0,8">
+                        <TextBlock x:Uid="MachineDialog_AdvancedHeader" />
+                        <TextBlock
+                            x:Uid="MachineDialog_AdvancedDescription"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}" />
+                    </StackPanel>
+                </Expander.Header>
+                <StackPanel Spacing="16">
+                    <StackPanel Spacing="4">
+                        <TextBox
+                            x:Name="BroadcastBox"
+                            x:Uid="MachineDialog_BroadcastBox"
+                            TextChanged="Field_TextChanged" />
+                        <TextBlock
+                            x:Uid="MachineDialog_BroadcastHelp"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            TextWrapping="Wrap" />
+                        <StackPanel x:Name="BroadcastMessage" AutomationProperties.LiveSetting="Assertive" />
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                        <NumberBox
+                            x:Name="PortBox"
+                            x:Uid="MachineDialog_PortBox"
+                            Maximum="65535"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Hidden"
+                            ValidationMode="Disabled"
+                            ValueChanged="PortBox_ValueChanged" />
+                        <TextBlock
+                            x:Uid="MachineDialog_PortHelp"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            TextWrapping="Wrap" />
+                        <StackPanel x:Name="PortMessage" AutomationProperties.LiveSetting="Assertive" />
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

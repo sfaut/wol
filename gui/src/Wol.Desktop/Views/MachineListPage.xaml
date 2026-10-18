@@ -15,6 +15,8 @@
             <Grid
                 MinHeight="48"
                 Padding="16,6,8,6"
+                Background="Transparent"
+                DoubleTapped="Row_DoubleTapped"
                 AutomationProperties.Name="{x:Bind AutomationName, Mode=OneWay}"
                 ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
@@ -54,22 +56,40 @@
                         TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-                <Grid Grid.Column="3" MinWidth="88" VerticalAlignment="Center">
+                <StackPanel
+                    Grid.Column="3"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="4">
+                    <Grid MinWidth="88">
+                        <Button
+                            HorizontalAlignment="Right"
+                            AutomationProperties.Name="{x:Bind AccentWakeName, Mode=OneWay}"
+                            Click="AccentWake_Click"
+                            Content="{x:Bind AccentWakeText, Mode=OneWay}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="{x:Bind AccentWakeVisibility, Mode=OneWay}" />
+                        <Button
+                            HorizontalAlignment="Right"
+                            AutomationProperties.Name="{x:Bind StandardWakeName, Mode=OneWay}"
+                            Click="StandardWake_Click"
+                            Content="{x:Bind StandardWakeText, Mode=OneWay}"
+                            IsEnabled="{x:Bind IsStandardWakeEnabled, Mode=OneWay}"
+                            Visibility="{x:Bind StandardWakeVisibility, Mode=OneWay}" />
+                    </Grid>
                     <Button
-                        HorizontalAlignment="Right"
-                        AutomationProperties.Name="{x:Bind AccentWakeName, Mode=OneWay}"
-                        Click="AccentWake_Click"
-                        Content="{x:Bind AccentWakeText, Mode=OneWay}"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Visibility="{x:Bind AccentWakeVisibility, Mode=OneWay}" />
-                    <Button
-                        HorizontalAlignment="Right"
-                        AutomationProperties.Name="{x:Bind StandardWakeName, Mode=OneWay}"
-                        Click="StandardWake_Click"
-                        Content="{x:Bind StandardWakeText, Mode=OneWay}"
-                        IsEnabled="{x:Bind IsStandardWakeEnabled, Mode=OneWay}"
-                        Visibility="{x:Bind StandardWakeVisibility, Mode=OneWay}" />
-                </Grid>
+                        Width="32"
+                        Height="32"
+                        Padding="0"
+                        AutomationProperties.Name="{x:Bind MoreName, Mode=OneWay}"
+                        Background="Transparent"
+                        BorderThickness="0">
+                        <FontIcon FontSize="16" Glyph="&#xE712;" />
+                        <Button.Flyout>
+                            <MenuFlyout Opening="RowMenu_Opening" Placement="BottomEdgeAlignedRight" />
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -116,6 +136,17 @@
                 DefaultLabelPosition="Right"
                 IsDynamicOverflowEnabled="True">
                 <AppBarButton
+                    x:Name="AddButton"
+                    x:Uid="AddButton"
+                    Click="Add_Click">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE710;" />
+                    </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="N" Modifiers="Control" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton
                     x:Name="RefreshButton"
                     x:Uid="RefreshButton"
                     Click="Refresh_Click">
@@ -153,6 +184,8 @@
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="models:GroupSection">
                         <Expander
+                            AutomationProperties.Name="{x:Bind Title}"
+                            Visibility="{x:Bind ShownVisibility, Mode=OneWay}"
                             Padding="0"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
@@ -183,6 +216,7 @@
                             </Expander.Header>
                             <ListView
                                 IsItemClickEnabled="False"
+                                KeyDown="Rows_KeyDown"
                                 ItemTemplate="{StaticResource MachineRowTemplate}"
                                 ItemsSource="{x:Bind Shown}"
                                 SelectionMode="None" />
@@ -207,16 +241,27 @@
                 FontSize="64"
                 Glyph="&#xE7F4;" />
             <TextBlock
-                x:Uid="EmptyTitle"
+                x:Name="EmptyTitle"
                 HorizontalAlignment="Center"
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                TextAlignment="Center" />
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
             <TextBlock
-                x:Uid="EmptyBody"
+                x:Name="EmptyBody"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />
+            <StackPanel
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <Button
+                    x:Name="EmptyPrimaryButton"
+                    Click="EmptyPrimary_Click"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button x:Name="EmptySecondaryButton" Click="EmptySecondary_Click" />
+            </StackPanel>
         </StackPanel>
 
         <!-- Wake results. -->

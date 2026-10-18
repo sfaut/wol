@@ -36,6 +36,7 @@
             IsSettingsVisible="False"
             OpenPaneLength="280"
             PaneDisplayMode="Auto"
+            ItemInvoked="Navigation_ItemInvoked"
             SelectionChanged="Navigation_SelectionChanged">
             <views:MachineListPage x:Name="ListPage" />
         </NavigationView>

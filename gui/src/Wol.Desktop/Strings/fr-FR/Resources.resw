@@ -162,12 +162,6 @@
   <data name="RefreshButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Tout actualiser (F5)</value>
   </data>
-  <data name="EmptyTitle.Text" xml:space="preserve">
-    <value>Ajoutez votre première machine</value>
-  </data>
-  <data name="EmptyBody.Text" xml:space="preserve">
-    <value>Wol réveille les ordinateurs de votre réseau local en leur envoyant un paquet Wake-on-LAN. Pour l’instant, ajoutez les machines en ligne de commande : wol add &lt;NOM&gt; --mac &lt;MAC&gt;</value>
-  </data>
   <data name="Wake_Success_Title" xml:space="preserve">
     <value>{0} est en ligne</value>
   </data>
@@ -269,5 +263,332 @@
   </data>
   <data name="Time_DaysAgo" xml:space="preserve">
     <value>il y a {0} j</value>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>Ajouter une machine</value>
+  </data>
+  <data name="AddButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ajouter une machine (Ctrl+N)</value>
+  </data>
+  <data name="Nav_NewGroup" xml:space="preserve">
+    <value>Nouveau groupe</value>
+  </data>
+  <data name="Nav_NewGroup_Tooltip" xml:space="preserve">
+    <value>Nouveau groupe (Ctrl+Maj+N)</value>
+  </data>
+  <data name="GroupMenu_WakeGroup" xml:space="preserve">
+    <value>Réveiller le groupe</value>
+  </data>
+  <data name="GroupMenu_Rename" xml:space="preserve">
+    <value>Renommer…</value>
+  </data>
+  <data name="GroupMenu_MoveUp" xml:space="preserve">
+    <value>Monter</value>
+  </data>
+  <data name="GroupMenu_MoveDown" xml:space="preserve">
+    <value>Descendre</value>
+  </data>
+  <data name="GroupMenu_Delete" xml:space="preserve">
+    <value>Supprimer le groupe…</value>
+  </data>
+  <data name="Row_More_Name" xml:space="preserve">
+    <value>Autres actions pour {0}</value>
+  </data>
+  <data name="RowMenu_Wake" xml:space="preserve">
+    <value>Réveiller</value>
+  </data>
+  <data name="RowMenu_CheckNow" xml:space="preserve">
+    <value>Vérifier maintenant</value>
+  </data>
+  <data name="RowMenu_Edit" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="RowMenu_Duplicate" xml:space="preserve">
+    <value>Dupliquer</value>
+  </data>
+  <data name="RowMenu_MoveToGroup" xml:space="preserve">
+    <value>Déplacer vers le groupe</value>
+  </data>
+  <data name="RowMenu_MoveToGroup_NewGroup" xml:space="preserve">
+    <value>Nouveau groupe…</value>
+  </data>
+  <data name="RowMenu_CopyMac" xml:space="preserve">
+    <value>Copier l’adresse MAC</value>
+  </data>
+  <data name="RowMenu_CopyMacs" xml:space="preserve">
+    <value>Copier les adresses MAC</value>
+  </data>
+  <data name="RowMenu_CopyMac_Item" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="RowMenu_CopyMac_All" xml:space="preserve">
+    <value>Toutes, une par ligne</value>
+  </data>
+  <data name="RowMenu_Remove" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="Duplicate_Name" xml:space="preserve">
+    <value>{0} (copie)</value>
+  </data>
+  <data name="Empty_First_Title" xml:space="preserve">
+    <value>Ajoutez votre première machine</value>
+  </data>
+  <data name="Empty_First_Body" xml:space="preserve">
+    <value>Wol réveille les ordinateurs de votre réseau local en leur envoyant un paquet Wake-on-LAN. Ajoutez une machine par son adresse MAC, ou choisissez-la parmi les appareils que Wol trouve sur votre réseau.</value>
+  </data>
+  <data name="Empty_First_Add" xml:space="preserve">
+    <value>Ajouter une machine</value>
+  </data>
+  <data name="Empty_First_CreateGroup" xml:space="preserve">
+    <value>Créer un groupe</value>
+  </data>
+  <data name="Empty_Group_Title" xml:space="preserve">
+    <value>{0} ne contient encore aucune machine</value>
+  </data>
+  <data name="Empty_Group_Body" xml:space="preserve">
+    <value>Ajoutez une machine à ce groupe, ou utilisez « Déplacer vers le groupe » dans le menu d’une machine.</value>
+  </data>
+  <data name="Empty_Group_GoToAll" xml:space="preserve">
+    <value>Voir toutes les machines</value>
+  </data>
+  <data name="Empty_Search_Title" xml:space="preserve">
+    <value>Aucune machine ne correspond à « {0} »</value>
+  </data>
+  <data name="Empty_Search_Body" xml:space="preserve">
+    <value>Vérifiez l’orthographe, ou cherchez par nom, adresse MAC, étiquette ou adresse IP.</value>
+  </data>
+  <data name="Empty_Search_Clear" xml:space="preserve">
+    <value>Effacer la recherche</value>
+  </data>
+  <data name="MachineDialog_AddTitle" xml:space="preserve">
+    <value>Ajouter une machine</value>
+  </data>
+  <data name="MachineDialog_EditTitle" xml:space="preserve">
+    <value>Modifier la machine</value>
+  </data>
+  <data name="MachineDialog_Add" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="MachineDialog_Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="MachineDialog_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="MachineDialog_NameBox.Header" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="MachineDialog_GroupBox.Header" xml:space="preserve">
+    <value>Groupe (facultatif)</value>
+  </data>
+  <data name="MachineDialog_GroupBox.PlaceholderText" xml:space="preserve">
+    <value>Aucun groupe</value>
+  </data>
+  <data name="MachineDialog_Group_New" xml:space="preserve">
+    <value>Le groupe « {0} » sera créé</value>
+  </data>
+  <data name="MachineDialog_InterfacesHeader.Text" xml:space="preserve">
+    <value>Interfaces réseau</value>
+  </data>
+  <data name="MachineDialog_InterfacesDescription.Text" xml:space="preserve">
+    <value>Wol réveille chaque interface et affiche la machine en ligne dès que l’une d’elles répond.</value>
+  </data>
+  <data name="MachineDialog_MacHeader.Text" xml:space="preserve">
+    <value>Adresse MAC</value>
+  </data>
+  <data name="MachineDialog_LabelHeader.Text" xml:space="preserve">
+    <value>Étiquette (facultative)</value>
+  </data>
+  <data name="MachineDialog_Interface_Mac_Placeholder" xml:space="preserve">
+    <value>AA:BB:CC:DD:EE:FF</value>
+  </data>
+  <data name="MachineDialog_Interface_Mac_Name" xml:space="preserve">
+    <value>Adresse MAC, interface {0}</value>
+  </data>
+  <data name="MachineDialog_Interface_Mac_Preview" xml:space="preserve">
+    <value>Sera enregistrée sous la forme {0}</value>
+  </data>
+  <data name="MachineDialog_Interface_Label_Placeholder" xml:space="preserve">
+    <value>Étiquette</value>
+  </data>
+  <data name="MachineDialog_Interface_Label_Name" xml:space="preserve">
+    <value>Étiquette, interface {0}</value>
+  </data>
+  <data name="MachineDialog_Interface_Label_Ethernet" xml:space="preserve">
+    <value>Ethernet</value>
+  </data>
+  <data name="MachineDialog_Interface_Label_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="MachineDialog_Interface_Remove_Name" xml:space="preserve">
+    <value>Retirer l’interface {0}</value>
+  </data>
+  <data name="MachineDialog_Interface_Remove_LastName" xml:space="preserve">
+    <value>Retirer l’interface {0} (une machine en a besoin d’au moins une)</value>
+  </data>
+  <data name="MachineDialog_AddInterface.Text" xml:space="preserve">
+    <value>Ajouter une interface</value>
+  </data>
+  <data name="MachineDialog_AddFromNetwork.Content" xml:space="preserve">
+    <value>Ajouter depuis le réseau…</value>
+  </data>
+  <data name="Discovery_Title.Text" xml:space="preserve">
+    <value>Appareils de votre réseau</value>
+  </data>
+  <data name="Discovery_Subtitle.Text" xml:space="preserve">
+    <value>Pas encore utilisés par une machine · choisissez-en un pour l’ajouter</value>
+  </data>
+  <data name="Discovery_Scanning.Text" xml:space="preserve">
+    <value>Analyse en cours…</value>
+  </data>
+  <data name="Discovery_Empty" xml:space="preserve">
+    <value>Aucun nouvel appareil trouvé</value>
+  </data>
+  <data name="Discovery_Item_Name" xml:space="preserve">
+    <value>{0}, {1}</value>
+  </data>
+  <data name="MachineDialog_AdvancedHeader.Text" xml:space="preserve">
+    <value>Options avancées</value>
+  </data>
+  <data name="MachineDialog_AdvancedDescription.Text" xml:space="preserve">
+    <value>Adresse de diffusion, port UDP</value>
+  </data>
+  <data name="MachineDialog_BroadcastBox.Header" xml:space="preserve">
+    <value>Adresse de diffusion</value>
+  </data>
+  <data name="MachineDialog_BroadcastBox.PlaceholderText" xml:space="preserve">
+    <value>255.255.255.255</value>
+  </data>
+  <data name="MachineDialog_BroadcastHelp.Text" xml:space="preserve">
+    <value>Laissez vide pour envoyer le paquet à tout le réseau local</value>
+  </data>
+  <data name="MachineDialog_PortBox.Header" xml:space="preserve">
+    <value>Port UDP</value>
+  </data>
+  <data name="MachineDialog_PortBox.PlaceholderText" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="MachineDialog_PortHelp.Text" xml:space="preserve">
+    <value>Port du paquet magique (1 à 65535). Laissez vide pour 9.</value>
+  </data>
+  <data name="Validation_Name_Required" xml:space="preserve">
+    <value>Saisissez un nom.</value>
+  </data>
+  <data name="Validation_Name_TooLong" xml:space="preserve">
+    <value>Utilisez 64 caractères au plus.</value>
+  </data>
+  <data name="Validation_Name_Duplicate" xml:space="preserve">
+    <value>Une machine nommée « {0} » existe déjà. Les noms ne tiennent pas compte des majuscules.</value>
+  </data>
+  <data name="Validation_Mac_Required" xml:space="preserve">
+    <value>Saisissez l’adresse MAC, ou retirez cette interface.</value>
+  </data>
+  <data name="Validation_Mac_Invalid" xml:space="preserve">
+    <value>Une adresse MAC compte 12 chiffres hexadécimaux, par exemple 3C:52:82:1A:4F:07.</value>
+  </data>
+  <data name="Validation_Mac_Repeated" xml:space="preserve">
+    <value>Cette adresse MAC figure déjà dans la liste.</value>
+  </data>
+  <data name="Validation_Mac_Shared" xml:space="preserve">
+    <value>{0} utilise aussi cette adresse MAC. Wol ne peut pas distinguer les deux machines quand elle répond. Vous pouvez tout de même enregistrer.</value>
+  </data>
+  <data name="Validation_Label_TooLong" xml:space="preserve">
+    <value>Utilisez 32 caractères au plus pour l’étiquette.</value>
+  </data>
+  <data name="Validation_Broadcast_Invalid" xml:space="preserve">
+    <value>Saisissez une adresse de diffusion IPv4, par exemple 192.168.1.255.</value>
+  </data>
+  <data name="Validation_Port_Invalid" xml:space="preserve">
+    <value>Utilisez un port de 1 à 65535.</value>
+  </data>
+  <data name="Validation_Group_Duplicate" xml:space="preserve">
+    <value>Un groupe nommé « {0} » existe déjà.</value>
+  </data>
+  <data name="Validation_Group_Reserved" xml:space="preserve">
+    <value>« {0} » est réservé. Choisissez un autre nom.</value>
+  </data>
+  <data name="GroupDialog_NewTitle" xml:space="preserve">
+    <value>Nouveau groupe</value>
+  </data>
+  <data name="GroupDialog_RenameTitle" xml:space="preserve">
+    <value>Renommer le groupe</value>
+  </data>
+  <data name="GroupDialog_Name_Header" xml:space="preserve">
+    <value>Nom du groupe</value>
+  </data>
+  <data name="GroupDialog_Create" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="GroupDialog_Rename" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="GroupDialog_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="DeleteGroup_Title" xml:space="preserve">
+    <value>Supprimer le groupe « {0} » ?</value>
+  </data>
+  <data name="DeleteGroup_Body_One" xml:space="preserve">
+    <value>{0} contient 1 machine. Que doit-elle devenir ?</value>
+  </data>
+  <data name="DeleteGroup_Body_Other" xml:space="preserve">
+    <value>{0} contient {1} machines. Que doivent-elles devenir ?</value>
+  </data>
+  <data name="DeleteGroup_Body_Empty" xml:space="preserve">
+    <value>Ce groupe ne contient aucune machine.</value>
+  </data>
+  <data name="DeleteGroup_Option_Move" xml:space="preserve">
+    <value>Les placer dans « Sans groupe »</value>
+  </data>
+  <data name="DeleteGroup_Option_Delete" xml:space="preserve">
+    <value>Les retirer aussi</value>
+  </data>
+  <data name="DeleteGroup_Confirm" xml:space="preserve">
+    <value>Supprimer le groupe</value>
+  </data>
+  <data name="DeleteGroup_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="RemoveDialog_Title_One" xml:space="preserve">
+    <value>Retirer {0} ?</value>
+  </data>
+  <data name="RemoveDialog_Title_Other" xml:space="preserve">
+    <value>Retirer {0} machines ?</value>
+  </data>
+  <data name="RemoveDialog_Body_One" xml:space="preserve">
+    <value>Elle est retirée de Wol seulement ; rien ne change sur la machine.</value>
+  </data>
+  <data name="RemoveDialog_Body_Other" xml:space="preserve">
+    <value>Elles sont retirées de Wol seulement ; rien ne change sur les machines.</value>
+  </data>
+  <data name="RemoveDialog_Confirm" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="RemoveDialog_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Change_Failed_Title" xml:space="preserve">
+    <value>Impossible d’enregistrer la modification</value>
+  </data>
+  <data name="CliError_machine_already_exists" xml:space="preserve">
+    <value>Une machine nommée « {0} » existe déjà.</value>
+  </data>
+  <data name="CliError_group_already_exists" xml:space="preserve">
+    <value>Un groupe nommé « {0} » existe déjà.</value>
+  </data>
+  <data name="CliError_machine_not_found" xml:space="preserve">
+    <value>La machine « {0} » n’existe plus.</value>
+  </data>
+  <data name="CliError_group_not_found" xml:space="preserve">
+    <value>Le groupe « {0} » n’existe plus.</value>
+  </data>
+  <data name="CliError_io_error" xml:space="preserve">
+    <value>Impossible d’écrire le fichier de configuration ({0}).</value>
+  </data>
+  <data name="CliError_no_local_network" xml:space="preserve">
+    <value>Aucun réseau local à analyser.</value>
+  </data>
+  <data name="CliError_scan_failed" xml:space="preserve">
+    <value>L’analyse du réseau a échoué.</value>
   </data>
 </root>
