@@ -60,6 +60,15 @@ tests and future front-ends (`wol serve`) reuse the same code.
   `[[group]]` array indexes in the document.
 - `error.rs`: one `Error` enum; each variant maps to a stable JSON `code`, `details` and an exit code.
 - `mac.rs`, `magic.rs`: MAC address parsing, magic packet building and sending.
+- `icmp.rs`, `probe.rs`: state checks. `icmp.rs` holds the only platform-specific code
+  (`#[cfg(windows)]` `IcmpSendEcho` via `windows-sys`, `#[cfg(unix)]` ICMP datagram sockets via
+  `socket2`); `probe.rs` resolves the host, pings, falls back to TCP, and runs one thread per
+  machine (`std::thread::scope`, no async runtime).
+- `watch.rs`: the `watch` loop (config reload on file change, debounced state tracking, NDJSON
+  events). `time.rs`: RFC 3339 timestamps without a date library.
+
+Platform-specific code cannot run here: after touching it, at least lint the other targets with
+`cargo clippy --all-targets --target x86_64-unknown-linux-gnu` and `--target aarch64-apple-darwin`.
 
 ### The GUI drives the CLI
 
