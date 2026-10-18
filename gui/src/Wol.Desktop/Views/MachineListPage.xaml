@@ -20,15 +20,12 @@
                 AutomationProperties.Name="{x:Bind AutomationName, Mode=OneWay}"
                 ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="16" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="172" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <controls:StateIcon VerticalAlignment="Center" State="{x:Bind State, Mode=OneWay}" />
-
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <StackPanel VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <FontIcon
@@ -47,17 +44,18 @@
                         ToolTipService.ToolTip="{x:Bind InterfacesTooltip, Mode=OneWay}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind StateLabel, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <controls:StateBadge State="{x:Bind State, Mode=OneWay}" />
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="{x:Bind Detail, Mode=OneWay}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        Visibility="{x:Bind DetailVisibility, Mode=OneWay}" />
                 </StackPanel>
 
                 <StackPanel
-                    Grid.Column="3"
+                    Grid.Column="2"
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="4">
