@@ -10,4 +10,5 @@ pub mod magic;
 pub mod probe;
 pub mod scan;
 pub mod time;
+pub mod wake;
 pub mod watch;

@@ -2,7 +2,7 @@
 
 use std::ffi::OsString;
 use std::fmt::Write as _;
-use std::net::{Ipv4Addr, SocketAddrV4};
+use std::net::Ipv4Addr;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -13,7 +13,7 @@ use crate::config::{self, Config, ConfigFile, ConfigStatus, Interface, Machine, 
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
 use crate::probe::{self, Probe, Reason, State};
-use crate::{magic, scan, time, watch};
+use crate::{scan, time, wake, watch};
 
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
@@ -281,13 +281,13 @@ enum GroupCommand {
 /// Result of a successful command: what to print in each output mode, and the exit code.
 pub struct Outcome {
     /// JSON document (without the `schema` field, added when printing).
-    json: Value,
+    pub(crate) json: Value,
 
     /// Human-readable text.
-    text: String,
+    pub(crate) text: String,
 
     /// Process exit code (non-zero for partial failures).
-    exit: u8,
+    pub(crate) exit: u8,
 }
 
 impl Outcome {
@@ -409,7 +409,7 @@ fn print_json_error(code: &str, message: &str, details: Value) {
 fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
         Command::List => Ok(list(file)),
-        Command::Wake { machines, groups } => wake(file, machines, groups),
+        Command::Wake { machines, groups } => wake::wake(file, machines, groups),
         Command::Scan => scan_network(file),
         Command::Status { selection } => status(file, selection),
         Command::Watch {
@@ -844,65 +844,4 @@ pub(crate) fn probe_text(probe: &Probe) -> String {
         ),
         (state, _) => state.code().to_owned(),
     }
-}
-
-/// Sends magic packets to every interface of the named machines and of every machine of the
-/// named groups.
-///
-/// # Errors
-///
-/// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`] before sending anything;
-/// send failures are reported per machine, with exit code [`EXIT_NETWORK`].
-fn wake(file: &ConfigFile, names: &[String], groups: &[String]) -> Result<Outcome> {
-    let targets = file.config().select(names, groups)?;
-
-    let mut results = Vec::new();
-    let mut text = String::new();
-    let mut exit = 0;
-    for machine in targets {
-        let target = SocketAddrV4::new(
-            machine.broadcast.unwrap_or(magic::DEFAULT_BROADCAST),
-            machine.port.unwrap_or(magic::DEFAULT_PORT),
-        );
-        let macs: Vec<String> = machine
-            .interfaces
-            .iter()
-            .map(|interface| interface.mac.to_string())
-            .collect();
-        let sent = machine
-            .interfaces
-            .iter()
-            .try_for_each(|interface| magic::send(interface.mac, target));
-        match sent {
-            Ok(()) => {
-                results.push(json!({ "machine": machine.name, "target": target.to_string(), "macs": macs, "status": "sent" }));
-                let _ = writeln!(
-                    text,
-                    "Magic packet sent to \"{}\" ({target}, {}).",
-                    machine.name,
-                    macs.join(", ")
-                );
-            }
-            Err(error) => {
-                exit = EXIT_NETWORK;
-                results.push(json!({
-                    "machine": machine.name,
-                    "target": target.to_string(),
-                    "macs": macs,
-                    "status": "failed",
-                    "error": { "code": "network_error", "message": error.to_string() },
-                }));
-                eprintln!(
-                    "error: cannot wake \"{}\" ({target}): {error}",
-                    machine.name
-                );
-            }
-        }
-    }
-
-    Ok(Outcome {
-        json: json!({ "results": results }),
-        text,
-        exit,
-    })
 }
