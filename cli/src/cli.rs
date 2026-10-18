@@ -5,30 +5,42 @@ use std::fmt::Write as _;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::PathBuf;
 use std::process::ExitCode;
-use std::time::Duration;
 
 use clap::{Args, Parser, Subcommand};
 use serde_json::{Value, json};
 
-use crate::config::{self, Config, ConfigFile, ConfigStatus, Machine};
+use crate::config::{self, Config, ConfigFile, ConfigStatus, Interface, Machine, SharedMac};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
-use crate::probe::{self, Method, Probe, Reason, State};
-use crate::{magic, time, watch};
+use crate::probe::{self, Probe, Reason, State};
+use crate::{magic, scan, time, watch};
 
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
 
-/// Wake-on-LAN machine manager: monitor remote machines and wake them up.
+/// Wake-on-LAN machine manager: monitor machines of the local network and wake them up.
+///
+/// Machines are described in a wol.toml file, by their network interfaces (MAC addresses).
+/// Wol finds them by scanning the local network, which also gives their current IP address,
+/// and wakes them up with Wake-on-LAN magic packets.
+///
+/// Use -h for a summary, --help for details.
 #[derive(Debug, Parser)]
-#[command(name = "wol", version)]
+#[command(name = "wol", bin_name = "wol", version, max_term_width = 80)]
 struct Cli {
-    /// Print machine-readable JSON (see docs/cli-contract.md)
-    #[arg(long, global = true)]
+    /// Print machine-readable JSON
+    ///
+    /// Every command then prints one JSON document on stdout (errors: on stderr), or one JSON
+    /// line per event for `watch`. The format is described in docs/cli-contract.md.
+    #[arg(long, global = true, display_order = 100)]
     json: bool,
 
-    /// Configuration file to use instead of the default lookup
-    #[arg(long, global = true, value_name = "PATH")]
+    /// Use this configuration file
+    ///
+    /// The file is created on the first change if it does not exist. Without this option, wol
+    /// uses wol.toml next to the executable when present (portable mode), otherwise wol.toml in
+    /// the user configuration directory (e.g. %APPDATA%\wol on Windows, ~/.config/wol on Linux).
+    #[arg(long, global = true, value_name = "PATH", display_order = 101)]
     config: Option<PathBuf>,
 
     /// Command to run.
@@ -39,12 +51,18 @@ struct Cli {
 /// Top-level commands.
 #[derive(Debug, Subcommand)]
 enum Command {
-    /// List groups and machines
+    /// List groups and machines, with their network interfaces
+    ///
+    /// Groups come in their order, then machines without a group. MAC addresses used by several
+    /// machines are reported as warnings.
     List,
 
-    /// Send magic packets to wake machines up
+    /// Wake machines up
+    ///
+    /// Sends magic packets to every network interface of the machines. The machines must have
+    /// Wake-on-LAN enabled (firmware and network adapter settings).
     Wake {
-        /// Names of the machines to wake
+        /// Names of the machines to wake (case-insensitive)
         #[arg(required_unless_present = "groups")]
         machines: Vec<String>,
 
@@ -54,40 +72,50 @@ enum Command {
     },
 
     /// Check whether machines are online (all machines by default)
+    ///
+    /// Scans the local network once: a machine is online when any of its MAC addresses
+    /// answers, and its current IP address is shown.
     Status {
         /// Machines to check.
         #[command(flatten)]
         selection: Selection,
-
-        /// Check options.
-        #[command(flatten)]
-        check: CheckArgs,
     },
 
     /// Monitor machines and report every state change (all machines by default)
+    ///
+    /// Prints the state of every machine, then one line per change, until stopped (Ctrl+C).
+    /// Changes made to the configuration file meanwhile are taken into account.
     Watch {
         /// Machines to monitor.
         #[command(flatten)]
         selection: Selection,
 
-        /// Check options.
-        #[command(flatten)]
-        check: CheckArgs,
-
-        /// Time between two checks, in seconds
+        /// Time between two scans, in seconds (1 to 3600)
+        ///
+        /// A machine that stops answering is reported offline only after two scans in a row,
+        /// so that a single missed answer does not count.
         #[arg(long, value_name = "SECONDS", default_value_t = 10, value_parser = clap::value_parser!(u64).range(1..=3_600))]
         interval: u64,
     },
 
+    /// List the devices found on the local network
+    ///
+    /// Shows the IP and MAC address of every device that answers, and the machines using
+    /// each MAC address. Handy to find the MAC address of a machine to add.
+    Scan,
+
     /// Add a machine
+    #[command(
+        after_help = "Examples:\n  wol add NAS --mac 00:11:32:BC:72:E9\n  wol add \"Office PC\" --mac A4BB6D123456=Ethernet --mac A4BB6D123457=Wi-Fi"
+    )]
     Add(AddArgs),
 
-    /// Change a machine
+    /// Change a machine (only the given options change)
     Edit(EditArgs),
 
     /// Remove a machine
     Remove {
-        /// Name of the machine to remove
+        /// Name of the machine to remove (case-insensitive)
         name: String,
     },
 
@@ -102,7 +130,7 @@ enum Command {
 /// Machines targeted by `status` and `watch`: every machine when nothing is given.
 #[derive(Debug, Args)]
 struct Selection {
-    /// Names of the machines
+    /// Names of the machines (case-insensitive); all machines when none is given
     machines: Vec<String>,
 
     /// Also include every machine of this group (repeatable)
@@ -110,64 +138,69 @@ struct Selection {
     groups: Vec<String>,
 }
 
-/// Options of state checks.
-#[derive(Debug, Args)]
-struct CheckArgs {
-    /// Time to wait for each answer (ping, then each TCP port), in milliseconds
-    #[arg(long, value_name = "MS", default_value_t = 1_000, value_parser = clap::value_parser!(u64).range(100..=60_000))]
-    timeout: u64,
-}
-
 /// Arguments of `wol add`.
 #[derive(Debug, Args)]
 struct AddArgs {
-    /// Unique machine name
+    /// Unique machine name (case-insensitive, up to 64 characters)
     name: String,
 
-    /// MAC address (AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABB.CCDD.EEFF or AABBCCDDEEFF)
-    #[arg(long)]
-    mac: MacAddress,
+    /// Network interface of the machine (repeatable, at least one)
+    ///
+    /// MAC address, optionally followed by =LABEL to tell interfaces apart, e.g.
+    /// A4:BB:6D:12:34:56=Ethernet. Accepted forms: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF,
+    /// AABB.CCDD.EEFF and AABBCCDDEEFF. A MAC address already used by another machine is
+    /// accepted with a warning.
+    #[arg(long = "mac", value_name = "MAC[=LABEL]", required = true, value_parser = parse_interface)]
+    interfaces: Vec<Interface>,
 
-    /// IP address or host name used for status checks
-    #[arg(long)]
-    host: String,
-
-    /// Group of the machine
+    /// Group of the machine (it must exist: see `wol group add`)
     #[arg(long)]
     group: Option<String>,
 
-    /// Destination address of the magic packet [default: 255.255.255.255]
+    /// Destination address of the magic packets [default: 255.255.255.255]
+    ///
+    /// The default reaches the whole local network. Use the broadcast address of a subnet
+    /// (e.g. 192.168.1.255) when the computer running wol has several networks.
     #[arg(long, value_name = "IPV4")]
     broadcast: Option<Ipv4Addr>,
 
-    /// UDP port of the magic packet [default: 9]
+    /// UDP port of the magic packets [default: 9]
+    ///
+    /// Network cards accept any port; some routers or firewalls only let port 7 or 9 through.
     #[arg(long)]
     port: Option<u16>,
-
-    /// TCP port tried when ICMP is unavailable (repeatable)
-    #[arg(long = "check-port", value_name = "PORT")]
-    check_ports: Vec<u16>,
 }
 
 /// Arguments of `wol edit`: only the given options change.
 #[derive(Debug, Args)]
 struct EditArgs {
-    /// Name of the machine to change
+    /// Name of the machine to change (case-insensitive)
     name: String,
 
     /// New machine name
     #[arg(long = "name", value_name = "NAME")]
     new_name: Option<String>,
 
-    /// New MAC address
-    #[arg(long)]
-    mac: Option<MacAddress>,
+    /// Replace all network interfaces (repeatable)
+    ///
+    /// Same format as `wol add --mac`. Cannot be combined with --add-mac or --remove-mac.
+    #[arg(long = "mac", value_name = "MAC[=LABEL]", value_parser = parse_interface, conflicts_with_all = ["add_interfaces", "remove_interfaces"])]
+    interfaces: Vec<Interface>,
 
-    /// New IP address or host name
-    #[arg(long)]
-    host: Option<String>,
+    /// Add a network interface (repeatable)
+    ///
+    /// When the machine already has this MAC address, its label is replaced instead
+    /// (removed when no =LABEL is given).
+    #[arg(long = "add-mac", value_name = "MAC[=LABEL]", value_parser = parse_interface)]
+    add_interfaces: Vec<Interface>,
 
-    /// New group
+    /// Remove the network interface with this MAC address (repeatable)
+    ///
+    /// A machine keeps at least one interface.
+    #[arg(long = "remove-mac", value_name = "MAC")]
+    remove_interfaces: Vec<MacAddress>,
+
+    /// Move the machine to this group
     #[arg(long, conflicts_with = "no_group")]
     group: Option<String>,
 
@@ -175,33 +208,33 @@ struct EditArgs {
     #[arg(long)]
     no_group: bool,
 
-    /// New destination address of the magic packet
+    /// New destination address of the magic packets
     #[arg(long, value_name = "IPV4", conflicts_with = "no_broadcast")]
     broadcast: Option<Ipv4Addr>,
 
-    /// Go back to the default destination address
+    /// Go back to the default destination address (255.255.255.255)
     #[arg(long)]
     no_broadcast: bool,
 
-    /// New UDP port of the magic packet
+    /// New UDP port of the magic packets
     #[arg(long, conflicts_with = "no_port")]
     port: Option<u16>,
 
-    /// Go back to the default UDP port
+    /// Go back to the default UDP port (9)
     #[arg(long)]
     no_port: bool,
+}
 
-    /// Replace the TCP check ports (repeatable)
-    #[arg(
-        long = "check-port",
-        value_name = "PORT",
-        conflicts_with = "no_check_ports"
-    )]
-    check_ports: Vec<u16>,
-
-    /// Remove all TCP check ports
-    #[arg(long)]
-    no_check_ports: bool,
+/// Parses a `MAC[=LABEL]` argument; the label is checked with the rest of the machine.
+fn parse_interface(text: &str) -> std::result::Result<Interface, String> {
+    let (mac, label) = match text.split_once('=') {
+        Some((mac, label)) => (mac, Some(label.to_owned())),
+        None => (text, None),
+    };
+    Ok(Interface {
+        mac: mac.parse().map_err(|error| format!("{error}"))?,
+        label,
+    })
 }
 
 /// Group commands.
@@ -209,13 +242,13 @@ struct EditArgs {
 enum GroupCommand {
     /// Add a group at the end of the list
     Add {
-        /// Unique group name
+        /// Unique group name (case-insensitive, up to 64 characters)
         name: String,
     },
 
     /// Rename a group (its machines follow)
     Rename {
-        /// Current name
+        /// Current name (case-insensitive)
         name: String,
 
         /// New name
@@ -224,20 +257,23 @@ enum GroupCommand {
 
     /// Remove a group
     Remove {
-        /// Name of the group to remove
+        /// Name of the group to remove (case-insensitive)
         name: String,
 
         /// Keep the group's machines, without a group
+        ///
+        /// Required when the group still has machines; machines are never removed with
+        /// their group.
         #[arg(long)]
         ungroup: bool,
     },
 
     /// Move a group to another position in the list
     Move {
-        /// Name of the group to move
+        /// Name of the group to move (case-insensitive)
         name: String,
 
-        /// New 1-based position
+        /// New position, starting at 1 (beyond the end: last)
         position: usize,
     },
 }
@@ -374,20 +410,17 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
         Command::List => Ok(list(file)),
         Command::Wake { machines, groups } => wake(file, machines, groups),
-        Command::Status { selection, check } => {
-            status(file, selection, Duration::from_millis(check.timeout))
-        }
+        Command::Scan => scan_network(file),
+        Command::Status { selection } => status(file, selection),
         Command::Watch {
             selection,
-            check,
             interval,
         } => watch::watch(
             file,
             &watch::Options {
                 names: &selection.machines,
                 groups: &selection.groups,
-                interval: Duration::from_secs(*interval),
-                timeout: Duration::from_millis(check.timeout),
+                interval: std::time::Duration::from_secs(*interval),
                 json: cli.json,
             },
         ),
@@ -395,16 +428,15 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
             let machine = Machine {
                 name: args.name.clone(),
                 group: args.group.clone(),
-                mac: args.mac,
-                host: args.host.clone(),
+                interfaces: args.interfaces.clone(),
                 broadcast: args.broadcast,
                 port: args.port,
-                check_ports: args.check_ports.clone(),
             };
             let machine = file.add_machine(&machine)?;
             file.save()?;
-            Ok(Outcome::ok(
-                json!({ "machine": machine }),
+            Ok(machine_outcome(
+                file,
+                &machine,
                 format!("Added machine \"{}\".\n", machine.name),
             ))
         }
@@ -424,8 +456,7 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
                 } else {
                     args.group.clone().or_else(|| current.group.clone())
                 },
-                mac: args.mac.unwrap_or(current.mac),
-                host: args.host.clone().unwrap_or_else(|| current.host.clone()),
+                interfaces: edited_interfaces(current, args)?,
                 broadcast: if args.no_broadcast {
                     None
                 } else {
@@ -436,16 +467,12 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
                 } else {
                     args.port.or(current.port)
                 },
-                check_ports: match (args.no_check_ports, args.check_ports.is_empty()) {
-                    (true, _) => Vec::new(),
-                    (false, true) => current.check_ports.clone(),
-                    (false, false) => args.check_ports.clone(),
-                },
             };
             let machine = file.edit_machine(&args.name, &machine)?;
             file.save()?;
-            Ok(Outcome::ok(
-                json!({ "machine": machine }),
+            Ok(machine_outcome(
+                file,
+                &machine,
                 format!("Updated machine \"{}\".\n", machine.name),
             ))
         }
@@ -459,6 +486,40 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
         }
         Command::Group { command } => group(file, command),
     }
+}
+
+/// Applies the interface options of `wol edit` to the interfaces of `current`.
+///
+/// # Errors
+///
+/// Returns [`Error::InvalidValue`] when `--remove-mac` names a MAC address the machine does
+/// not have.
+fn edited_interfaces(current: &Machine, args: &EditArgs) -> Result<Vec<Interface>> {
+    if !args.interfaces.is_empty() {
+        return Ok(args.interfaces.clone());
+    }
+
+    let mut interfaces = current.interfaces.clone();
+    for mac in &args.remove_interfaces {
+        let index = interfaces
+            .iter()
+            .position(|interface| interface.mac == *mac)
+            .ok_or_else(|| Error::InvalidValue {
+                field: "remove-mac",
+                reason: format!("machine \"{}\" has no interface {mac}", current.name),
+            })?;
+        interfaces.remove(index);
+    }
+    for added in &args.add_interfaces {
+        match interfaces
+            .iter_mut()
+            .find(|interface| interface.mac == added.mac)
+        {
+            Some(interface) => interface.label.clone_from(&added.label),
+            None => interfaces.push(added.clone()),
+        }
+    }
+    Ok(interfaces)
 }
 
 /// Runs a group command.
@@ -510,12 +571,13 @@ fn list(file: &ConfigFile) -> Outcome {
     let json = json!({
         "groups": config.groups,
         "machines": config.machines,
+        "warnings": warnings_json(&config.shared_macs()),
     });
 
     if config.groups.is_empty() && config.machines.is_empty() {
         return Outcome::ok(
             json,
-            "No machines yet. Add one with: wol add <NAME> --mac <MAC> --host <HOST>\n".to_owned(),
+            "No machines yet. Add one with: wol add <NAME> --mac <MAC>\n".to_owned(),
         );
     }
 
@@ -525,17 +587,19 @@ fn list(file: &ConfigFile) -> Outcome {
         .map(|machine| machine.name.chars().count())
         .max()
         .unwrap_or(0);
-    let host_width = config
-        .machines
-        .iter()
-        .map(|machine| machine.host.chars().count())
-        .max()
-        .unwrap_or(0);
+    // One line per interface; the machine name only on the first one.
     let line = |machine: &Machine| {
-        format!(
-            "  {:<width$}  {}  {:<host_width$}\n",
-            machine.name, machine.mac, machine.host
-        )
+        let mut lines = String::new();
+        for (index, interface) in machine.interfaces.iter().enumerate() {
+            let name = if index == 0 {
+                machine.name.as_str()
+            } else {
+                ""
+            };
+            let label = interface.label.as_deref().unwrap_or_default();
+            let _ = writeln!(lines, "  {name:<width$}  {}  {label}", interface.mac);
+        }
+        lines
     };
 
     let mut text = String::new();
@@ -568,27 +632,147 @@ fn list(file: &ConfigFile) -> Outcome {
         .map(str::trim_end)
         .collect::<Vec<_>>()
         .join("\n")
-        + "\n";
+        + "\n"
+        + &warnings_text(&config.shared_macs());
     Outcome::ok(json, text)
 }
 
-/// Checks the selected machines once.
+/// JSON warnings about MAC addresses shared by several machines.
+fn warnings_json(shared: &[SharedMac]) -> Vec<Value> {
+    shared
+        .iter()
+        .map(|entry| {
+            json!({
+                "code": "shared_mac",
+                "message": shared_mac_message(entry),
+                "mac": entry.mac,
+                "machines": entry.machines,
+            })
+        })
+        .collect()
+}
+
+/// Human-readable warnings about MAC addresses shared by several machines.
+fn warnings_text(shared: &[SharedMac]) -> String {
+    shared
+        .iter()
+        .map(|entry| format!("Warning: {}.\n", shared_mac_message(entry)))
+        .collect()
+}
+
+/// Describes a shared MAC address.
+fn shared_mac_message(entry: &SharedMac) -> String {
+    let machines: Vec<String> = entry
+        .machines
+        .iter()
+        .map(|name| format!("\"{name}\""))
+        .collect();
+    format!(
+        "MAC address {} is used by several machines ({}), which cannot be told apart when it answers",
+        entry.mac,
+        machines.join(", ")
+    )
+}
+
+/// Builds the outcome of `add` / `edit`, warning about the MAC addresses `machine` shares
+/// with other machines.
+fn machine_outcome(file: &ConfigFile, machine: &Machine, text: String) -> Outcome {
+    let shared: Vec<SharedMac> = file
+        .config()
+        .shared_macs()
+        .into_iter()
+        .filter(|entry| entry.machines.contains(&machine.name))
+        .collect();
+    Outcome::ok(
+        json!({ "machine": machine, "warnings": warnings_json(&shared) }),
+        text + &warnings_text(&shared),
+    )
+}
+
+/// Lists the devices found on the local network, with the machines that use their MAC address.
 ///
 /// # Errors
 ///
-/// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`]; check failures are
-/// reported as machine states.
-fn status(file: &ConfigFile, selection: &Selection, timeout: Duration) -> Result<Outcome> {
+/// Returns [`Error::Scan`] when the local network cannot be scanned.
+fn scan_network(file: &ConfigFile) -> Result<Outcome> {
+    let devices = scan::scan().map_err(|error| Error::Scan(error.into()))?;
+    let config = file.config();
+
+    // Machines (and the label of their interface) using a MAC address.
+    let users = |mac: MacAddress| -> Vec<(&str, Option<&str>)> {
+        config
+            .machines
+            .iter()
+            .filter_map(|machine| {
+                machine
+                    .interfaces
+                    .iter()
+                    .find(|interface| interface.mac == mac)
+                    .map(|interface| (machine.name.as_str(), interface.label.as_deref()))
+            })
+            .collect()
+    };
+
+    let json = json!({
+        "scanned_at": time::now(),
+        "devices": devices.iter().map(|device| json!({
+            "address": device.address.to_string(),
+            "mac": device.mac,
+            "machines": users(device.mac).into_iter().map(|(machine, label)| json!({ "machine": machine, "label": label })).collect::<Vec<_>>(),
+        })).collect::<Vec<_>>(),
+    });
+
+    if devices.is_empty() {
+        return Ok(Outcome::ok(json, "No devices found.\n".to_owned()));
+    }
+    let mut text = String::new();
+    for device in &devices {
+        let known: Vec<String> = users(device.mac)
+            .into_iter()
+            .map(|(machine, label)| match label {
+                Some(label) => format!("{machine} ({label})"),
+                None => machine.to_owned(),
+            })
+            .collect();
+        let _ = writeln!(
+            text,
+            "{:<15}  {}  {}",
+            device.address.to_string(),
+            device.mac,
+            known.join(", ")
+        );
+    }
+    let text = text
+        .lines()
+        .map(str::trim_end)
+        .collect::<Vec<_>>()
+        .join("\n")
+        + "\n";
+    Ok(Outcome::ok(json, text))
+}
+
+/// Checks the selected machines once, with one scan of the local network.
+///
+/// # Errors
+///
+/// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`]; a failed scan is reported
+/// as machine states, with exit code [`EXIT_NETWORK`].
+fn status(file: &ConfigFile, selection: &Selection) -> Result<Outcome> {
     let config = file.config();
     let machines = config.select(&selection.machines, &selection.groups)?;
 
-    let probes = probe::probe_all(&machines, timeout);
+    let scan = scan::scan();
+    let probes = probe::probe_all(&machines, &scan);
     let json = json!({
         "checked_at": time::now(),
         "machines": machines.iter().zip(&probes).map(|(machine, probe)| probe_json(machine, probe)).collect::<Vec<_>>(),
     });
 
-    Ok(Outcome::ok(json, status_text(config, &machines, &probes)))
+    Ok(Outcome {
+        json,
+        text: status_text(config, &machines, &probes),
+        exit: if scan.is_err() { EXIT_NETWORK } else { 0 },
+    })
 }
 
 /// Describes the state of machines for humans, by group (groups without selected machines are skipped).
@@ -636,35 +820,34 @@ pub(crate) fn probe_json(machine: &Machine, probe: &Probe) -> Value {
     json!({
         "machine": machine.name,
         "state": probe.state,
+        "mac": probe.interface.as_ref().map(|interface| interface.mac),
+        "label": probe.interface.as_ref().and_then(|interface| interface.label.as_deref()),
         "address": probe.address.map(|address| address.to_string()),
-        "method": probe.method,
-        "port": probe.port,
-        "latency_ms": probe.latency.map(|latency| latency.as_millis() as u64),
         "reason": probe.reason,
     })
 }
 
-/// Short human-readable description of a state, e.g. `online  3 ms` or `offline`.
+/// Short human-readable description of a state, e.g. `online   192.168.1.20 (Wi-Fi)` or `offline`.
 pub(crate) fn probe_text(probe: &Probe) -> String {
-    let latency = probe
-        .latency
-        .map(|latency| latency.as_millis())
-        .unwrap_or_default();
-    match (probe.state, probe.method, probe.port) {
-        (State::Online, Some(Method::Tcp), Some(port)) => {
-            format!("online   {latency} ms (TCP {port})")
-        }
-        (State::Online, ..) => format!("online   {latency} ms"),
-        (State::Offline, ..) => "offline".to_owned(),
-        (state, ..) => format!(
-            "{:<8} {}",
-            state.code(),
+    match (probe.state, probe.address) {
+        (State::Online, Some(address)) => match probe
+            .interface
+            .as_ref()
+            .and_then(|interface| interface.label.as_deref())
+        {
+            Some(label) => format!("online   {address} ({label})"),
+            None => format!("online   {address}"),
+        },
+        (State::Error, _) => format!(
+            "error    {}",
             probe.reason.map(Reason::message).unwrap_or_default()
         ),
+        (state, _) => state.code().to_owned(),
     }
 }
 
-/// Sends magic packets to the named machines and to every machine of the named groups.
+/// Sends magic packets to every interface of the named machines and of every machine of the
+/// named groups.
 ///
 /// # Errors
 ///
@@ -681,13 +864,23 @@ fn wake(file: &ConfigFile, names: &[String], groups: &[String]) -> Result<Outcom
             machine.broadcast.unwrap_or(magic::DEFAULT_BROADCAST),
             machine.port.unwrap_or(magic::DEFAULT_PORT),
         );
-        match magic::send(machine.mac, target) {
+        let macs: Vec<String> = machine
+            .interfaces
+            .iter()
+            .map(|interface| interface.mac.to_string())
+            .collect();
+        let sent = machine
+            .interfaces
+            .iter()
+            .try_for_each(|interface| magic::send(interface.mac, target));
+        match sent {
             Ok(()) => {
-                results.push(json!({ "machine": machine.name, "target": target.to_string(), "status": "sent" }));
+                results.push(json!({ "machine": machine.name, "target": target.to_string(), "macs": macs, "status": "sent" }));
                 let _ = writeln!(
                     text,
-                    "Magic packet sent to \"{}\" ({target}).",
-                    machine.name
+                    "Magic packet sent to \"{}\" ({target}, {}).",
+                    machine.name,
+                    macs.join(", ")
                 );
             }
             Err(error) => {
@@ -695,6 +888,7 @@ fn wake(file: &ConfigFile, names: &[String], groups: &[String]) -> Result<Outcom
                 results.push(json!({
                     "machine": machine.name,
                     "target": target.to_string(),
+                    "macs": macs,
                     "status": "failed",
                     "error": { "code": "network_error", "message": error.to_string() },
                 }));

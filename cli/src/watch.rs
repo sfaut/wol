@@ -15,10 +15,10 @@ use crate::cli::{document, probe_json, probe_text, status_text};
 use crate::config::ConfigFile;
 use crate::error::{Error, Result};
 use crate::probe::{self, State};
-use crate::time;
+use crate::{scan, time};
 
 /// Number of consecutive failed checks before an online machine is reported as not online,
-/// so that a single lost ping does not trigger a notification.
+/// so that a single missed answer does not trigger a notification.
 const CONFIRMATIONS: u32 = 2;
 
 /// Options of `wol watch`.
@@ -31,9 +31,6 @@ pub struct Options<'a> {
 
     /// Time between the starts of two checks.
     pub interval: Duration,
-
-    /// Time to wait for each answer.
-    pub timeout: Duration,
 
     /// Whether to print NDJSON instead of text.
     pub json: bool,
@@ -106,7 +103,7 @@ pub fn watch(file: &mut ConfigFile, options: &Options<'_>) -> Result<crate::cli:
             .config()
             .select(options.names, options.groups)
             .unwrap_or_default();
-        let probes = probe::probe_all(&machines, options.timeout);
+        let probes = probe::probe_all(&machines, &scan::scan());
         let checked_at = time::now();
 
         if snapshot {
@@ -273,10 +270,10 @@ mod tests {
     #[test]
     fn other_changes_are_immediate() {
         assert_eq!(
-            changes(State::Offline, &[State::Error, State::Unknown]),
+            changes(State::Offline, &[State::Error, State::Offline]),
             [
                 (State::Offline, State::Error),
-                (State::Error, State::Unknown)
+                (State::Error, State::Offline)
             ]
         );
     }

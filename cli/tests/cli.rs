@@ -11,6 +11,9 @@ use tempfile::TempDir;
 struct Wol {
     /// Temporary directory holding the configuration file.
     dir: TempDir,
+
+    /// Devices the fake network scan finds (`WOL_FAKE_SCAN` syntax).
+    network: String,
 }
 
 impl Wol {
@@ -18,7 +21,14 @@ impl Wol {
     fn new() -> Self {
         Self {
             dir: TempDir::new().unwrap(),
+            network: String::new(),
         }
+    }
+
+    /// Sets the devices the fake network scan finds (`IP=MAC` pairs, or `none`).
+    fn network(mut self, devices: &str) -> Self {
+        devices.clone_into(&mut self.network);
+        self
     }
 
     /// Path of the configuration file.
@@ -30,6 +40,7 @@ impl Wol {
     fn command(&self, args: &[&str]) -> Command {
         let mut command = Command::cargo_bin("wol").unwrap();
         command.arg("--config").arg(self.config()).args(args);
+        command.env("WOL_FAKE_SCAN", &self.network);
         command
     }
 
@@ -72,22 +83,25 @@ fn add_then_list_round_trips() {
         "add",
         "Office PC",
         "--mac",
-        "a4-bb-6d-12-34-56",
-        "--host",
-        "192.168.1.20",
+        "a4-bb-6d-12-34-56=Ethernet",
+        "--mac",
+        "a4bb6d123457",
         "--group",
         "office",
-        "--check-port",
-        "3389",
     ]);
 
     let (_, stdout, _) = wol.json(&["list"]);
     let machine = &stdout.unwrap()["machines"][0];
     assert_eq!(machine["name"], "Office PC");
     assert_eq!(machine["group"], "Office");
-    assert_eq!(machine["mac"], "A4:BB:6D:12:34:56");
+    assert_eq!(
+        machine["interfaces"],
+        serde_json::json!([
+            { "mac": "A4:BB:6D:12:34:56", "label": "Ethernet" },
+            { "mac": "A4:BB:6D:12:34:57", "label": null },
+        ])
+    );
     assert_eq!(machine["broadcast"], Value::Null);
-    assert_eq!(machine["check_ports"], serde_json::json!([3389]));
 
     let text = std::fs::read_to_string(wol.config()).unwrap();
     assert!(text.starts_with("[[group]]"), "{text}");
@@ -133,21 +147,17 @@ fn schema_comes_first() {
 #[test]
 fn errors_have_codes_and_exit_codes() {
     let wol = Wol::new();
-    wol.ok(&["add", "NAS", "--mac", "001122334455", "--host", "nas.local"]);
+    wol.ok(&["add", "NAS", "--mac", "001122334455"]);
 
     let cases: [(&[&str], i32, &str); 5] = [
         (&["wake", "Ghost"], 4, "machine_not_found"),
         (&["wake", "--group", "Ghost"], 4, "group_not_found"),
         (
-            &["add", "nas", "--mac", "001122334455", "--host", "x"],
+            &["add", "nas", "--mac", "001122334455"],
             2,
             "machine_already_exists",
         ),
-        (
-            &["add", "PC", "--mac", "nope", "--host", "x"],
-            2,
-            "invalid_usage",
-        ),
+        (&["add", "PC", "--mac", "nope"], 2, "invalid_usage"),
         (&["edit", "NAS", "--port", "0"], 2, "invalid_value"),
     ];
     for (args, expected_code, expected_error) in cases {
@@ -185,8 +195,8 @@ fn wake_sends_magic_packets_once_per_machine() {
         "NAS",
         "--mac",
         "00:11:22:33:44:55",
-        "--host",
-        "nas",
+        "--mac",
+        "00:11:22:33:44:56",
         "--group",
         "Servers",
         "--broadcast",
@@ -203,10 +213,62 @@ fn wake_sends_magic_packets_once_per_machine() {
     assert_eq!(results[0]["status"], "sent");
     assert_eq!(results[0]["target"], format!("127.0.0.1:{port}"));
 
+    assert_eq!(
+        results[0]["macs"],
+        serde_json::json!(["00:11:22:33:44:55", "00:11:22:33:44:56"])
+    );
+
+    // Every interface gets its packets (each one is sent several times).
+    let mut targets = std::collections::BTreeSet::new();
     let mut buffer = [0u8; 256];
-    let (len, _) = receiver.recv_from(&mut buffer).unwrap();
-    assert_eq!(len, 102);
-    assert_eq!(&buffer[6..12], &[0x00, 0x11, 0x22, 0x33, 0x44, 0x55]);
+    receiver
+        .set_read_timeout(Some(std::time::Duration::from_secs(2)))
+        .unwrap();
+    while let Ok((len, _)) = receiver.recv_from(&mut buffer) {
+        assert_eq!(len, 102);
+        targets.insert(buffer[6..12].to_vec());
+        if targets.len() == 2 {
+            break;
+        }
+    }
+    assert_eq!(
+        targets.into_iter().collect::<Vec<_>>(),
+        [
+            vec![0x00, 0x11, 0x22, 0x33, 0x44, 0x55],
+            vec![0x00, 0x11, 0x22, 0x33, 0x44, 0x56]
+        ]
+    );
+}
+
+#[test]
+fn edit_adds_relabels_and_removes_interfaces() {
+    let wol = Wol::new();
+    wol.ok(&["add", "PC", "--mac", "001122334455=Ethernet"]);
+    wol.ok(&[
+        "edit",
+        "pc",
+        "--add-mac",
+        "001122334456=Wi-Fi",
+        "--add-mac",
+        "001122334455=LAN",
+    ]);
+
+    let (_, stdout, _) = wol.json(&["list"]);
+    assert_eq!(
+        stdout.unwrap()["machines"][0]["interfaces"],
+        serde_json::json!([
+            { "mac": "00:11:22:33:44:55", "label": "LAN" },
+            { "mac": "00:11:22:33:44:56", "label": "Wi-Fi" },
+        ])
+    );
+
+    wol.ok(&["edit", "PC", "--remove-mac", "00:11:22:33:44:55"]);
+    let (code, _, stderr) = wol.json(&["edit", "PC", "--remove-mac", "00:11:22:33:44:56"]);
+    assert_eq!(code, 2);
+    assert_eq!(stderr.unwrap()["error"]["details"]["field"], "interfaces");
+
+    let (code, _, _) = wol.json(&["edit", "PC", "--remove-mac", "00:11:22:33:44:99"]);
+    assert_eq!(code, 2);
 }
 
 #[test]
@@ -214,16 +276,7 @@ fn group_lifecycle() {
     let wol = Wol::new();
     wol.ok(&["group", "add", "Office"]);
     wol.ok(&["group", "add", "Servers"]);
-    wol.ok(&[
-        "add",
-        "PC",
-        "--mac",
-        "001122334455",
-        "--host",
-        "pc",
-        "--group",
-        "Office",
-    ]);
+    wol.ok(&["add", "PC", "--mac", "001122334455", "--group", "Office"]);
 
     let (_, stdout, _) = wol.json(&["group", "move", "Servers", "1"]);
     assert_eq!(stdout.unwrap()["position"], 1);
@@ -247,28 +300,9 @@ fn group_lifecycle() {
 
 #[test]
 fn status_reports_states() {
-    let listener = std::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
-    let port = listener.local_addr().unwrap().port().to_string();
-
-    let wol = Wol::new();
-    wol.ok(&[
-        "add",
-        "Local",
-        "--mac",
-        "001122334455",
-        "--host",
-        "127.0.0.1",
-        "--check-port",
-        &port,
-    ]);
-    wol.ok(&[
-        "add",
-        "Nowhere",
-        "--mac",
-        "001122334456",
-        "--host",
-        "nowhere.invalid",
-    ]);
+    let wol = Wol::new().network("192.168.1.20=00:11:22:33:44:55, 192.168.1.30=66:77:88:99:AA:BB");
+    wol.ok(&["add", "Desk", "--mac", "001122334455"]);
+    wol.ok(&["add", "NAS", "--mac", "001122334456"]);
 
     let (code, stdout, _) = wol.json(&["status"]);
     assert_eq!(code, 0);
@@ -276,14 +310,27 @@ fn status_reports_states() {
     assert!(stdout["checked_at"].as_str().unwrap().ends_with('Z'));
 
     let machines = stdout["machines"].as_array().unwrap();
-    assert_eq!(machines[0]["machine"], "Local");
+    assert_eq!(machines[0]["machine"], "Desk");
     assert_eq!(machines[0]["state"], "online");
-    assert!(machines[0]["latency_ms"].is_u64());
-    assert_eq!(machines[1]["state"], "error");
-    assert_eq!(machines[1]["reason"], "host_not_found");
+    assert_eq!(machines[0]["mac"], "00:11:22:33:44:55");
+    assert_eq!(machines[0]["address"], "192.168.1.20");
+    assert_eq!(machines[1]["state"], "offline");
+    assert_eq!(machines[1]["address"], Value::Null);
 
-    let (_, stdout, _) = wol.json(&["status", "nowhere"]);
+    let (_, stdout, _) = wol.json(&["status", "nas"]);
     assert_eq!(stdout.unwrap()["machines"].as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn status_without_local_network_is_an_error() {
+    let wol = Wol::new().network("none");
+    wol.ok(&["add", "Desk", "--mac", "001122334455"]);
+
+    let (code, stdout, _) = wol.json(&["status"]);
+    assert_eq!(code, 5);
+    let machine = &stdout.unwrap()["machines"][0];
+    assert_eq!(machine["state"], "error");
+    assert_eq!(machine["reason"], "no_local_network");
 }
 
 #[test]
@@ -292,19 +339,13 @@ fn watch_emits_snapshots_and_reloads_config() {
     use std::process::Stdio;
 
     let wol = Wol::new();
-    wol.ok(&[
-        "add",
-        "Local",
-        "--mac",
-        "001122334455",
-        "--host",
-        "127.0.0.1",
-    ]);
+    wol.ok(&["add", "Local", "--mac", "001122334455"]);
 
     let mut child = std::process::Command::new(assert_cmd::cargo::cargo_bin("wol"))
         .arg("--config")
         .arg(wol.config())
-        .args(["watch", "--json", "--interval", "1", "--timeout", "300"])
+        .args(["watch", "--json", "--interval", "1"])
+        .env("WOL_FAKE_SCAN", "")
         .stdout(Stdio::piped())
         .spawn()
         .unwrap();
@@ -317,18 +358,58 @@ fn watch_emits_snapshots_and_reloads_config() {
     assert_eq!(first["machines"].as_array().unwrap().len(), 1);
 
     // Editing the file while watching produces a new snapshot including the new machine.
-    wol.ok(&[
-        "add",
-        "Other",
-        "--mac",
-        "001122334456",
-        "--host",
-        "127.0.0.1",
-    ]);
+    wol.ok(&["add", "Other", "--mac", "001122334456"]);
     let second = next_event();
     child.kill().unwrap();
     child.wait().unwrap();
 
     assert_eq!(second["event"], "snapshot");
     assert_eq!(second["machines"].as_array().unwrap().len(), 2);
+}
+
+#[test]
+fn shared_mac_addresses_are_allowed_with_a_warning() {
+    let wol = Wol::new();
+    wol.ok(&["add", "VM 1", "--mac", "001122334455"]);
+
+    let (code, stdout, _) = wol.json(&["add", "VM 2", "--mac", "001122334455"]);
+    assert_eq!(code, 0);
+    let warning = &stdout.unwrap()["warnings"][0];
+    assert_eq!(warning["code"], "shared_mac");
+    assert_eq!(warning["mac"], "00:11:22:33:44:55");
+    assert_eq!(warning["machines"], serde_json::json!(["VM 1", "VM 2"]));
+
+    let (_, stdout, _) = wol.json(&["list"]);
+    let stdout = stdout.unwrap();
+    assert_eq!(stdout["machines"].as_array().unwrap().len(), 2);
+    assert_eq!(stdout["warnings"].as_array().unwrap().len(), 1);
+
+    wol.command(&["list"])
+        .assert()
+        .success()
+        .stdout(predicates::str::contains(
+            "Warning: MAC address 00:11:22:33:44:55 is used by several machines (\"VM 1\", \"VM 2\")",
+        ));
+}
+
+#[test]
+fn scan_lists_devices_and_known_machines() {
+    let wol = Wol::new().network("192.168.1.30=66:77:88:99:AA:BB, 192.168.1.20=00:11:22:33:44:55");
+    wol.ok(&["add", "Desk", "--mac", "001122334455=Wi-Fi"]);
+
+    let (code, stdout, _) = wol.json(&["scan"]);
+    assert_eq!(code, 0);
+    let devices = stdout.unwrap()["devices"].as_array().unwrap().clone();
+    assert_eq!(devices.len(), 2);
+    assert_eq!(devices[0]["address"], "192.168.1.20");
+    assert_eq!(
+        devices[0]["machines"],
+        serde_json::json!([{ "machine": "Desk", "label": "Wi-Fi" }])
+    );
+    assert_eq!(devices[1]["mac"], "66:77:88:99:AA:BB");
+    assert_eq!(devices[1]["machines"], serde_json::json!([]));
+
+    let (code, _, stderr) = Wol::new().network("none").json(&["scan"]);
+    assert_eq!(code, 5);
+    assert_eq!(stderr.unwrap()["error"]["code"], "no_local_network");
 }

@@ -9,7 +9,7 @@ license = "MIT"
 publish = false
 
 [dependencies]
-clap = { version = "4.6.7", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive", "wrap_help"] }
 dirs = "7.0.0"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = { version = "1.0.154", features = ["preserve_order"] }
@@ -29,7 +29,7 @@ predicates = "3.1.4"
 tempfile = "3.27.0"
 
 [target."cfg(windows)".dependencies]
-windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper"] }
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper", "Win32_NetworkManagement_Ndis", "Win32_Networking_WinSock"] }
 
 [target."cfg(unix)".dependencies]
-socket2 = "0.6.5"
+libc = "0.2.191"
