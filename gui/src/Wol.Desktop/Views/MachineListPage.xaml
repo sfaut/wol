@@ -45,7 +45,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <controls:StateBadge State="{x:Bind State, Mode=OneWay}" />
+                    <controls:StateBadge State="{x:Bind State, Mode=OneWay}" Text="{x:Bind StateLabel, Mode=OneWay}" />
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"

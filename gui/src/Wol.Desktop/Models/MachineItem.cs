@@ -85,9 +85,15 @@ public sealed partial class MachineItem : ObservableObject
     public bool CliUnavailable { get; set; }
 
     /// <summary>
-    /// Localized state name.
+    /// Label of the state badge: the localized state name, or "Never seen" / "Not checked yet"
+    /// when that says more.
     /// </summary>
-    public string StateLabel => Strings.Get($"State_{State}");
+    public string StateLabel => State switch
+    {
+        MachineState.Offline when LastSeen is null => Strings.Get("State_Offline_Never"),
+        MachineState.Unknown when !CliUnavailable && !IsChecking => Strings.Get("State_Unknown_NotChecked"),
+        _ => Strings.Get($"State_{State}"),
+    };
 
     /// <summary>
     /// Detail shown under the state, e.g. "Last seen 5 min ago".
@@ -96,14 +102,12 @@ public sealed partial class MachineItem : ObservableObject
     {
         MachineState.Offline when LastSeen is { } seen =>
             Strings.Format("State_Offline_Detail", TimeText.Ago(seen)),
-        MachineState.Offline => Strings.Get("State_Offline_Never"),
         MachineState.Waking => Strings.Format(
             "State_Waking_Detail",
             TimeText.Clock(DateTimeOffset.Now - WakeStartedAt)),
         MachineState.TimedOut => Strings.Format("State_TimedOut_Detail", TimeText.Clock(WakeTimeout)),
         MachineState.Unknown when CliUnavailable => Strings.Get("State_Unknown_CliUnavailable"),
         MachineState.Unknown when IsChecking => Strings.Get("State_Unknown_Checking"),
-        MachineState.Unknown => Strings.Get("State_Unknown_NotChecked"),
         MachineState.Error => Strings.Get("State_Error_NoNetwork"),
         _ => string.Empty,
     };
