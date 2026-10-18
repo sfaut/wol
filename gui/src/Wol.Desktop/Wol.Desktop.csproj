@@ -25,6 +25,13 @@
     <SelfContained>true</SelfContained>
     <PublishAot>true</PublishAot>
 
+    <!-- Smaller release: native code optimized for size, no .NET resource strings or symbols. -->
+    <OptimizationPreference>Size</OptimizationPreference>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <StackTraceSupport>false</StackTraceSupport>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    <SatelliteResourceLanguages>en;fr</SatelliteResourceLanguages>
+
     <!-- LibraryImport (Win32 calls) generates unsafe marshalling code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
