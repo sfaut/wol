@@ -5,13 +5,12 @@
 
 use std::collections::HashMap;
 use std::fs;
-use std::io::{self, Write as _};
 use std::path::Path;
 use std::time::{Duration, Instant, SystemTime};
 
 use serde_json::{Value, json};
 
-use crate::cli::{document, probe_json, probe_text, status_text};
+use crate::cli::{document, emit, emit_text, probe_json, probe_text, status_text};
 use crate::config::ConfigFile;
 use crate::error::{Error, Result};
 use crate::probe::{self, State};
@@ -204,22 +203,6 @@ fn report(options: &Options<'_>, error: &Error) {
         ));
     } else {
         eprintln!("error: {error}");
-    }
-}
-
-/// Prints one NDJSON line.
-fn emit(event: &Value) {
-    emit_text(&event.to_string());
-}
-
-/// Prints a line and flushes it; exits quietly when the consumer has gone (closed pipe).
-fn emit_text(line: &str) {
-    let mut stdout = io::stdout().lock();
-    if writeln!(stdout, "{line}")
-        .and_then(|()| stdout.flush())
-        .is_err()
-    {
-        std::process::exit(0);
     }
 }
 

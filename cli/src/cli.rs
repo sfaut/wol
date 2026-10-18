@@ -2,6 +2,7 @@
 
 use std::ffi::OsString;
 use std::fmt::Write as _;
+use std::io::{self, Write as _};
 use std::net::Ipv4Addr;
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -368,6 +369,22 @@ pub(crate) fn document(config: Option<Value>, body: Value) -> Value {
         object.extend(fields);
     }
     Value::Object(object)
+}
+
+/// Prints one NDJSON line.
+pub(crate) fn emit(event: &Value) {
+    emit_text(&event.to_string());
+}
+
+/// Prints a line and flushes it; exits quietly when the consumer has gone (closed pipe).
+pub(crate) fn emit_text(line: &str) {
+    let mut stdout = io::stdout().lock();
+    if writeln!(stdout, "{line}")
+        .and_then(|()| stdout.flush())
+        .is_err()
+    {
+        std::process::exit(0);
+    }
 }
 
 /// Describes, for humans, which configuration file was used and what happened to it.
