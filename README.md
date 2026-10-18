@@ -70,8 +70,12 @@ cargo build --release              # -> cli/target/release/wol(.exe)
 # Desktop app (Windows only)
 cd gui
 dotnet build
-dotnet publish src/Wol.Desktop -c Release -r win-x64   # -> wol-gui.exe
+cd launcher && cargo build --release && cd ..
+dotnet publish src/Wol.Desktop -c Release -r win-x64
 ```
+
+The publish folder holds `wol-gui.exe` (the desktop app), `wol.exe` (the CLI) and a `runtime`
+folder with the rest of the desktop app.
 
 ## Documentation
 
