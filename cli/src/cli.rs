@@ -9,7 +9,7 @@ use std::process::ExitCode;
 use clap::{Args, Parser, Subcommand};
 use serde_json::{Value, json};
 
-use crate::config::{self, ConfigFile, Machine};
+use crate::config::{self, ConfigFile, ConfigStatus, Machine};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
 use crate::magic;
@@ -245,55 +245,88 @@ where
         }
     };
 
-    match execute(&cli) {
+    let mut file = match ConfigFile::load(config::locate(cli.config.as_deref())) {
+        Ok(file) => file,
+        Err(error) => {
+            // The error itself names the file (invalid or unreadable).
+            report_error(cli.json, &error, None);
+            return ExitCode::from(error.exit_code());
+        }
+    };
+
+    let result = execute(&cli, &mut file);
+    let config = json!({ "path": file.path(), "status": file.status() });
+
+    match result {
         Ok(outcome) => {
             if cli.json {
-                println!("{}", with_schema(outcome.json));
-            } else if !outcome.text.is_empty() {
+                println!("{}", document(Some(config), outcome.json));
+            } else {
                 print!("{}", outcome.text);
+                eprintln!("{}", config_line(&file));
             }
             ExitCode::from(outcome.exit)
         }
         Err(error) => {
-            if cli.json {
-                print_json_error(error.code(), &error.to_string(), error.details());
-            } else {
-                eprintln!("error: {error}");
-            }
+            report_error(cli.json, &error, Some(&file));
             ExitCode::from(error.exit_code())
         }
     }
 }
 
-/// Adds the `schema` field at the beginning of a JSON object.
-fn with_schema(document: Value) -> Value {
+/// Builds a JSON document: `schema` first, then `config` when known, then the `body` fields.
+fn document(config: Option<Value>, body: Value) -> Value {
     let mut object = serde_json::Map::new();
     object.insert("schema".to_owned(), json!(SCHEMA));
-    if let Value::Object(fields) = document {
+    if let Some(config) = config {
+        object.insert("config".to_owned(), config);
+    }
+    if let Value::Object(fields) = body {
         object.extend(fields);
     }
     Value::Object(object)
 }
 
-/// Prints a JSON error document on `stderr`.
-fn print_json_error(code: &str, message: &str, details: Value) {
-    eprintln!(
-        "{}",
-        with_schema(json!({ "error": { "code": code, "message": message, "details": details } }))
-    );
+/// Describes, for humans, which configuration file was used and what happened to it.
+fn config_line(file: &ConfigFile) -> String {
+    let path = file.path().display();
+    match file.status() {
+        ConfigStatus::Loaded => format!("Configuration: {path}"),
+        ConfigStatus::Updated => format!("Configuration: {path} (updated)"),
+        ConfigStatus::Created => format!("Configuration: {path} (created)"),
+        ConfigStatus::Missing => format!("Configuration: {path} (not created yet)"),
+    }
 }
 
-/// Runs the parsed command.
+/// Reports an error on `stderr`, with the configuration file when it was loaded.
+fn report_error(json: bool, error: &Error, file: Option<&ConfigFile>) {
+    if json {
+        let config = file.map(|file| json!({ "path": file.path(), "status": file.status() }));
+        let body = json!({ "error": { "code": error.code(), "message": error.to_string(), "details": error.details() } });
+        eprintln!("{}", document(config, body));
+    } else {
+        eprintln!("error: {error}");
+        if let Some(file) = file {
+            eprintln!("{}", config_line(file));
+        }
+    }
+}
+
+/// Prints a JSON error document on `stderr`, for errors raised before any configuration is loaded.
+fn print_json_error(code: &str, message: &str, details: Value) {
+    let body = json!({ "error": { "code": code, "message": message, "details": details } });
+    eprintln!("{}", document(None, body));
+}
+
+/// Runs the parsed command against the loaded configuration file.
 ///
 /// # Errors
 ///
 /// Returns the error to report; partial failures are reported through [`Outcome::exit`].
-fn execute(cli: &Cli) -> Result<Outcome> {
-    let mut file = ConfigFile::load(config::locate(cli.config.as_deref()))?;
-
+fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
-        Command::List => Ok(list(&file)),
-        Command::Wake { machines, groups } => wake(&file, machines, groups),
+        Command::List => Ok(list(file)),
+        Command::Wake { machines, groups } => wake(file, machines, groups),
         Command::Add(args) => {
             let machine = Machine {
                 name: args.name.clone(),
@@ -360,7 +393,7 @@ fn execute(cli: &Cli) -> Result<Outcome> {
                 format!("Removed machine \"{}\".\n", machine.name),
             ))
         }
-        Command::Group { command } => group(&mut file, command),
+        Command::Group { command } => group(file, command),
     }
 }
 
@@ -411,7 +444,6 @@ fn group(file: &mut ConfigFile, command: &GroupCommand) -> Result<Outcome> {
 fn list(file: &ConfigFile) -> Outcome {
     let config = file.config();
     let json = json!({
-        "config": file.path(),
         "groups": config.groups,
         "machines": config.machines,
     });

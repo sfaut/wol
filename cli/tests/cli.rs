@@ -94,6 +94,32 @@ fn add_then_list_round_trips() {
 }
 
 #[test]
+fn reports_config_file_and_status() {
+    let wol = Wol::new();
+    let path = wol.config().display().to_string();
+
+    let status = |args: &[&str]| {
+        let (_, stdout, _) = wol.json(args);
+        let config = stdout.unwrap()["config"].clone();
+        assert_eq!(config["path"], path.as_str(), "{args:?}");
+        config["status"].as_str().unwrap().to_owned()
+    };
+    assert_eq!(status(&["list"]), "missing");
+    assert_eq!(status(&["group", "add", "Office"]), "created");
+    assert_eq!(status(&["group", "add", "Home"]), "updated");
+    assert_eq!(status(&["list"]), "loaded");
+
+    // Human output names the file on stderr, keeping stdout for data.
+    let output = wol.command(&["list"]).output().unwrap();
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    assert_eq!(stderr.trim_end(), format!("Configuration: {path}"));
+
+    // Errors after loading also name the file.
+    let (_, _, stderr) = wol.json(&["wake", "Ghost"]);
+    assert_eq!(stderr.unwrap()["config"]["status"], "loaded");
+}
+
+#[test]
 fn schema_comes_first() {
     let wol = Wol::new();
     let output = wol.command(&["list", "--json"]).output().unwrap();

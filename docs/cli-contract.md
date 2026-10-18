@@ -19,6 +19,8 @@ Lookup order (first match wins):
    - macOS: `~/Library/Application Support/wol/wol.toml`
 
 A missing file is an empty configuration; it is created on the first change.
+Every command reports which file it used and what happened to it: on `stderr` in
+human-readable mode (`Configuration: <path> (created)`), in the `config` object in JSON.
 Only the CLI reads and writes this file: front-ends go through the CLI commands. The CLI
 preserves comments and layout written by hand.
 
@@ -78,6 +80,10 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 - Every JSON document starts with `"schema": <integer>` (currently `1`), bumped on any breaking change.
 - JSON is **language-neutral**: states, statuses and errors are stable `snake_case` codes.
   Front-ends translate them; human-readable output may be localized, JSON never is.
+- Then comes `"config": { "path": "<absolute path>", "status": "<status>" }`, where status is
+  `loaded` (read, unchanged), `updated` (rewritten), `created` (written for the first time) or
+  `missing` (does not exist, empty configuration). It is present in every success document and
+  in error documents raised once the file is loaded; errors loading the file name it in `details`.
 - Successful commands print one JSON document on `stdout`.
 - `watch` will print **NDJSON** (one JSON document per line) on `stdout`, flushed per event.
 - Errors print one JSON document on `stderr` and nothing on `stdout`.
@@ -97,12 +103,12 @@ Group: `{ "name": "Office" }`
 
 | Command | `stdout` document |
 |---|---|
-| `list` | `{ "schema", "config": "<path>", "groups": [Group…], "machines": [Machine…] }` |
-| `wake` | `{ "schema", "results": [{ "machine", "target": "<ip>:<port>", "status": "sent" \| "failed", "error"?: { "code", "message" } }…] }` |
-| `add`, `edit`, `remove` | `{ "schema", "machine": Machine }` (the removed machine for `remove`) |
-| `group add`, `group move` | `{ "schema", "group": Group, "position": <1-based> }` |
-| `group rename` | `{ "schema", "group": Group }` |
-| `group remove` | `{ "schema", "group": Group, "ungrouped": ["<machine>"…] }` |
+| `list` | `{ "schema", "config", "groups": [Group…], "machines": [Machine…] }` |
+| `wake` | `{ "schema", "config", "results": [{ "machine", "target": "<ip>:<port>", "status": "sent" \| "failed", "error"?: { "code", "message" } }…] }` |
+| `add`, `edit`, `remove` | `{ "schema", "config", "machine": Machine }` (the removed machine for `remove`) |
+| `group add`, `group move` | `{ "schema", "config", "group": Group, "position": <1-based> }` |
+| `group rename` | `{ "schema", "config", "group": Group }` |
+| `group remove` | `{ "schema", "config", "group": Group, "ungrouped": ["<machine>"…] }` |
 
 `wake` reports send failures per machine and still prints its document; the exit code is then 5.
 
