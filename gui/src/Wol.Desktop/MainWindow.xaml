@@ -44,7 +44,7 @@
             </Grid>
         </NavigationView>
 
-        <!-- Where a group dragged in the navigation pane would land. -->
+        <!-- Where a dragged group would land (navigation pane or machine list). -->
         <Canvas x:Name="DropLayer" Grid.Row="1" IsHitTestVisible="False">
             <Rectangle
                 x:Name="DropMarker"
