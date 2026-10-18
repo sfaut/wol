@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — State indicator spec</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="doc light" style="width: 1440px; min-height: 1020px; display: flex; flex-direction: column; gap: 24px">
+  <div class="vstack" style="gap: 8px">
+    <h1>State indicators</h1>
+    <p class="lead">Six states. Each has its own silhouette and always sits next to its label, so colour is never the only cue.</p>
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width: 168px">Light · Dark · High contrast</th><th>State label</th><th>Glyph (Segoe Fluent Icons)</th><th>Fill token</th><th>Detail line</th><th>Row action</th><th>FR length check</th></tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td>
+          <div style="display: flex; gap: 6px">
+            
+            <span class="light" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--success)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="dark" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--success)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="hc" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--success)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+          </div>
+        </td>
+        <td><strong>Online</strong><div class="help">Replied to the last check</div></td>
+        <td><span class="code">U+F136 StatusCircleOuter + U+F13E StatusCircleCheckmark</span></td>
+        <td><span class="code">SystemFillColorSuccessBrush</span></td>
+        <td>Latency: “4 ms”</td>
+        <td>None (Wake hidden)</td>
+        <td><span class="help" style="font-size: 14px">En ligne</span></td>
+      </tr>
+      
+      <tr>
+        <td>
+          <div style="display: flex; gap: 6px">
+            
+            <span class="light" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--neutral)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="dark" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--neutral)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="hc" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--neutral)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+          </div>
+        </td>
+        <td><strong>Offline</strong><div class="help">No reply to the last check</div></td>
+        <td><span class="code">U+F138 StatusCircleRing</span></td>
+        <td><span class="code">SystemFillColorSolidNeutralBrush</span></td>
+        <td>“Last seen 3 h ago” or “Never seen”</td>
+        <td>Wake — accent button</td>
+        <td><span class="help" style="font-size: 14px">Hors ligne</span></td>
+      </tr>
+      
+      <tr>
+        <td>
+          <div style="display: flex; gap: 6px">
+            
+            <span class="light" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="dark" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="hc" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+          </div>
+        </td>
+        <td><strong>Waking</strong><div class="help">Packet sent, waiting for a reply</div></td>
+        <td><span class="code">ProgressRing 16 × 16 (no glyph)</span></td>
+        <td><span class="code">AccentFillColorDefaultBrush</span></td>
+        <td>“0:24 · waiting for reply”</td>
+        <td>Cancel — standard button</td>
+        <td><span class="help" style="font-size: 14px">Réveil en cours</span></td>
+      </tr>
+      
+      <tr>
+        <td>
+          <div style="display: flex; gap: 6px">
+            
+            <span class="light" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M8 6.1v3.4" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.8" r="0.9" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="dark" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M8 6.1v3.4" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.8" r="0.9" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="hc" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M8 6.1v3.4" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.8" r="0.9" fill="var(--on-status)"></circle></svg></span>
+            
+          </div>
+        </td>
+        <td><strong>Timed out</strong><div class="help">Woken but never came up</div></td>
+        <td><span class="code">U+F139 StatusTriangleOuter + U+F13B StatusTriangleExclamation</span></td>
+        <td><span class="code">SystemFillColorCautionBrush</span></td>
+        <td>“No reply after 2:00”</td>
+        <td>Retry — accent button</td>
+        <td><span class="help" style="font-size: 14px">Délai dépassé</span></td>
+      </tr>
+      
+      <tr>
+        <td>
+          <div style="display: flex; gap: 6px">
+            
+            <span class="light" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--neutral)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.6" r="0.85" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="dark" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--neutral)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.6" r="0.85" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="hc" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--neutral)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.6" r="0.85" fill="var(--on-status)"></circle></svg></span>
+            
+          </div>
+        </td>
+        <td><strong>Unknown</strong><div class="help">Not checked yet, or check running</div></td>
+        <td><span class="code">U+F136 StatusCircleOuter + U+F142 StatusCircleQuestionMark</span></td>
+        <td><span class="code">SystemFillColorSolidNeutralBrush</span></td>
+        <td>“Not checked yet” / “Checking…”</td>
+        <td>Wake — standard button</td>
+        <td><span class="help" style="font-size: 14px">Inconnu</span></td>
+      </tr>
+      
+      <tr>
+        <td>
+          <div style="display: flex; gap: 6px">
+            
+            <span class="light" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--critical)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="dark" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--critical)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+            <span class="hc" style="width: 48px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000"><svg class="st" viewbox="0 0 16 16" aria-hidden="true" style="width: 20px; height: 20px"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--critical)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg></span>
+            
+          </div>
+        </td>
+        <td><strong>Error</strong><div class="help">Check impossible</div></td>
+        <td><span class="code">U+F136 StatusCircleOuter + U+F13D StatusCircleErrorX</span></td>
+        <td><span class="code">SystemFillColorCriticalBrush</span></td>
+        <td>“Host not found” / “Network unreachable”</td>
+        <td>Wake — standard button (WoL does not need the host)</td>
+        <td><span class="help" style="font-size: 14px">Erreur</span></td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+    <div class="panel">
+      <h3>How to build it</h3>
+      <p>Two stacked FontIcons in a 16 × 16 Grid, the same technique InfoBar uses: outer glyph with the state brush, inner mark with <span class="code">TextFillColorInverseBrush</span> (white in Light, near-black in Dark). Waking is a real <span class="code">ProgressRing</span> (IsIndeterminate, 16 × 16), not a glyph.</p>
+      <p class="help">Codepoints follow the Segoe Fluent Icons status set (U+F136–F143). Check them in the WinUI Gallery iconography page before shipping; on Windows 10 fall back to Segoe MDL2 Assets equivalents.</p>
+    </div>
+    <div class="panel">
+      <h3>Sizes and placement</h3>
+      <p>16 epx in list rows and menus, 14 epx in status summaries, 20 epx in cards. 8 epx between glyph and text in summaries, 12 epx column gap in rows. The label uses Body (14/20); the detail line uses Caption (12/16) in <span class="code">TextFillColorSecondaryBrush</span>.</p>
+    </div>
+    <div class="panel">
+      <h3>Accessibility</h3>
+      <p>The glyph is decorative (<span class="code">AccessibilityView="Raw"</span>); the row’s automation name carries the state: “Meeting room PC, Offline, last seen 3 hours ago”. State changes on a focused row are announced politely (<span class="code">LiveSetting="Polite"</span>). In high contrast every fill maps to <span class="code">SystemColorWindowTextColor</span> and the shapes alone separate the states.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

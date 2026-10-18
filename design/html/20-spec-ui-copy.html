@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — UI copy (en-US)</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="doc light" style="width: 1440px; min-height: 7280px; display: flex; flex-direction: column; gap: 28px">
+  <div class="vstack" style="gap: 8px">
+    <h1>UI copy — en-US</h1>
+    <p class="lead">Every string shown in the mockups, keyed for Resources.resw. {0}, {1}… are runtime values; strings whose noun changes with the count have .One and .Other. Relative times and durations come from the locale formatter, so “il y a 2 min” needs no extra key.</p>
+  </div>
+  <div style="columns: 2; column-gap: 32px">
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">App and navigation</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">App.Name</td><td>Wol</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.AllMachines</td><td>All machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.GroupsHeader</td><td>Groups</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.Ungrouped</td><td>Ungrouped</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.NewGroup</td><td>New group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.Settings</td><td>Settings</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.PaneToggle.Open</td><td>Open navigation</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.PaneToggle.Close</td><td>Close navigation</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.Group.BadgeName.One</td><td>{0}, 1 machine not online<div class="help">Automation name of a group item with its InfoBadge</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Nav.Group.BadgeName.Other</td><td>{0}, {1} machines not online</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Group menu (pane)</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupMenu.WakeGroup</td><td>Wake group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupMenu.Rename</td><td>Rename…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupMenu.MoveUp</td><td>Move up</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupMenu.MoveDown</td><td>Move down</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupMenu.Delete</td><td>Delete group…</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">States</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Online</td><td>Online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Offline</td><td>Offline</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking</td><td>Waking</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.TimedOut</td><td>Timed out</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Unknown</td><td>Unknown</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error</td><td>Error</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Online.Detail</td><td>{0} ms<div class="help">Latency</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Offline.Detail</td><td>Last seen {0}<div class="help">Relative time from the formatter</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Offline.Never</td><td>Never seen</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Sending</td><td>Sending wake packet…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Detail</td><td>{0} · waiting for reply<div class="help">Elapsed time, m:ss</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.TimedOut.Detail</td><td>No reply after {0}<div class="help">Timeout, m:ss</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Unknown.NotChecked</td><td>Not checked yet</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Unknown.Checking</td><td>Checking…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Unknown.CliUnavailable</td><td>Not checked · CLI unavailable</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.HostNotFound</td><td>Host not found</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.NetworkUnreachable</td><td>Network unreachable</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.Generic</td><td>Check failed</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.AutomationName</td><td>{0}, {1}, {2}<div class="help">Name, state, detail spelled out</div></td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Status summary</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Online</td><td>{0} online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Offline</td><td>{0} offline</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Waking</td><td>{0} waking</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.TimedOut</td><td>{0} timed out</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Error.One</td><td>{0} error</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Error.Other</td><td>{0} errors</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Unknown</td><td>{0} unknown</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.NotOnline</td><td>{0} not online<div class="help">Compact group header</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Separator</td><td> · </td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Unavailable.Other</td><td>{0} machines · status unavailable</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Empty</td><td>No machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.AutomationName</td><td>Status summary</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Toolbar, search and filter</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Page.AllMachines.Title</td><td>All machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.AddMachine</td><td>Add machine</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.RefreshAll</td><td>Refresh all</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.Refresh</td><td>Refresh<div class="help">On a group page</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.Select</td><td>Select</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.Rename</td><td>Rename<div class="help">On a group page</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.MoreGroupActions</td><td>More group actions</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.Placeholder</td><td>Search machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.PlaceholderInGroup</td><td>Search in {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.Clear</td><td>Clear search</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.Results</td><td>{0} of {1} machines match “{2}”</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.ClearAll</td><td>Clear search and filter</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Filter.Name</td><td>Filter by state</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Filter.AllStates</td><td>All states</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Filter.SomeStates</td><td>{0} states</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Filter.ShowAll</td><td>Show all states</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Selection</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Selection.Count</td><td>{0} selected</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Selection.Wake</td><td>Wake</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Selection.MoveToGroup</td><td>Move to group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Selection.Remove</td><td>Remove</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Selection.Clear</td><td>Clear selection</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Selection.Checkbox.Name</td><td>Select {0}</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Group sections and rows</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Section.WakeGroup</td><td>Wake group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Section.Collapse</td><td>Collapse {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Section.Expand</td><td>Expand {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Section.Shown</td><td>{0} of {1} machines shown<div class="help">While searching or filtering</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Wake</td><td>Wake</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Retry</td><td>Retry</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Cancel</td><td>Cancel</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Wake.Name</td><td>Wake {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Retry.Name</td><td>Retry waking {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Cancel.Name</td><td>Cancel waking {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.More.Name</td><td>More actions for {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Card.AlreadyOnline</td><td>Already online · {0} ms<div class="help">Group wake detail</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Card.WokeIn</td><td>Woke in {0} · {1} ms<div class="help">Group wake detail</div></td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Machine menu</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.Wake</td><td>Wake</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.WakeMany</td><td>Wake {0} machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CheckNow</td><td>Check now</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.Edit</td><td>Edit</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.Duplicate</td><td>Duplicate</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.MoveToGroup</td><td>Move to group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.MoveToGroup.Current</td><td>Current</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.MoveToGroup.NewGroup</td><td>New group…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CopyMac</td><td>Copy MAC address</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.Remove</td><td>Remove</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.RemoveMany</td><td>Remove {0} machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Duplicate.Name</td><td>{0} (copy)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">CopyMac.Announcement</td><td>MAC address copied</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Drag and drop</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Drag.MoveTo</td><td>Move to {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Drag.Moved.Announcement.One</td><td>Moved {0} to {1}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Drag.Moved.Announcement.Other</td><td>Moved {0} machines to {1}</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Empty states</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Title</td><td>Add your first machine</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Body</td><td>Wol wakes computers on your network by sending them a Wake-on-LAN packet. Add a machine with its MAC address to get started.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Add</td><td>Add machine</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.CreateGroup</td><td>Create a group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Help</td><td>How to turn on Wake-on-LAN on a PC</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Group.Title</td><td>{0} has no machines yet</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Group.Body</td><td>Add a machine to this group, or drag machines here from another group. You can also use Move to group (Ctrl+M) on any machine.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Group.GoToAll</td><td>Go to All machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Title</td><td>No machines match “{0}”</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Body</td><td>Check the spelling, or search by name, host or MAC address. A state filter may also be hiding machines.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Clear</td><td>Clear search</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Add / Edit machine</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AddTitle</td><td>Add machine</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.EditTitle</td><td>Edit machine</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Add</td><td>Add</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Save</td><td>Save</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Cancel</td><td>Cancel</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Name.Header</td><td>Name</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Mac.Header</td><td>MAC address</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Mac.Preview</td><td>Will be saved as {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Host.Header</td><td>Host</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Host.Help</td><td>IP address or host name used to check whether the machine is online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.Header</td><td>Group (optional)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.ShowList</td><td>Show groups</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.New</td><td>New group “{0}” will be created</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Header</td><td>Advanced</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Description</td><td>Broadcast address, status check</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Header</td><td>Broadcast address</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Placeholder</td><td>Automatic</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Help</td><td>Leave empty to use the broadcast address of the local subnet</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Check.Header</td><td>Status check</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Check.Help</td><td>Wol pings the host (ICMP). Some firewalls block ping — TCP ports can be tried as a fallback.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Check.UseTcp</td><td>If ping gets no reply, try TCP ports</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Ports.Name</td><td>TCP ports</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Ports.Help</td><td>Separate ports with commas (1–65535)</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Validation</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Name.Required</td><td>Enter a name.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Name.Duplicate</td><td>A machine named “{0}” already exists. Choose another name.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Required</td><td>Enter the MAC address.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Invalid</td><td>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Host.Required</td><td>Enter an IP address or host name.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Host.Invalid</td><td>“{0}” isn’t a valid IP address or host name.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Host.Unresolved</td><td>Can’t resolve “{0}” right now. You can still save; the machine will show Error until it resolves.<div class="help">Warning, does not block saving</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Broadcast.Invalid</td><td>Enter an IPv4 broadcast address, for example 192.168.1.255.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Ports.Invalid</td><td>Use numbers from 1 to 65535, separated by commas.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Group.Required</td><td>Enter a group name.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Group.Duplicate</td><td>A group named “{0}” already exists.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Group.Reserved</td><td>“Ungrouped” is reserved. Choose another name.</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Group dialogs</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupDialog.NewTitle</td><td>New group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupDialog.RenameTitle</td><td>Rename group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupDialog.Name.Header</td><td>Group name</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupDialog.Create</td><td>Create</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupDialog.Rename</td><td>Rename</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">GroupDialog.Cancel</td><td>Cancel</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Title</td><td>Delete the group “{0}”?</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Body.One</td><td>{0} contains 1 machine. What should happen to it?</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Body.Other</td><td>{0} contains {1} machines. What should happen to them?</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Body.Empty</td><td>This group has no machines.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Option.Move</td><td>Move them to Ungrouped</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Option.Delete</td><td>Delete them too</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Confirm</td><td>Delete group</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">DeleteGroup.Cancel</td><td>Cancel</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Remove machines</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RemoveDialog.Title.One</td><td>Remove {0}?</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RemoveDialog.Title.Other</td><td>Remove {0} machines?</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RemoveDialog.Body.One</td><td>It is removed from Wol only; nothing changes on the machine.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RemoveDialog.Body.Other</td><td>They are removed from Wol only; nothing changes on the machines.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RemoveDialog.Confirm</td><td>Remove</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RemoveDialog.Cancel</td><td>Cancel</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Wake feedback (in window)</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Success.Title</td><td>{0} is online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Success.Message</td><td>It woke up in {0}.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.TimedOut.Title</td><td>{0} did not wake up</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.TimedOut.Message</td><td>No reply after {0}. Check that Wake-on-LAN is turned on for this PC.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Retry</td><td>Retry</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.SendFailed.Title</td><td>Couldn’t send the wake packet</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.SendFailed.Message</td><td>{0}<div class="help">Message from the CLI</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Progress.Title.Group</td><td>Waking {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Progress.Title.Selection</td><td>Waking {0} machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Progress.Message</td><td>{0} of {1} online · {2}<div class="help">{2} = state counts and elapsed time</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Progress.Name</td><td>Machines online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Progress.Cancel</td><td>Cancel</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.AllOnline.Title</td><td>{0}: all {1} machines online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.AllOnline.Message</td><td>Woken in {0}.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.Partial.Title</td><td>{0}: {1} of {2} machines online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.Partial.Message.One</td><td>{0} did not wake up.<div class="help">Machine name</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.Partial.Message.Other</td><td>{0} machines did not wake up.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.Retry.One</td><td>Retry 1 machine</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Wake.Result.Retry.Other</td><td>Retry {0} machines</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Notifications.MoreCount</td><td>+{0} more</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Notifications.Close</td><td>Close</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Errors and degraded states</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Title</td><td>Companion CLI not found</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Message</td><td>Wol needs the command-line tool to check and wake machines. It was not found at {0}.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Locate</td><td>Locate…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Help</td><td>How to install</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.Title</td><td>Companion CLI version not supported</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.Message</td><td>This version of Wol needs CLI {0} or later. Found {1}.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.CheckAgain</td><td>Check again</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.Help</td><td>How to update</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Config.Title</td><td>Configuration file can’t be read</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Config.MessageWithLine</td><td>Line {0}: {1} Your machines are shown as last saved until the file is fixed.<div class="help">{1} = CLI message</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Config.Message</td><td>{0} Your machines are shown as last saved until the file is fixed.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Config.Open</td><td>Open file</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Config.Reload</td><td>Reload</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Network.Title</td><td>No network connection</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Network.Message</td><td>Checks are paused and machines can’t be woken. Wol resumes automatically when you’re back online.</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Settings</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Title</td><td>Settings</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Appearance</td><td>Appearance</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Theme.Header</td><td>App theme</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Theme.Description</td><td>Light, dark or the same as Windows</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Theme.System</td><td>Use system setting</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Theme.Light</td><td>Light</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Theme.Dark</td><td>Dark</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Language.Header</td><td>Language</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Language.Description</td><td>Changes apply the next time Wol starts</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Language.System</td><td>Use system setting</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Language.English</td><td>English<div class="help">Never translated</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Language.French</td><td>Français<div class="help">Never translated</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Behavior</td><td>Behavior</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartWithWindows.Header</td><td>Start with Windows</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartWithWindows.Description</td><td>Run Wol in the notification area when you sign in</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartMinimized.Header</td><td>Start minimized</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartMinimized.Description</td><td>Open to the notification area instead of showing the window</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CloseToTray.Header</td><td>Close to the notification area</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CloseToTray.Description</td><td>Closing the window keeps Wol running so it can check machines and notify you. Quit from the notification area icon.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Monitoring</td><td>Monitoring</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CheckInterval.Header</td><td>Check interval</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CheckInterval.Description</td><td>How often Wol checks whether machines are online (5–3600 seconds)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.WakeTimeout.Header</td><td>Wake timeout</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.WakeTimeout.Description</td><td>Stop waiting and mark the machine Timed out after this long (30–900 seconds)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Unit.Seconds</td><td>seconds</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.NumberBox.Increase</td><td>Increase</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.NumberBox.Decrease</td><td>Decrease</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notifications</td><td>Notifications</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Header</td><td>Machine notifications</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Description</td><td>Windows notifications from the notification area icon</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Intro</td><td>Notify me when a machine…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Online</td><td>Comes online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Offline</td><td>Goes offline</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.TimedOut</td><td>Doesn’t wake up (timed out)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Error</td><td>Has an error (host not found, network unreachable)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About</td><td>About</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Version</td><td>Version {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Copy</td><td>Copy</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Header</td><td>Companion CLI</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Description</td><td>Version {0} · {1}<div class="help">{1} = path</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Connected</td><td>Connected</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.NotFound</td><td>Not found</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Incompatible</td><td>Not supported</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.CheckAgain</td><td>Check again</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Config.Header</td><td>Configuration file</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Config.OpenLocation</td><td>Open file location</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Docs</td><td>Documentation</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Report</td><td>Report a problem</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Notices</td><td>Third-party notices</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toggle.On</td><td>On</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Toggle.Off</td><td>Off</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Notification area</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Tooltip.AllOnline</td><td>Wol — all {0} machines online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Tooltip.Mixed</td><td>Wol — {0} online · {1} not online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Tooltip.Error</td><td>Wol — {0}<div class="help">Title of the current error</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.Open</td><td>Open Wol</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.Wake</td><td>Wake</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.WakeAll</td><td>Wake all offline ({0})</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.GroupAllOnline</td><td>{0} — all online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.MachineWaking</td><td>{0} — waking…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.Refresh</td><td>Refresh</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tray.Menu.Quit</td><td>Quit</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Online.Title</td><td>{0} is online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Online.Woken</td><td>It woke up in {0}.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Online.Passive</td><td>It just came online.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Offline.Title</td><td>{0} went offline</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Offline.Text</td><td>Last reply {0}.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.TimedOut.Title</td><td>{0} did not wake up</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.TimedOut.Text</td><td>No reply after {0}. Check that Wake-on-LAN is turned on.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Error.Title</td><td>Can’t check {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Error.Text</td><td>{0}<div class="help">Error detail</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Group.Title</td><td>{0}: {1} of {2} machines online</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Group.Text.One</td><td>{0} did not wake up.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Group.Text.Other</td><td>{0} machines did not wake up.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.StillRunning.Title</td><td>Wol is still running</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.StillRunning.Text</td><td>Find it in the notification area. You can change this in Settings.</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Tooltips with shortcuts</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.AddMachine</td><td>Add machine (Ctrl+N)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.NewGroup</td><td>New group (Ctrl+Shift+N)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.RefreshAll</td><td>Refresh all (F5)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.Search</td><td>Search (Ctrl+F)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.Wake</td><td>Wake (Ctrl+W)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.WakeAgain</td><td>Wake again (Ctrl+W)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.Cancel</td><td>Stop waiting (Esc)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.MoveToGroup</td><td>Move to group (Ctrl+M)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.Remove</td><td>Remove (Delete)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.ClearSelection</td><td>Clear selection (Esc)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.RenameGroup</td><td>Rename group (F2)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Tooltip.Settings</td><td>Settings (Ctrl+,)</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+  </div>
+</div>
+</body>
+</html>

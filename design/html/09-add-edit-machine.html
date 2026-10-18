@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — Add and edit machine dialog</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div style="width: 1804px; height: 2088px; display: flex; flex-direction: column">
+
+<div class="pane light">
+<div class="pane-h">Light · ContentDialog at full length — inside a 700 epx window the content area scrolls, buttons stay pinned</div>
+<div class="hstack" style="align-items: flex-start">
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">1 · Add — required fields, Advanced collapsed</div>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add1-light">
+      <div class="dlg-top">
+        <h2 class="dlg-t" id="add1-light">Add machine</h2>
+        <div class="fld">
+          <label class="lbl" for="n1-light">Name</label>
+          <div class="tb"><input id="n1-light" value="Living room PC"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="m1-light">MAC address</label>
+          <div class="tb focus"><input id="m1-light" value="1c-69-7a-0b-33-e8" aria-describedby="m1h-light"></div>
+          <span class="help" id="m1h-light">Will be saved as 1C:69:7A:0B:33:E8</span>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="h1-light">Host</label>
+          <div class="tb"><input id="h1-light" value="192.168.1.40" aria-describedby="h1h-light"></div>
+          <span class="help" id="h1h-light">IP address or host name used to check whether the machine is online</span>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="g1-light">Group (optional)</label>
+          <div class="tb"><input id="g1-light" value="Studio" role="combobox" aria-expanded="false" aria-describedby="g1h-light"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+          <span class="help" id="g1h-light">New group “Studio” will be created</span>
+        </div>
+        <div class="exp">
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+        </div>
+      </div>
+      <div class="dlg-b">
+        <button class="btn acc">Add</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">2 · Add — Advanced expanded</div>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add2-light">
+      <div class="dlg-top">
+        <h2 class="dlg-t" id="add2-light">Add machine</h2>
+        <div class="fld">
+          <label class="lbl" for="n2-light">Name</label>
+          <div class="tb"><input id="n2-light" value="Gaming PC"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="m2-light">MAC address</label>
+          <div class="tb"><input id="m2-light" value="04:42:1A:C6:58:9D"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="h2-light">Host</label>
+          <div class="tb"><input id="h2-light" value="gaming-pc.lan"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="g2-light">Group (optional)</label>
+          <div class="tb"><input id="g2-light" value="Home" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="exp">
+          <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          <div class="exp-c">
+            <div class="fld">
+              <label class="lbl" for="b2-light">Broadcast address</label>
+              <div class="tb"><input id="b2-light" placeholder="Automatic" aria-describedby="b2h-light"></div>
+              <span class="help" id="b2h-light">Leave empty to use the broadcast address of the local subnet</span>
+            </div>
+            <div class="fld" role="group" aria-labelledby="c2-light">
+              <span class="lbl" id="c2-light">Status check</span>
+              <span class="help">Wol pings the host (ICMP). Some firewalls block ping — TCP ports can be tried as a fallback.</span>
+              <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" checked><span class="cb on"><svg viewbox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span><span>If ping gets no reply, try TCP ports</span></label>
+              <div class="tb" style="margin-left: 28px"><input value="22, 445, 3389" aria-label="TCP ports" aria-describedby="p2h-light"></div>
+              <span class="help" id="p2h-light" style="margin-left: 28px">Separate ports with commas (1–65535)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-b">
+        <button class="btn acc">Add</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">3 · Edit — inline validation</div>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ed3-light">
+      <div class="dlg-top">
+        <h2 class="dlg-t" id="ed3-light">Edit machine</h2>
+        <div class="fld">
+          <label class="lbl" for="n3-light">Name</label>
+          <div class="tb bad"><input id="n3-light" value="NAS" aria-invalid="true" aria-describedby="n3e-light"></div>
+          <div class="err" id="n3e-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A machine named “NAS” already exists. Choose another name.</span></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="m3-light">MAC address</label>
+          <div class="tb bad focus"><input id="m3-light" value="D0:50:99:A4:3E" aria-invalid="true" aria-describedby="m3e-light"></div>
+          <div class="err" id="m3e-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</span></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="h3-light">Host</label>
+          <div class="tb"><input id="h3-light" value="backup.lan" aria-describedby="h3w-light"></div>
+          <div class="err" id="h3w-light" style="color: var(--text)"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span>Can’t resolve “backup.lan” right now. You can still save; the machine will show Error until it resolves.</span></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="g3-light">Group (optional)</label>
+          <div class="tb"><input id="g3-light" value="Servers" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="exp">
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+        </div>
+      </div>
+      <div class="dlg-b">
+        <button class="btn acc dis" disabled>Save</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="pane dark">
+<div class="pane-h">Dark · ContentDialog at full length — inside a 700 epx window the content area scrolls, buttons stay pinned</div>
+<div class="hstack" style="align-items: flex-start">
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">1 · Add — required fields, Advanced collapsed</div>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add1-dark">
+      <div class="dlg-top">
+        <h2 class="dlg-t" id="add1-dark">Add machine</h2>
+        <div class="fld">
+          <label class="lbl" for="n1-dark">Name</label>
+          <div class="tb"><input id="n1-dark" value="Living room PC"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="m1-dark">MAC address</label>
+          <div class="tb focus"><input id="m1-dark" value="1c-69-7a-0b-33-e8" aria-describedby="m1h-dark"></div>
+          <span class="help" id="m1h-dark">Will be saved as 1C:69:7A:0B:33:E8</span>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="h1-dark">Host</label>
+          <div class="tb"><input id="h1-dark" value="192.168.1.40" aria-describedby="h1h-dark"></div>
+          <span class="help" id="h1h-dark">IP address or host name used to check whether the machine is online</span>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="g1-dark">Group (optional)</label>
+          <div class="tb"><input id="g1-dark" value="Studio" role="combobox" aria-expanded="false" aria-describedby="g1h-dark"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+          <span class="help" id="g1h-dark">New group “Studio” will be created</span>
+        </div>
+        <div class="exp">
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+        </div>
+      </div>
+      <div class="dlg-b">
+        <button class="btn acc">Add</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">2 · Add — Advanced expanded</div>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add2-dark">
+      <div class="dlg-top">
+        <h2 class="dlg-t" id="add2-dark">Add machine</h2>
+        <div class="fld">
+          <label class="lbl" for="n2-dark">Name</label>
+          <div class="tb"><input id="n2-dark" value="Gaming PC"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="m2-dark">MAC address</label>
+          <div class="tb"><input id="m2-dark" value="04:42:1A:C6:58:9D"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="h2-dark">Host</label>
+          <div class="tb"><input id="h2-dark" value="gaming-pc.lan"></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="g2-dark">Group (optional)</label>
+          <div class="tb"><input id="g2-dark" value="Home" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="exp">
+          <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          <div class="exp-c">
+            <div class="fld">
+              <label class="lbl" for="b2-dark">Broadcast address</label>
+              <div class="tb"><input id="b2-dark" placeholder="Automatic" aria-describedby="b2h-dark"></div>
+              <span class="help" id="b2h-dark">Leave empty to use the broadcast address of the local subnet</span>
+            </div>
+            <div class="fld" role="group" aria-labelledby="c2-dark">
+              <span class="lbl" id="c2-dark">Status check</span>
+              <span class="help">Wol pings the host (ICMP). Some firewalls block ping — TCP ports can be tried as a fallback.</span>
+              <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" checked><span class="cb on"><svg viewbox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span><span>If ping gets no reply, try TCP ports</span></label>
+              <div class="tb" style="margin-left: 28px"><input value="22, 445, 3389" aria-label="TCP ports" aria-describedby="p2h-dark"></div>
+              <span class="help" id="p2h-dark" style="margin-left: 28px">Separate ports with commas (1–65535)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-b">
+        <button class="btn acc">Add</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">3 · Edit — inline validation</div>
+    <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ed3-dark">
+      <div class="dlg-top">
+        <h2 class="dlg-t" id="ed3-dark">Edit machine</h2>
+        <div class="fld">
+          <label class="lbl" for="n3-dark">Name</label>
+          <div class="tb bad"><input id="n3-dark" value="NAS" aria-invalid="true" aria-describedby="n3e-dark"></div>
+          <div class="err" id="n3e-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A machine named “NAS” already exists. Choose another name.</span></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="m3-dark">MAC address</label>
+          <div class="tb bad focus"><input id="m3-dark" value="D0:50:99:A4:3E" aria-invalid="true" aria-describedby="m3e-dark"></div>
+          <div class="err" id="m3e-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</span></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="h3-dark">Host</label>
+          <div class="tb"><input id="h3-dark" value="backup.lan" aria-describedby="h3w-dark"></div>
+          <div class="err" id="h3w-dark" style="color: var(--text)"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span>Can’t resolve “backup.lan” right now. You can still save; the machine will show Error until it resolves.</span></div>
+        </div>
+        <div class="fld">
+          <label class="lbl" for="g3-dark">Group (optional)</label>
+          <div class="tb"><input id="g3-dark" value="Servers" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="exp">
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+        </div>
+      </div>
+      <div class="dlg-b">
+        <button class="btn acc dis" disabled>Save</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</div>
+</body>
+</html>
