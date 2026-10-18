@@ -21,7 +21,7 @@
         <TitleBar
             x:Name="AppTitleBar"
             x:Uid="AppTitleBar"
-            Height="48"
+            Height="40"
             IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="True"
             PaneToggleRequested="AppTitleBar_PaneToggleRequested" />

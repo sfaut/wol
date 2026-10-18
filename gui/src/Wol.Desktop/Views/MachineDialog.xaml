@@ -15,7 +15,7 @@
     </ContentDialog.Resources>
 
     <ScrollViewer Width="500" VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="0,0,12,0" Spacing="16">
+        <StackPanel Padding="0,0,12,0" Spacing="12">
             <StackPanel Spacing="4">
                 <TextBox
                     x:Name="NameBox"
@@ -125,7 +125,7 @@
                             Style="{StaticResource CaptionTextBlockStyle}" />
                     </StackPanel>
                 </Expander.Header>
-                <StackPanel Spacing="16">
+                <StackPanel Spacing="12">
                     <StackPanel Spacing="4">
                         <TextBox
                             x:Name="BroadcastBox"
