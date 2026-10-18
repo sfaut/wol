@@ -17,6 +17,8 @@
     <!-- WinUI 3, unpackaged (no MSIX), Windows App SDK bundled next to the executable. -->
     <UseWinUI>true</UseWinUI>
     <WindowsPackageType>None</WindowsPackageType>
+    <!-- MSIX tooling also publishes the app resources index (wol-gui.pri), needed by XAML. -->
+    <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
     <!-- Portable folder: .NET runtime compiled into the executable. -->
@@ -25,7 +27,18 @@
 
     <!-- LibraryImport (Win32 calls) generates unsafe marshalling code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Program.cs is the entry point (single instance), not the one generated from App.xaml. -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+
+    <Version>0.1.0</Version>
+    <ApplicationIcon>Assets/wol-gui.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Icons built by tools/Build-Icons.ps1 from design/assets. -->
+    <Content Include="Assets/*.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />

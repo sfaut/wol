@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Settings (design/specs/layout.md, "Settings"): Appearance, Behavior, Monitoring,
+    Notifications, About. Cards are plain Borders in the Windows settings style.
+-->
+<UserControl
+    x:Class="Wol.Desktop.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
+            <Setter Property="Padding" Value="16,12" />
+            <Setter Property="MinHeight" Value="68" />
+        </Style>
+        <Style x:Key="SectionHeaderStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="1,24,0,6" />
+        </Style>
+        <Style x:Key="CardDescriptionStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer Padding="36,0,32,24">
+        <StackPanel MaxWidth="1000" Spacing="4">
+            <TextBlock
+                x:Uid="SettingsTitle"
+                Margin="0,20,0,8"
+                AutomationProperties.HeadingLevel="Level1"
+                Style="{StaticResource TitleTextBlockStyle}" />
+
+            <!-- Appearance. -->
+            <TextBlock x:Uid="SettingsAppearance" AutomationProperties.HeadingLevel="Level2" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE790;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsThemeHeader" />
+                        <TextBlock x:Uid="SettingsThemeDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <ComboBox
+                        x:Name="ThemeBox"
+                        x:Uid="SettingsThemeBox"
+                        Grid.Column="2"
+                        MinWidth="200"
+                        VerticalAlignment="Center"
+                        SelectionChanged="Theme_SelectionChanged" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xF2B7;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsLanguageHeader" />
+                        <TextBlock x:Uid="SettingsLanguageDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <ComboBox
+                        x:Name="LanguageBox"
+                        x:Uid="SettingsLanguageBox"
+                        Grid.Column="2"
+                        MinWidth="200"
+                        VerticalAlignment="Center"
+                        SelectionChanged="Language_SelectionChanged" />
+                </Grid>
+            </Border>
+
+            <!-- Behavior. -->
+            <TextBlock x:Uid="SettingsBehavior" AutomationProperties.HeadingLevel="Level2" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE7E8;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsStartWithWindowsHeader" />
+                        <TextBlock x:Uid="SettingsStartWithWindowsDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <ToggleSwitch
+                        x:Name="StartWithWindowsSwitch"
+                        x:Uid="SettingsStartWithWindowsSwitch"
+                        Grid.Column="2"
+                        MinWidth="0"
+                        VerticalAlignment="Center"
+                        Toggled="StartWithWindows_Toggled" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE921;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsStartMinimizedHeader" />
+                        <TextBlock x:Uid="SettingsStartMinimizedDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <ToggleSwitch
+                        x:Name="StartMinimizedSwitch"
+                        x:Uid="SettingsStartMinimizedSwitch"
+                        Grid.Column="2"
+                        MinWidth="0"
+                        VerticalAlignment="Center"
+                        Toggled="StartMinimized_Toggled" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE8BB;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsCloseToTrayHeader" />
+                        <TextBlock x:Uid="SettingsCloseToTrayDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <ToggleSwitch
+                        x:Name="CloseToTraySwitch"
+                        x:Uid="SettingsCloseToTraySwitch"
+                        Grid.Column="2"
+                        MinWidth="0"
+                        VerticalAlignment="Center"
+                        Toggled="CloseToTray_Toggled" />
+                </Grid>
+            </Border>
+
+            <!-- Monitoring. -->
+            <TextBlock x:Uid="SettingsMonitoring" AutomationProperties.HeadingLevel="Level2" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE72C;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsCheckIntervalHeader" />
+                        <TextBlock x:Uid="SettingsCheckIntervalDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <NumberBox
+                            x:Name="CheckIntervalBox"
+                            x:Uid="SettingsCheckIntervalBox"
+                            Width="132"
+                            LargeChange="30"
+                            Maximum="3600"
+                            Minimum="1"
+                            SmallChange="5"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="CheckInterval_ValueChanged" />
+                        <TextBlock x:Uid="SettingsUnitSeconds" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE916;" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Uid="SettingsWakeTimeoutHeader" />
+                        <TextBlock x:Uid="SettingsWakeTimeoutDescription" Style="{StaticResource CardDescriptionStyle}" />
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <NumberBox
+                            x:Name="WakeTimeoutBox"
+                            x:Uid="SettingsWakeTimeoutBox"
+                            Width="132"
+                            LargeChange="30"
+                            Maximum="900"
+                            Minimum="30"
+                            SmallChange="5"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="WakeTimeout_ValueChanged" />
+                        <TextBlock x:Uid="SettingsUnitSeconds2" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Notifications. -->
+            <TextBlock x:Uid="SettingsNotifications" AutomationProperties.HeadingLevel="Level2" Style="{StaticResource SectionHeaderStyle}" />
+            <Expander
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <Expander.Header>
+                    <Grid MinHeight="56" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon VerticalAlignment="Center" Glyph="&#xEA8F;" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Uid="SettingsNotifyHeader" />
+                            <TextBlock x:Uid="SettingsNotifyDescription" Style="{StaticResource CardDescriptionStyle}" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            x:Name="NotifySwitch"
+                            x:Uid="SettingsNotifySwitch"
+                            Grid.Column="2"
+                            MinWidth="0"
+                            VerticalAlignment="Center"
+                            Toggled="Notify_Toggled" />
+                    </Grid>
+                </Expander.Header>
+                <StackPanel Padding="40,0,0,0" Spacing="4">
+                    <TextBlock x:Uid="SettingsNotifyIntro" Margin="0,0,0,4" />
+                    <CheckBox x:Name="NotifyOnlineBox" x:Uid="SettingsNotifyOnline" Click="NotifyKind_Click" />
+                    <CheckBox x:Name="NotifyOfflineBox" x:Uid="SettingsNotifyOffline" Click="NotifyKind_Click" />
+                    <CheckBox x:Name="NotifyTimedOutBox" x:Uid="SettingsNotifyTimedOut" Click="NotifyKind_Click" />
+                    <CheckBox x:Name="NotifyErrorBox" x:Uid="SettingsNotifyError" Click="NotifyKind_Click" />
+                </StackPanel>
+            </Expander>
+
+            <!-- About. -->
+            <TextBlock x:Uid="SettingsAbout" AutomationProperties.HeadingLevel="Level2" Style="{StaticResource SectionHeaderStyle}" />
+            <Expander
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <Expander.Header>
+                    <Grid MinHeight="56" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            x:Name="AppIcon"
+                            Width="32"
+                            Height="32"
+                            VerticalAlignment="Center"
+                            AutomationProperties.AccessibilityView="Raw" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Wol" />
+                            <TextBlock x:Name="VersionText" Style="{StaticResource CardDescriptionStyle}" />
+                        </StackPanel>
+                        <Button
+                            x:Uid="SettingsAboutCopy"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Click="CopyVersion_Click" />
+                    </Grid>
+                </Expander.Header>
+                <StackPanel Spacing="16">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Uid="SettingsAboutCliHeader" />
+                            <TextBlock x:Name="CliDescription" Style="{StaticResource CardDescriptionStyle}" />
+                            <TextBlock
+                                x:Name="CliPathText"
+                                IsTextSelectionEnabled="True"
+                                Style="{StaticResource CardDescriptionStyle}" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <FontIcon x:Name="CliStatusIcon" FontSize="16" />
+                            <TextBlock x:Name="CliStatusText" VerticalAlignment="Center" />
+                            <Button x:Uid="SettingsAboutCliCheckAgain" Click="CheckCli_Click" />
+                        </StackPanel>
+                    </Grid>
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Uid="SettingsAboutConfigHeader" />
+                            <TextBlock
+                                x:Name="ConfigPathText"
+                                IsTextSelectionEnabled="True"
+                                Style="{StaticResource CardDescriptionStyle}" />
+                        </StackPanel>
+                        <Button
+                            x:Name="OpenConfigButton"
+                            x:Uid="SettingsAboutConfigOpenLocation"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Click="OpenConfig_Click" />
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <HyperlinkButton x:Uid="SettingsAboutDocs" NavigateUri="https://github.com/sfaut/wol#readme" />
+                        <HyperlinkButton x:Uid="SettingsAboutReport" NavigateUri="https://github.com/sfaut/wol/issues" />
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

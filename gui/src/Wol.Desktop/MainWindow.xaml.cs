@@ -45,6 +45,11 @@ public sealed partial class MainWindow : Window
     private readonly MainViewModel _viewModel;
 
     /// <summary>
+    /// Whether the window is the active one (notifications are then shown in it, not as balloons).
+    /// </summary>
+    private bool _isActive;
+
+    /// <summary>
     /// Group to select at the next navigation rebuild (after a rename or a creation).
     /// </summary>
     private string? _selectGroup;
@@ -88,26 +93,57 @@ public sealed partial class MainWindow : Window
         };
         Root.KeyboardAccelerators.Add(newGroupShortcut);
 
-        _viewModel = new MainViewModel(DispatcherQueue);
+        var settingsShortcut = new KeyboardAccelerator { Key = (VirtualKey)0xBC, Modifiers = VirtualKeyModifiers.Control };
+        settingsShortcut.Invoked += (accelerator, args) =>
+        {
+            args.Handled = true;
+            Navigation.SelectedItem = Navigation.SettingsItem;
+        };
+        Root.KeyboardAccelerators.Add(settingsShortcut);
+
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "wol-gui.ico"));
+        ApplyTheme();
+
+        _viewModel = new MainViewModel(DispatcherQueue)
+        {
+            CheckInterval = AppSettings.Current.CheckInterval,
+            WakeTimeout = TimeSpan.FromSeconds(AppSettings.Current.WakeTimeout),
+        };
         _viewModel.GroupsChanged += (_, _) => BuildNavigation();
         _viewModel.StatesChanged += (_, _) => UpdateBadges();
         ListPage.ViewModel = _viewModel;
         ListPage.ShowAllRequested += (_, _) => Navigation.SelectedItem = _allMachines;
+        SettingsView.ViewModel = _viewModel;
+        SettingsView.ThemeChanged += (_, _) => ApplyTheme();
         BuildNavigation();
 
-        Activated += Window_Activated;
-        Closed += (_, _) => _viewModel.Shutdown();
+        StartTray();
+        Activated += (_, args) => _isActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        AppWindow.Closing += AppWindow_Closing;
+
+        // Monitoring runs whether the window is shown or not (start in the notification area).
+        _ = _viewModel.StartAsync();
     }
 
     /// <summary>
-    /// Loads the machines once, when the window is first shown.
+    /// Applies the theme of the settings to the window content (dialogs and menus follow).
     /// </summary>
-    /// <param name="sender">The window.</param>
-    /// <param name="args">Unused.</param>
-    private void Window_Activated(object sender, WindowActivatedEventArgs args)
+    private void ApplyTheme()
     {
-        Activated -= Window_Activated;
-        _ = _viewModel.StartAsync();
+        Root.RequestedTheme = AppSettings.Current.Theme switch
+        {
+            "light" => ElementTheme.Light,
+            "dark" => ElementTheme.Dark,
+            _ => ElementTheme.Default,
+        };
+
+        // The caption buttons are drawn by the system: they follow the theme separately.
+        AppWindow.TitleBar.PreferredTheme = AppSettings.Current.Theme switch
+        {
+            "light" => TitleBarTheme.Light,
+            "dark" => TitleBarTheme.Dark,
+            _ => TitleBarTheme.UseDefaultAppMode,
+        };
     }
 
     /// <summary>
@@ -328,8 +364,17 @@ public sealed partial class MainWindow : Window
     /// </summary>
     /// <param name="sender">The navigation view.</param>
     /// <param name="args">Selected item.</param>
-    private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) =>
+    private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    {
+        SettingsView.Visibility = args.IsSettingsSelected ? Visibility.Visible : Visibility.Collapsed;
+        ListPage.Visibility = args.IsSettingsSelected ? Visibility.Collapsed : Visibility.Visible;
+        if (args.IsSettingsSelected)
+        {
+            SettingsView.Load();
+            return;
+        }
         ListPage.Show((args.SelectedItem as NavigationViewItem)?.Tag as GroupSection);
+    }
 
     /// <summary>
     /// Opens the New group dialog from its navigation item.

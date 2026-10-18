@@ -43,9 +43,16 @@ dotnet run --project src/Wol.Desktop
 dotnet publish src/Wol.Desktop -c Release -r win-x64   # or win-arm64
 ```
 
+The Native AOT link of `dotnet publish` runs `vswhere.exe`: put
+`C:\Program Files (x86)\Microsoft Visual Studio\Installer` on the `PATH` if it is not found.
+
 The GUI build copies `cli/target/release/wol.exe` (or the debug build when there is no release
 one) next to `wol-gui.exe`: build the CLI first, and rebuild it after changing it. A `wol.toml`
-dropped in the GUI output folder is picked up in portable mode (ignored by Git).
+dropped in the GUI output folder is picked up in portable mode (ignored by Git); the GUI then
+keeps its own settings in `wol-gui.json` next to it, otherwise in `%APPDATA%\wol\wol-gui.json`.
+
+The `.ico` files in `gui/src/Wol.Desktop/Assets/` are generated from `design/assets/*.svg` by
+`gui/tools/Build-Icons.ps1` (renders with Edge headless); run it again after changing the SVGs.
 
 There is no GUI test project yet.
 
