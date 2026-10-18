@@ -4,13 +4,13 @@ use std::ffi::OsString;
 use std::fmt::Write as _;
 use std::io::{self, Write as _};
 use std::net::Ipv4Addr;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, CommandFactory, Parser, Subcommand};
 use serde_json::{Value, json};
 
-use crate::config::{self, Config, ConfigFile, ConfigStatus, Interface, Machine, SharedMac};
+use crate::config::{self, Config, ConfigFile, Interface, Machine, SharedMac};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
 use crate::probe::{self, Probe, Reason, State};
@@ -44,9 +44,9 @@ struct Cli {
     #[arg(long, global = true, value_name = "PATH", display_order = 101)]
     config: Option<PathBuf>,
 
-    /// Command to run.
+    /// Command to run; without one, the help is printed with the configuration file in use.
     #[command(subcommand)]
-    command: Command,
+    command: Option<Command>,
 }
 
 /// Top-level commands.
@@ -349,8 +349,13 @@ where
         }
     };
 
+    let Some(command) = &cli.command else {
+        print!("{}", overview(cli.config.as_deref()));
+        return ExitCode::SUCCESS;
+    };
+
     // Needs no configuration: it must work even when the file is invalid.
-    if let Command::Version = cli.command {
+    if let Command::Version = command {
         let version = env!("CARGO_PKG_VERSION");
         if cli.json {
             println!("{}", document(None, json!({ "version": version })));
@@ -369,7 +374,7 @@ where
         }
     };
 
-    let result = execute(&cli, &mut file);
+    let result = execute(command, cli.json, &mut file);
     let config = json!({ "path": file.path(), "status": file.status() });
 
     match result {
@@ -380,7 +385,6 @@ where
                 }
             } else {
                 print!("{}", outcome.text);
-                eprintln!("{}", config_line(&file));
             }
             ExitCode::from(outcome.exit)
         }
@@ -420,18 +424,33 @@ pub(crate) fn emit_text(line: &str) {
     }
 }
 
-/// Describes, for humans, which configuration file was used and what happened to it.
-fn config_line(file: &ConfigFile) -> String {
-    let path = file.path().display();
-    match file.status() {
-        ConfigStatus::Loaded => format!("Configuration: {path}"),
-        ConfigStatus::Updated => format!("Configuration: {path} (updated)"),
-        ConfigStatus::Created => format!("Configuration: {path} (created)"),
-        ConfigStatus::Missing => format!("Configuration: {path} (not created yet)"),
+/// Builds the text printed by `wol` without a command: the help summary, with the
+/// configuration file in use between the usage line and the command list.
+fn overview(explicit: Option<&Path>) -> String {
+    let path = config::locate(explicit);
+    let state = if path.is_file() {
+        ""
+    } else {
+        " (not created yet)"
+    };
+    let line = format!(
+        "Configuration: {}{state}
+
+",
+        path.display()
+    );
+
+    let help = Cli::command().render_help().to_string();
+    match help.find("Commands:") {
+        Some(index) => format!("{}{line}{}", &help[..index], &help[index..]),
+        None => format!(
+            "{help}
+{line}"
+        ),
     }
 }
 
-/// Reports an error on `stderr`, with the configuration file when it was loaded.
+/// Reports an error on `stderr`; in JSON, with the configuration file when it was loaded.
 fn report_error(json: bool, error: &Error, file: Option<&ConfigFile>) {
     if json {
         let config = file.map(|file| json!({ "path": file.path(), "status": file.status() }));
@@ -439,9 +458,6 @@ fn report_error(json: bool, error: &Error, file: Option<&ConfigFile>) {
         eprintln!("{}", document(config, body));
     } else {
         eprintln!("error: {error}");
-        if let Some(file) = file {
-            eprintln!("{}", config_line(file));
-        }
     }
 }
 
@@ -456,8 +472,8 @@ fn print_json_error(code: &str, message: &str, details: Value) {
 /// # Errors
 ///
 /// Returns the error to report; partial failures are reported through [`Outcome::exit`].
-fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
-    match &cli.command {
+fn execute(command: &Command, json: bool, file: &mut ConfigFile) -> Result<Outcome> {
+    match command {
         Command::List => Ok(list(file)),
         Command::Wake {
             machines,
@@ -469,7 +485,7 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
                 names: machines,
                 groups,
                 wait: wait.map(std::time::Duration::from_secs),
-                json: cli.json,
+                json,
             },
         ),
         Command::Scan => scan_network(file),
@@ -483,7 +499,7 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
                 names: &selection.machines,
                 groups: &selection.groups,
                 interval: std::time::Duration::from_secs(*interval),
-                json: cli.json,
+                json,
             },
         ),
         Command::Add(args) => {
