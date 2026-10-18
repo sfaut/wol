@@ -244,3 +244,45 @@ fn group_lifecycle() {
     assert_eq!(stdout["groups"], serde_json::json!([{ "name": "Servers" }]));
     assert_eq!(stdout["machines"][0]["group"], Value::Null);
 }
+
+#[test]
+fn status_reports_states() {
+    let listener = std::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
+    let port = listener.local_addr().unwrap().port().to_string();
+
+    let wol = Wol::new();
+    wol.ok(&[
+        "add",
+        "Local",
+        "--mac",
+        "001122334455",
+        "--host",
+        "127.0.0.1",
+        "--check-port",
+        &port,
+    ]);
+    wol.ok(&[
+        "add",
+        "Nowhere",
+        "--mac",
+        "001122334456",
+        "--host",
+        "nowhere.invalid",
+    ]);
+
+    let (code, stdout, _) = wol.json(&["status"]);
+    assert_eq!(code, 0);
+    let stdout = stdout.unwrap();
+    assert!(stdout["checked_at"].as_str().unwrap().ends_with('Z'));
+
+    let machines = stdout["machines"].as_array().unwrap();
+    assert_eq!(machines[0]["machine"], "Local");
+    assert_eq!(machines[0]["state"], "online");
+    assert!(machines[0]["latency_ms"].is_u64());
+    assert_eq!(machines[1]["state"], "error");
+    assert_eq!(machines[1]["reason"], "host_not_found");
+
+    let (_, stdout, _) = wol.json(&["status", "nowhere"]);
+    assert_eq!(stdout.unwrap()["machines"].as_array().unwrap().len(), 1);
+}
+

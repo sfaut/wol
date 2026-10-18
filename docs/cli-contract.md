@@ -4,8 +4,8 @@
 > the interface between the `wol` CLI and any front-end (the Windows GUI today, a macOS GUI or
 > a `wol serve` service later). Any change to the JSON output must be reflected here first.
 >
-> Implemented: `list`, `wake`, `add`, `edit`, `remove`, `group …`.
-> Not implemented yet: `status`, `watch`, `wake --wait`, `--lang`, localized output.
+> Implemented: `list`, `status`, `wake`, `add`, `edit`, `remove`, `group …`.
+> Not implemented yet: `watch`, `wake --wait`, `--lang`, localized output.
 
 ## Configuration file: `wol.toml`
 
@@ -62,6 +62,8 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 | Command | Purpose |
 |---|---|
 | `wol list` | List groups and machines |
+| `wol status [<machine>…] [--group <name>]… [--timeout <ms>]` | Check the state of machines once (all machines by default) |
+| `wol watch [<machine>…] [--group <name>]… [--interval <s>] [--timeout <ms>]` | *(planned)* Monitor machines continuously, one event per state change (all machines by default) |
 | `wol wake [<machine>…] [--group <name>]…` | Send magic packets (a machine named twice is woken once) |
 | `wol add <name> --mac <mac> --host <host> [--group <g>] [--broadcast <ipv4>] [--port <p>] [--check-port <p>]…` | Add a machine |
 | `wol edit <name> [--name <new>] [--mac …] [--host …] [--group <g> \| --no-group] [--broadcast <ipv4> \| --no-broadcast] [--port <p> \| --no-port] [--check-port <p>… \| --no-check-ports]` | Change a machine; only given options change, `--check-port` replaces the list |
@@ -70,8 +72,21 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 | `wol group rename <name> <new-name>` | Rename a group; its machines follow |
 | `wol group remove <name> [--ungroup]` | Remove a group; fails if not empty unless `--ungroup` |
 | `wol group move <name> <position>` | Move a group to a 1-based position (clamped) |
-| `wol status [<machine>…] [--group <name>]` | *(planned)* Check current state once |
-| `wol watch [--interval <s>]` | *(planned)* Monitor continuously, one event per state change |
+
+## State checks
+
+`status` checks machines concurrently. For each machine:
+
+1. Resolve `host` (an IPv4 address is preferred). Failure: state `error`, reason `host_not_found`.
+2. Send one ICMP echo request, without administrator rights (Windows `IcmpSendEcho`; unprivileged
+   ICMP sockets on Linux / macOS, which on Linux require `net.ipv4.ping_group_range` to include
+   the user's group). A reply: state `online`, method `icmp`.
+3. Otherwise, try each `check_ports` entry with a TCP connection. Accepted **or refused** (the
+   host answered with a reset): state `online`, method `tcp`.
+4. Otherwise: state `offline`; or `unknown` with reason `icmp_unavailable` when ICMP cannot be used
+   (permissions, IPv6 host) and no TCP port is configured.
+
+`--timeout` (default 1000 ms, 100 to 60000) applies to the ICMP attempt and to each TCP attempt.
 
 ## JSON output
 
@@ -99,11 +114,25 @@ Machine (optional fields are `null` when not set, meaning "default"):
 
 Group: `{ "name": "Office" }`
 
+Machine state (fields that do not apply are `null`):
+
+```json
+{ "machine": "Office PC", "state": "online", "address": "192.168.1.20",
+  "method": "icmp", "port": null, "latency_ms": 3, "reason": null }
+```
+
+- `state`: see "Machine states".
+- `address`: address `host` resolved to; `null` when it did not resolve.
+- `method`: `icmp` or `tcp` when online; `port`: the TCP port that answered.
+- `latency_ms`: ICMP round-trip time or TCP connection time, when online.
+- `reason`: `host_not_found` (state `error`) or `icmp_unavailable` (state `unknown`).
+
 ### Per command
 
 | Command | `stdout` document |
 |---|---|
 | `list` | `{ "schema", "config", "groups": [Group…], "machines": [Machine…] }` |
+| `status` | `{ "schema", "config", "checked_at": "<RFC 3339 UTC>", "machines": [Machine state…] }` |
 | `wake` | `{ "schema", "config", "results": [{ "machine", "target": "<ip>:<port>", "status": "sent" \| "failed", "error"?: { "code", "message" } }…] }` |
 | `add`, `edit`, `remove` | `{ "schema", "config", "machine": Machine }` (the removed machine for `remove`) |
 | `group add`, `group move` | `{ "schema", "config", "group": Group, "position": <1-based> }` |
@@ -133,9 +162,10 @@ Group: `{ "name": "Office" }`
 | `io_error` | `{ "path" }` | 1 |
 | `network_error` | (per machine, inside `wake` results) | 5 |
 
-## Machine states *(planned, for `status` and `watch`)*
+## Machine states
 
-`online`, `offline`, `waking`, `timed_out`, `unknown`, `error`.
+`online`, `offline`, `unknown`, `error` (see "State checks").
+Planned for `wake --wait`: `waking`, `timed_out`.
 
 ## Exit codes
 
