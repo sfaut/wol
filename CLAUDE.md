@@ -54,7 +54,8 @@ keeps its own settings in `wol-gui.json` next to it, otherwise in `%APPDATA%\wol
 The `.ico` files in `gui/src/Wol.Desktop/Assets/` are generated from `design/assets/*.svg` by
 `gui/tools/Build-Icons.ps1` (renders with Edge headless); run it again after changing the SVGs.
 
-There is no GUI test project yet.
+There is no GUI test project yet. Run the GUI from a non-elevated console: WinUI 3 drag and drop
+(reordering groups) fails in an elevated process.
 
 ## Architecture
 
