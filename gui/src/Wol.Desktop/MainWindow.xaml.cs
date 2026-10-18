@@ -168,6 +168,7 @@ public sealed partial class MainWindow : Window
         var selected = (Navigation.SelectedItem as NavigationViewItem)?.Tag as GroupSection;
         var selectedKey = _selectGroup ?? selected?.Group;
         var wasUngrouped = _selectGroup is null && selected is { Group: null };
+        var keepSettings = _selectGroup is null && ReferenceEquals(Navigation.SelectedItem, Navigation.SettingsItem);
         _selectGroup = null;
 
         Navigation.MenuItems.Clear();
@@ -202,6 +203,13 @@ public sealed partial class MainWindow : Window
             }
         }
         Navigation.MenuItems.Add(_newGroup);
+
+        // A reload from the settings page (Check again) stays there.
+        if (keepSettings)
+        {
+            UpdateBadges();
+            return;
+        }
 
         var target = reselect ?? _allMachines;
         if (ReferenceEquals(Navigation.SelectedItem, target))
