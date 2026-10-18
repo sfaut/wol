@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — Group management</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="duo" style="width: 2160px; height: 1180px">
+
+<div class="pane light">
+<div class="pane-h">Light · Right-click (or Shift+F10) on a group in the pane — sections collapsed</div>
+<div class="win">
+  <div class="tbar">
+    <button class="btn sub ico" aria-label="Toggle navigation pane"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"></path></svg></button>
+    <div class="tbar-app"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true"><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="#0067c0"></rect><path d="M8 3.6v4.1M5.3 5.3a3.8 3.8 0 1 0 5.4 0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"></path></svg><span>Wol</span></div>
+    <div class="caps" aria-hidden="true"><span class="cap"><svg viewbox="0 0 10 10"><path d="M0 5h10"></path></svg></span><span class="cap"><svg viewbox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" rx="1"></rect></svg></span><span class="cap"><svg viewbox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"></path></svg></span></div>
+  </div>
+  <div class="body">
+    <nav class="nav" aria-label="Machines and groups">
+      
+      <button class="ni sel"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z"></path></svg></span><span class="ni-lb">All machines</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Office</span><span class="ib">2</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Servers</span></button>
+      
+      <button class="ni hov"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Home</span><span class="ib">2</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 9h3.5l1 1.75h4l1-1.75h3.5M3.6 3.5h8.8l2.1 5.5v3.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V9z"></path></svg></span><span class="ni-lb">Ungrouped</span><span class="ib">1</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></span><span class="ni-lb">New group</span></button>
+      
+      <div class="sp"></div>
+      <div class="nsep"></div>
+      <button class="ni"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M6.9 1.5h2.2l.4 1.8 1.2.7 1.8-.6 1.1 1.9-1.4 1.2v1.4l1.4 1.2-1.1 1.9-1.8-.6-1.2.7-.4 1.8H6.9l-.4-1.8-1.2-.7-1.8.6-1.1-1.9 1.4-1.2V7.3L2.4 6.1l1.1-1.9 1.8.6 1.2-.7z"></path><circle cx="8" cy="8" r="2"></circle></svg></span><span class="ni-lb">Settings</span></button>
+    </nav>
+    <main class="content">
+      <div class="ph">
+        <h1 class="h-title">All machines</h1>
+        <div class="sum">2 online · 4 offline · 1 waking · 1 timed out · 1 error · 1 unknown</div>
+      </div>
+      <div class="tools">
+        <div class="cmd" role="toolbar" aria-label="Machine commands">
+          <button class="abb" title="Add machine (Ctrl+N)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add machine</button>
+          <button class="abb" title="Refresh all (F5)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71M13.25 2.75v3h-3"></path></svg>Refresh all</button>
+          <div class="vsep"></div>
+          <button class="abb" title="Select"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2 4.25l1.25 1.25 2.25-2.5M2 11.25l1.25 1.25 2.25-2.5M8 4.5h6M8 11.5h6"></path></svg>Select</button>
+        </div>
+        <div class="sp"></div>
+        <div class="tb asb"><input type="search" placeholder="Search machines" aria-label="Search machines (Ctrl+F)"><span class="tbb" aria-hidden="true"><svg class="ic" viewbox="0 0 16 16"><path d="M6.75 2.25a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10 10l3.75 3.75"></path></svg></span></div>
+        <button class="btn" title="Filter by state"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.25 3.25h11.5l-4.5 5.25v4l-2.5 1.25V8.5z"></path></svg>All states<svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+      </div>
+      <div class="scroll">
+        
+        <section class="grp" aria-label="Office">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Office</span><span class="grp-s">1 online · 1 offline · 1 waking · 1 timed out</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Office" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+        <section class="grp" aria-label="Servers">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 error · 1 unknown</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Servers" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+        <section class="grp" aria-label="Home">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Home</span><span class="grp-s">2 offline</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Home" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+        <section class="grp" aria-label="Ungrouped">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Ungrouped</span><span class="grp-s">1 offline</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Ungrouped" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+      </div>
+    </main>
+  </div>
+  <div class="menu" role="menu" aria-label="Group Home" style="left: 150px; top: 230px; width: 252px">
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg><span class="mi-l">Wake group</span></button>
+    <div class="msep" role="separator"></div>
+    <button class="mi hov" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5l3 3-8 8H2.5v-3zM9 4l3 3"></path></svg><span class="mi-l">Rename…</span><span class="mi-k">F2</span></button>
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 13.5v-11M3.5 7L8 2.5 12.5 7"></path></svg><span class="mi-l">Move up</span><span class="mi-k">Alt+Up</span></button>
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M3.5 9L8 13.5 12.5 9"></path></svg><span class="mi-l">Move down</span><span class="mi-k">Alt+Down</span></button>
+    <div class="msep" role="separator"></div>
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg><span class="mi-l">Delete group…</span><span class="mi-k">Delete</span></button>
+  </div>
+</div>
+<div class="pane-h" style="margin-top: 8px">Light · ContentDialogs shown at real size (window smoke omitted)</div>
+<div class="hstack" style="gap: 40px">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-new-light" style="width: 460px">
+    <div class="dlg-top">
+      <h2 class="dlg-t" id="dlg-new-light">New group</h2>
+      <div class="fld">
+        <label class="lbl" for="gname-light">Group name</label>
+        <div class="tb focus bad"><input id="gname-light" value="Home" aria-invalid="true" aria-describedby="gname-err-light"></div>
+        <div class="err" id="gname-err-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A group named “Home” already exists.</span></div>
+      </div>
+      <p class="help" style="margin: 0">Rename uses the same dialog, titled “Rename group”, with the current name selected.</p>
+    </div>
+    <div class="dlg-b">
+      <button class="btn acc dis" disabled>Create</button>
+      <button class="btn">Cancel</button>
+    </div>
+  </div>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-del-light" style="width: 500px">
+    <div class="dlg-top">
+      <h2 class="dlg-t" id="dlg-del-light">Delete the group “Home”?</h2>
+      <p style="margin: 0">Home contains 2 machines. What should happen to them?</p>
+      <div role="radiogroup" aria-label="Machines in this group" style="display: flex; flex-direction: column; gap: 8px">
+        <label class="chk" style="min-height: 32px"><input class="sr" type="radio" name="del-light" checked><span class="rd on"></span><span>Move them to Ungrouped</span></label>
+        <label class="chk" style="min-height: 32px"><input class="sr" type="radio" name="del-light"><span class="rd"></span><span>Delete them too</span></label>
+      </div>
+    </div>
+    <div class="dlg-b">
+      <button class="btn">Delete group</button>
+      <button class="btn acc focus">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="pane dark">
+<div class="pane-h">Dark · Right-click (or Shift+F10) on a group in the pane — sections collapsed</div>
+<div class="win">
+  <div class="tbar">
+    <button class="btn sub ico" aria-label="Toggle navigation pane"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"></path></svg></button>
+    <div class="tbar-app"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true"><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="#0067c0"></rect><path d="M8 3.6v4.1M5.3 5.3a3.8 3.8 0 1 0 5.4 0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"></path></svg><span>Wol</span></div>
+    <div class="caps" aria-hidden="true"><span class="cap"><svg viewbox="0 0 10 10"><path d="M0 5h10"></path></svg></span><span class="cap"><svg viewbox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" rx="1"></rect></svg></span><span class="cap"><svg viewbox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"></path></svg></span></div>
+  </div>
+  <div class="body">
+    <nav class="nav" aria-label="Machines and groups">
+      
+      <button class="ni sel"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z"></path></svg></span><span class="ni-lb">All machines</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Office</span><span class="ib">2</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Servers</span></button>
+      
+      <button class="ni hov"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Home</span><span class="ib">2</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 9h3.5l1 1.75h4l1-1.75h3.5M3.6 3.5h8.8l2.1 5.5v3.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V9z"></path></svg></span><span class="ni-lb">Ungrouped</span><span class="ib">1</span></button>
+      
+      <button class="ni "><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></span><span class="ni-lb">New group</span></button>
+      
+      <div class="sp"></div>
+      <div class="nsep"></div>
+      <button class="ni"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M6.9 1.5h2.2l.4 1.8 1.2.7 1.8-.6 1.1 1.9-1.4 1.2v1.4l1.4 1.2-1.1 1.9-1.8-.6-1.2.7-.4 1.8H6.9l-.4-1.8-1.2-.7-1.8.6-1.1-1.9 1.4-1.2V7.3L2.4 6.1l1.1-1.9 1.8.6 1.2-.7z"></path><circle cx="8" cy="8" r="2"></circle></svg></span><span class="ni-lb">Settings</span></button>
+    </nav>
+    <main class="content">
+      <div class="ph">
+        <h1 class="h-title">All machines</h1>
+        <div class="sum">2 online · 4 offline · 1 waking · 1 timed out · 1 error · 1 unknown</div>
+      </div>
+      <div class="tools">
+        <div class="cmd" role="toolbar" aria-label="Machine commands">
+          <button class="abb" title="Add machine (Ctrl+N)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add machine</button>
+          <button class="abb" title="Refresh all (F5)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71M13.25 2.75v3h-3"></path></svg>Refresh all</button>
+          <div class="vsep"></div>
+          <button class="abb" title="Select"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2 4.25l1.25 1.25 2.25-2.5M2 11.25l1.25 1.25 2.25-2.5M8 4.5h6M8 11.5h6"></path></svg>Select</button>
+        </div>
+        <div class="sp"></div>
+        <div class="tb asb"><input type="search" placeholder="Search machines" aria-label="Search machines (Ctrl+F)"><span class="tbb" aria-hidden="true"><svg class="ic" viewbox="0 0 16 16"><path d="M6.75 2.25a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10 10l3.75 3.75"></path></svg></span></div>
+        <button class="btn" title="Filter by state"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.25 3.25h11.5l-4.5 5.25v4l-2.5 1.25V8.5z"></path></svg>All states<svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+      </div>
+      <div class="scroll">
+        
+        <section class="grp" aria-label="Office">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Office</span><span class="grp-s">1 online · 1 offline · 1 waking · 1 timed out</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Office" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+        <section class="grp" aria-label="Servers">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 error · 1 unknown</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Servers" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+        <section class="grp" aria-label="Home">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Home</span><span class="grp-s">2 offline</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Home" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+        <section class="grp" aria-label="Ungrouped">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Ungrouped</span><span class="grp-s">1 offline</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Ungrouped" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        
+      </div>
+    </main>
+  </div>
+  <div class="menu" role="menu" aria-label="Group Home" style="left: 150px; top: 230px; width: 252px">
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg><span class="mi-l">Wake group</span></button>
+    <div class="msep" role="separator"></div>
+    <button class="mi hov" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5l3 3-8 8H2.5v-3zM9 4l3 3"></path></svg><span class="mi-l">Rename…</span><span class="mi-k">F2</span></button>
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 13.5v-11M3.5 7L8 2.5 12.5 7"></path></svg><span class="mi-l">Move up</span><span class="mi-k">Alt+Up</span></button>
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M3.5 9L8 13.5 12.5 9"></path></svg><span class="mi-l">Move down</span><span class="mi-k">Alt+Down</span></button>
+    <div class="msep" role="separator"></div>
+    <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg><span class="mi-l">Delete group…</span><span class="mi-k">Delete</span></button>
+  </div>
+</div>
+<div class="pane-h" style="margin-top: 8px">Dark · ContentDialogs shown at real size (window smoke omitted)</div>
+<div class="hstack" style="gap: 40px">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-new-dark" style="width: 460px">
+    <div class="dlg-top">
+      <h2 class="dlg-t" id="dlg-new-dark">New group</h2>
+      <div class="fld">
+        <label class="lbl" for="gname-dark">Group name</label>
+        <div class="tb focus bad"><input id="gname-dark" value="Home" aria-invalid="true" aria-describedby="gname-err-dark"></div>
+        <div class="err" id="gname-err-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A group named “Home” already exists.</span></div>
+      </div>
+      <p class="help" style="margin: 0">Rename uses the same dialog, titled “Rename group”, with the current name selected.</p>
+    </div>
+    <div class="dlg-b">
+      <button class="btn acc dis" disabled>Create</button>
+      <button class="btn">Cancel</button>
+    </div>
+  </div>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-del-dark" style="width: 500px">
+    <div class="dlg-top">
+      <h2 class="dlg-t" id="dlg-del-dark">Delete the group “Home”?</h2>
+      <p style="margin: 0">Home contains 2 machines. What should happen to them?</p>
+      <div role="radiogroup" aria-label="Machines in this group" style="display: flex; flex-direction: column; gap: 8px">
+        <label class="chk" style="min-height: 32px"><input class="sr" type="radio" name="del-dark" checked><span class="rd on"></span><span>Move them to Ungrouped</span></label>
+        <label class="chk" style="min-height: 32px"><input class="sr" type="radio" name="del-dark"><span class="rd"></span><span>Delete them too</span></label>
+      </div>
+    </div>
+    <div class="dlg-b">
+      <button class="btn">Delete group</button>
+      <button class="btn acc focus">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

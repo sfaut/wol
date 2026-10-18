@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — All machines, list layout</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="duo" style="width: 2160px; height: 796px">
+
+<div class="pane light">
+<div class="pane-h">Light · 1000 × 700 · NavigationView expanded</div>
+<div class="win">
+  <div class="tbar">
+    <button class="btn sub ico" aria-label="Toggle navigation pane"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"></path></svg></button>
+    <div class="tbar-app"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true"><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="#0067c0"></rect><path d="M8 3.6v4.1M5.3 5.3a3.8 3.8 0 1 0 5.4 0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"></path></svg><span>Wol</span></div>
+    <div class="caps" aria-hidden="true">
+      <span class="cap"><svg viewbox="0 0 10 10"><path d="M0 5h10"></path></svg></span>
+      <span class="cap"><svg viewbox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" rx="1"></rect></svg></span>
+      <span class="cap"><svg viewbox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"></path></svg></span>
+    </div>
+  </div>
+  <div class="body">
+    <nav class="nav" aria-label="Machines and groups">
+      <button class="ni sel" aria-current="page"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z"></path></svg></span><span class="ni-lb">All machines</span></button>
+      <div class="nhdr">Groups</div>
+      <button class="ni" aria-label="Office, 2 machines not online"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Office</span><span class="ib">2</span></button>
+      <button class="ni"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Servers</span></button>
+      <button class="ni" aria-label="Home, 2 machines not online"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Home</span><span class="ib">2</span></button>
+      <button class="ni" aria-label="Ungrouped, 1 machine not online"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 9h3.5l1 1.75h4l1-1.75h3.5M3.6 3.5h8.8l2.1 5.5v3.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V9z"></path></svg></span><span class="ni-lb">Ungrouped</span><span class="ib">1</span></button>
+      <button class="ni" title="New group (Ctrl+Shift+N)"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></span><span class="ni-lb">New group</span></button>
+      <div class="sp"></div>
+      <div class="nsep"></div>
+      <button class="ni"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M6.9 1.5h2.2l.4 1.8 1.2.7 1.8-.6 1.1 1.9-1.4 1.2v1.4l1.4 1.2-1.1 1.9-1.8-.6-1.2.7-.4 1.8H6.9l-.4-1.8-1.2-.7-1.8.6-1.1-1.9 1.4-1.2V7.3L2.4 6.1l1.1-1.9 1.8.6 1.2-.7z"></path><circle cx="8" cy="8" r="2"></circle></svg></span><span class="ni-lb">Settings</span></button>
+    </nav>
+    <main class="content">
+      <div class="ph">
+        <h1 class="h-title">All machines</h1>
+        <div class="sum" aria-label="Status summary">
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>2 online</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>4 offline</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>1 waking</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg>1 timed out</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg>1 error</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--neutral)"></circle><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.4" stroke-linecap="round"></path><circle cx="8" cy="11.6" r=".85" fill="var(--on-status)"></circle></svg>1 unknown</span>
+        </div>
+      </div>
+      <div class="tools">
+        <div class="cmd" role="toolbar" aria-label="Machine commands">
+          <button class="abb" title="Add machine (Ctrl+N)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add machine</button>
+          <button class="abb hov" title="Refresh all (F5)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71M13.25 2.75v3h-3"></path></svg>Refresh all</button>
+          <div class="vsep"></div>
+          <button class="abb" title="Select (Ctrl+A selects all)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2 4.25l1.25 1.25 2.25-2.5M2 11.25l1.25 1.25 2.25-2.5M8 4.5h6M8 11.5h6"></path></svg>Select</button>
+        </div>
+        <div class="sp"></div>
+        <div class="tb asb"><input type="search" placeholder="Search machines" aria-label="Search machines (Ctrl+F)"><span class="tbb" aria-hidden="true"><svg class="ic" viewbox="0 0 16 16"><path d="M6.75 2.25a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10 10l3.75 3.75"></path></svg></span></div>
+        <button class="btn" title="Filter by state"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.25 3.25h11.5l-4.5 5.25v4l-2.5 1.25V8.5z"></path></svg>All states<svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+      </div>
+      <div class="tip" role="tooltip" style="left: 160px; top: 128px">Refresh all (F5)</div>
+      <div class="scroll">
+        <section class="grp" aria-label="Office">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Office</span><span class="grp-s">1 online · 1 offline · 1 waking · 1 timed out</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Collapse Office" aria-expanded="true"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          </div>
+          <div class="rows">
+            
+            <div class="row">
+              <span style="display: flex">
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                
+                
+                
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Office PC</span><span class="r-sub">192.168.1.20 · 3C:52:82:1A:4F:07</span></div>
+              <div class="r-st"><span>Online</span><span class="r-sub">4 ms</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Office PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>
+                
+                
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+              <div class="r-st"><span>Offline</span><span class="r-sub">Last seen 3 h ago</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn acc" title="Wake (Ctrl+W)" aria-label="Wake Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                
+                <svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>
+                
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Reception PC</span><span class="r-sub">192.168.1.31 · B4:2E:99:07:D1:6A</span></div>
+              <div class="r-st"><span>Waking</span><span class="r-sub">0:24 · waiting for reply</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                  
+                  <button class="btn" aria-label="Cancel waking Reception PC">Cancel</button>
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Reception PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg>
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Lab PC</span><span class="r-sub">lab-pc.lan · 70:85:C2:5E:10:B3</span></div>
+              <div class="r-st"><span>Timed out</span><span class="r-sub">No reply after 2:00</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn acc" title="Wake (Ctrl+W)" aria-label="Wake Lab PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Lab PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+        <section class="grp" aria-label="Servers">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 error · 1 unknown</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Collapse Servers" aria-expanded="true"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          </div>
+          <div class="rows">
+            
+            <div class="row">
+              <span style="display: flex">
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">NAS</span><span class="r-sub">nas.local · 00:11:32:8F:2A:C1</span></div>
+              <div class="r-st"><span>Online</span><span class="r-sub">1 ms</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for NAS"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                
+              </span>
+              <div class="r-n"><span class="r-t">Backup server</span><span class="r-sub">backup.lan · D0:50:99:A4:3E:72</span></div>
+              <div class="r-st"><span>Error</span><span class="r-sub">Host not found</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn" title="Wake (Ctrl+W)" aria-label="Wake Backup server"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Backup server"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--neutral)"></circle><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.4" stroke-linecap="round"></path><circle cx="8" cy="11.6" r=".85" fill="var(--on-status)"></circle></svg>
+              </span>
+              <div class="r-n"><span class="r-t">Proxmox host</span><span class="r-sub">192.168.1.5 · A8:A1:59:2C:77:0E</span></div>
+              <div class="r-st"><span>Unknown</span><span class="r-sub">Checking…</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn" title="Wake (Ctrl+W)" aria-label="Wake Proxmox host"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Proxmox host"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+        <section class="grp" aria-label="Home">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Home</span><span class="grp-s">2 offline</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Home" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        <div class="sbar" style="height: 280px"></div>
+      </div>
+    </main>
+  </div>
+</div>
+</div>
+
+<div class="pane dark">
+<div class="pane-h">Dark · 1000 × 700 · NavigationView expanded</div>
+<div class="win">
+  <div class="tbar">
+    <button class="btn sub ico" aria-label="Toggle navigation pane"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"></path></svg></button>
+    <div class="tbar-app"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true"><rect x="0.5" y="0.5" width="15" height="15" rx="3.5" fill="#0067c0"></rect><path d="M8 3.6v4.1M5.3 5.3a3.8 3.8 0 1 0 5.4 0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"></path></svg><span>Wol</span></div>
+    <div class="caps" aria-hidden="true">
+      <span class="cap"><svg viewbox="0 0 10 10"><path d="M0 5h10"></path></svg></span>
+      <span class="cap"><svg viewbox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" rx="1"></rect></svg></span>
+      <span class="cap"><svg viewbox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"></path></svg></span>
+    </div>
+  </div>
+  <div class="body">
+    <nav class="nav" aria-label="Machines and groups">
+      <button class="ni sel" aria-current="page"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z"></path></svg></span><span class="ni-lb">All machines</span></button>
+      <div class="nhdr">Groups</div>
+      <button class="ni" aria-label="Office, 2 machines not online"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Office</span><span class="ib">2</span></button>
+      <button class="ni"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Servers</span></button>
+      <button class="ni" aria-label="Home, 2 machines not online"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.6 1.6h5.8a1 1 0 0 1 1 1v6.4a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"></path></svg></span><span class="ni-lb">Home</span><span class="ib">2</span></button>
+      <button class="ni" aria-label="Ungrouped, 1 machine not online"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M1.5 9h3.5l1 1.75h4l1-1.75h3.5M3.6 3.5h8.8l2.1 5.5v3.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V9z"></path></svg></span><span class="ni-lb">Ungrouped</span><span class="ib">1</span></button>
+      <button class="ni" title="New group (Ctrl+Shift+N)"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></span><span class="ni-lb">New group</span></button>
+      <div class="sp"></div>
+      <div class="nsep"></div>
+      <button class="ni"><span class="ni-ic"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M6.9 1.5h2.2l.4 1.8 1.2.7 1.8-.6 1.1 1.9-1.4 1.2v1.4l1.4 1.2-1.1 1.9-1.8-.6-1.2.7-.4 1.8H6.9l-.4-1.8-1.2-.7-1.8.6-1.1-1.9 1.4-1.2V7.3L2.4 6.1l1.1-1.9 1.8.6 1.2-.7z"></path><circle cx="8" cy="8" r="2"></circle></svg></span><span class="ni-lb">Settings</span></button>
+    </nav>
+    <main class="content">
+      <div class="ph">
+        <h1 class="h-title">All machines</h1>
+        <div class="sum" aria-label="Status summary">
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>2 online</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>4 offline</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>1 waking</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg>1 timed out</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg>1 error</span>
+          <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--neutral)"></circle><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.4" stroke-linecap="round"></path><circle cx="8" cy="11.6" r=".85" fill="var(--on-status)"></circle></svg>1 unknown</span>
+        </div>
+      </div>
+      <div class="tools">
+        <div class="cmd" role="toolbar" aria-label="Machine commands">
+          <button class="abb" title="Add machine (Ctrl+N)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add machine</button>
+          <button class="abb hov" title="Refresh all (F5)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71M13.25 2.75v3h-3"></path></svg>Refresh all</button>
+          <div class="vsep"></div>
+          <button class="abb" title="Select (Ctrl+A selects all)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2 4.25l1.25 1.25 2.25-2.5M2 11.25l1.25 1.25 2.25-2.5M8 4.5h6M8 11.5h6"></path></svg>Select</button>
+        </div>
+        <div class="sp"></div>
+        <div class="tb asb"><input type="search" placeholder="Search machines" aria-label="Search machines (Ctrl+F)"><span class="tbb" aria-hidden="true"><svg class="ic" viewbox="0 0 16 16"><path d="M6.75 2.25a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10 10l3.75 3.75"></path></svg></span></div>
+        <button class="btn" title="Filter by state"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.25 3.25h11.5l-4.5 5.25v4l-2.5 1.25V8.5z"></path></svg>All states<svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+      </div>
+      <div class="tip" role="tooltip" style="left: 160px; top: 128px">Refresh all (F5)</div>
+      <div class="scroll">
+        <section class="grp" aria-label="Office">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Office</span><span class="grp-s">1 online · 1 offline · 1 waking · 1 timed out</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Collapse Office" aria-expanded="true"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          </div>
+          <div class="rows">
+            
+            <div class="row">
+              <span style="display: flex">
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                
+                
+                
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Office PC</span><span class="r-sub">192.168.1.20 · 3C:52:82:1A:4F:07</span></div>
+              <div class="r-st"><span>Online</span><span class="r-sub">4 ms</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Office PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>
+                
+                
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+              <div class="r-st"><span>Offline</span><span class="r-sub">Last seen 3 h ago</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn acc" title="Wake (Ctrl+W)" aria-label="Wake Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                
+                <svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>
+                
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Reception PC</span><span class="r-sub">192.168.1.31 · B4:2E:99:07:D1:6A</span></div>
+              <div class="r-st"><span>Waking</span><span class="r-sub">0:24 · waiting for reply</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                  
+                  <button class="btn" aria-label="Cancel waking Reception PC">Cancel</button>
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Reception PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg>
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">Lab PC</span><span class="r-sub">lab-pc.lan · 70:85:C2:5E:10:B3</span></div>
+              <div class="r-st"><span>Timed out</span><span class="r-sub">No reply after 2:00</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn acc" title="Wake (Ctrl+W)" aria-label="Wake Lab PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Lab PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+        <section class="grp" aria-label="Servers">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 error · 1 unknown</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Collapse Servers" aria-expanded="true"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          </div>
+          <div class="rows">
+            
+            <div class="row">
+              <span style="display: flex">
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                
+                
+              </span>
+              <div class="r-n"><span class="r-t">NAS</span><span class="r-sub">nas.local · 00:11:32:8F:2A:C1</span></div>
+              <div class="r-st"><span>Online</span><span class="r-sub">1 ms</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for NAS"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                
+              </span>
+              <div class="r-n"><span class="r-t">Backup server</span><span class="r-sub">backup.lan · D0:50:99:A4:3E:72</span></div>
+              <div class="r-st"><span>Error</span><span class="r-sub">Host not found</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn" title="Wake (Ctrl+W)" aria-label="Wake Backup server"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Backup server"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <span style="display: flex">
+                
+                
+                <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--neutral)"></circle><path d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4" fill="none" stroke="var(--on-status)" stroke-width="1.4" stroke-linecap="round"></path><circle cx="8" cy="11.6" r=".85" fill="var(--on-status)"></circle></svg>
+              </span>
+              <div class="r-n"><span class="r-t">Proxmox host</span><span class="r-sub">192.168.1.5 · A8:A1:59:2C:77:0E</span></div>
+              <div class="r-st"><span>Unknown</span><span class="r-sub">Checking…</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  <button class="btn" title="Wake (Ctrl+W)" aria-label="Wake Proxmox host"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake</button>
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Proxmox host"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+        <section class="grp" aria-label="Home">
+          <div class="grp-h">
+            <div class="grp-tt"><span class="grp-n">Home</span><span class="grp-s">2 offline</span></div>
+            <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
+            <button class="btn sub ico" aria-label="Expand Home" aria-expanded="false"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          </div>
+        </section>
+        <div class="sbar" style="height: 280px"></div>
+      </div>
+    </main>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — Interaction notes</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="doc light" style="width: 1440px; min-height: 2100px; display: flex; flex-direction: column; gap: 28px">
+  <div class="vstack" style="gap: 8px">
+    <h1>Interaction notes</h1>
+    <p class="lead">Keyboard first, screen-reader friendly, system motion only. Shortcuts appear in tooltips and as accelerator text in menus.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 560px minmax(0, 1fr); gap: 16px; align-items: start">
+    <div class="panel" style="gap: 12px">
+      <h2>Focus order</h2>
+      <div style="position: relative; width: 510px; height: 330px; border: 1px solid var(--win-stroke); border-radius: 8px; background: var(--mica); overflow: hidden" role="img" aria-label="Tab order across the main window">
+        <div style="position: absolute; left: 0; top: 0; right: 0; height: 30px; border-bottom: 1px solid var(--divider)"></div>
+        <div style="position: absolute; left: 0; top: 30px; width: 140px; bottom: 0; border-right: 1px solid var(--divider)"></div>
+        <div style="position: absolute; left: 10px; top: 44px; width: 120px; height: 18px; border-radius: 3px; background: var(--subtle2)"></div>
+        <div style="position: absolute; left: 10px; top: 70px; width: 120px; height: 18px; border-radius: 3px; background: var(--subtle3)"></div>
+        <div style="position: absolute; left: 10px; top: 96px; width: 120px; height: 18px; border-radius: 3px; background: var(--subtle3)"></div>
+        <div style="position: absolute; left: 156px; top: 40px; width: 340px; height: 22px; border-radius: 3px; background: var(--critical-bg)"></div>
+        <div style="position: absolute; left: 156px; top: 74px; width: 120px; height: 14px; border-radius: 3px; background: var(--subtle2)"></div>
+        <div style="position: absolute; left: 156px; top: 100px; width: 150px; height: 18px; border-radius: 3px; background: var(--subtle3)"></div>
+        <div style="position: absolute; left: 356px; top: 100px; width: 96px; height: 18px; border-radius: 3px; background: var(--ctl2); border: 1px solid var(--ctl-stroke2)"></div>
+        <div style="position: absolute; left: 458px; top: 100px; width: 38px; height: 18px; border-radius: 3px; background: var(--ctl2); border: 1px solid var(--ctl-stroke2)"></div>
+        <div style="position: absolute; left: 156px; top: 130px; width: 340px; height: 26px; border-radius: 3px; background: var(--card); border: 1px solid var(--card-stroke)"></div>
+        <div style="position: absolute; left: 156px; top: 156px; width: 340px; height: 66px; background: var(--card2); border: 1px solid var(--card-stroke)"></div>
+        <div style="position: absolute; left: 156px; top: 230px; width: 340px; height: 26px; border-radius: 3px; background: var(--card); border: 1px solid var(--card-stroke)"></div>
+        <div style="position: absolute; left: 156px; top: 290px; width: 340px; height: 24px; border-radius: 3px; background: var(--success-bg)"></div>
+        <div class="rl-num" style="left: 4px; top: 5px">1</div>
+        <div class="rl-num" style="left: 112px; top: 43px">2</div>
+        <div class="rl-num" style="left: 476px; top: 41px">3</div>
+        <div class="rl-num" style="left: 286px; top: 99px">4</div>
+        <div class="rl-num" style="left: 430px; top: 99px">5</div>
+        <div class="rl-num" style="left: 466px; top: 99px">6</div>
+        <div class="rl-num" style="left: 162px; top: 133px">7</div>
+        <div class="rl-num" style="left: 410px; top: 133px">8</div>
+        <div class="rl-num" style="left: 162px; top: 179px">9</div>
+        <div class="rl-num" style="left: 162px; top: 233px">10</div>
+        <div class="rl-num" style="left: 476px; top: 292px">11</div>
+      </div>
+      <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px">
+        <li>Pane toggle in the title bar</li>
+        <li>Navigation items — one tab stop, arrow keys inside, Enter selects</li>
+        <li>InfoBar actions, when an error bar is shown</li>
+        <li>CommandBar — one tab stop, arrow keys inside</li>
+        <li>Search box</li>
+        <li>State filter</li>
+        <li>Section header: expand/collapse (Space, Enter), then Wake group</li>
+        <li>Wake group button</li>
+        <li>Machine rows — one tab stop; Up/Down move, Home/End jump, Space selects, Enter edits; Tab goes to the focused row’s Wake, then More, then leaves the list</li>
+        <li>Next section header, and so on</li>
+        <li>Notification host (last). F6 cycles pane → content → notifications.</li>
+      </ol>
+      <p class="help">Opening a dialog focuses its first field; closing returns focus to the control that opened it. After Remove, focus moves to the next row (or the previous one at the end).</p>
+    </div>
+
+    <div class="panel" style="gap: 12px">
+      <h2>Keyboard shortcuts</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Keys</th><th>Action</th><th style="width: 200px">Where it is shown</th></tr></thead>
+        <tbody>
+          
+          <tr><td><span class="kbd">Ctrl+N</span></td><td>Add machine (pre-fills the group on a group page)</td><td class="help" style="font-size: 14px">Add machine button, empty states</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+Shift+N</span></td><td>New group</td><td class="help" style="font-size: 14px">New group item, Create a group button</td></tr>
+          
+          <tr><td><span class="kbd">F5</span></td><td>Refresh all — check every machine now</td><td class="help" style="font-size: 14px">Refresh all button</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+R</span></td><td>Check now — selected or focused machines</td><td class="help" style="font-size: 14px">Row menu</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+F</span></td><td>Focus search</td><td class="help" style="font-size: 14px">Search box tooltip</td></tr>
+          
+          <tr><td><span class="kbd">Esc</span></td><td>Clear search, leave Select mode, close a flyout</td><td class="help" style="font-size: 14px">—</td></tr>
+          
+          <tr><td><span class="kbd">Enter</span></td><td>Edit the focused machine</td><td class="help" style="font-size: 14px">Row menu</td></tr>
+          
+          <tr><td><span class="kbd">Delete</span></td><td>Remove selected machines (asks first)</td><td class="help" style="font-size: 14px">Row menu, selection bar</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+W</span></td><td>Wake selected or focused machines</td><td class="help" style="font-size: 14px">Wake buttons, row menu, selection bar</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+M</span></td><td>Move selection to group (flyout at the row)</td><td class="help" style="font-size: 14px">Row menu, selection bar</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+D</span></td><td>Duplicate the focused machine</td><td class="help" style="font-size: 14px">Row menu</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+Shift+C</span></td><td>Copy MAC address</td><td class="help" style="font-size: 14px">Row menu</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+A</span></td><td>Select all visible machines</td><td class="help" style="font-size: 14px">Select button tooltip</td></tr>
+          
+          <tr><td><span class="kbd">F2</span></td><td>Rename the focused group</td><td class="help" style="font-size: 14px">Group menu</td></tr>
+          
+          <tr><td><span class="kbd">Alt+Up / Alt+Down</span></td><td>Move the focused group up or down</td><td class="help" style="font-size: 14px">Group menu</td></tr>
+          
+          <tr><td><span class="kbd">Shift+F10</span></td><td>Open the context menu of the focused item</td><td class="help" style="font-size: 14px">—</td></tr>
+          
+          <tr><td><span class="kbd">Ctrl+,</span></td><td>Open Settings</td><td class="help" style="font-size: 14px">Settings item tooltip</td></tr>
+          
+          <tr><td><span class="kbd">F6</span></td><td>Move between pane, content and notifications</td><td class="help" style="font-size: 14px">—</td></tr>
+          
+        </tbody>
+      </table>
+      <p class="help">Ctrl+W usually closes a window or tab in Windows apps. Wol has no tabs, so it is safe here, but the window close shortcut stays Alt+F4. All accelerators are set with KeyboardAccelerator on the command itself so the tooltip and menu text come for free; ScopeOwner limits list shortcuts to the list.</p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start">
+    <div class="panel" style="gap: 12px">
+      <h2>Motion — system transitions only</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 200px">Moment</th><th>Transition</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Change page in the pane</td><td>Frame navigation with EntranceNavigationTransitionInfo (NavigationView default).</td></tr>
+          
+          <tr><td>Expand / collapse a group</td><td>Expander built-in animation.</td></tr>
+          
+          <tr><td>Machine added, removed, moved</td><td>ListView default ItemContainerTransitions (AddDelete, Reposition).</td></tr>
+          
+          <tr><td>Notification appears / leaves</td><td>EntranceThemeTransition + RepositionThemeTransition on the host’s ChildrenTransitions.</td></tr>
+          
+          <tr><td>Dialogs, menus, tooltips</td><td>ContentDialog, MenuFlyout, ToolTip built-in open and close.</td></tr>
+          
+          <tr><td>Waking</td><td>ProgressRing (indeterminate). State changes swap glyph and text with no extra effect.</td></tr>
+          
+          <tr><td>Theme change</td><td>Instant; no cross-fade.</td></tr>
+          
+        </tbody>
+      </table>
+      <p class="help">No custom storyboards. When Windows “Animation effects” is off, these transitions are skipped automatically.</p>
+    </div>
+
+    <div class="panel" style="gap: 12px">
+      <h2>Confirmations</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 200px">Action</th><th>Behaviour</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Remove machine(s)</td><td>ContentDialog “Remove Lab PC?” / “Remove 3 machines?” — “They are removed from Wol only; nothing changes on the machines.” Primary Remove, DefaultButton Close (Cancel).</td></tr>
+          
+          <tr><td>Delete group</td><td>ContentDialog with the choice Move to Ungrouped (default) or Delete them too. DefaultButton Close.</td></tr>
+          
+          <tr><td>Wake, Wake group, Retry</td><td>No confirmation: harmless and cancellable.</td></tr>
+          
+          <tr><td>Cancel waking</td><td>No confirmation. The packet is already sent; Wol only stops waiting.</td></tr>
+          
+          <tr><td>Cancel Add / Edit</td><td>Closes without saving, no “discard?” prompt — the form is short.</td></tr>
+          
+          <tr><td>Close window (close to notification area on)</td><td>First time only: balloon “Wol is still running — find it in the notification area.”</td></tr>
+          
+          <tr><td>Quit from the tray</td><td>Quits at once. Machines still waking keep their packet; their result is not reported.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" style="gap: 12px">
+    <h2>Screen reader</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+      <p>Landmarks: the pane is <span class="code">Navigation</span>, the page is <span class="code">Main</span>. The page title is heading level 1, each group name level 2, so “H” jumps between groups in Narrator and NVDA.</p>
+      <p>Row name: “{name}, {state}, {detail}”, e.g. “Lab PC, timed out, no reply after 2 minutes”. Icon-only buttons include the machine: “More actions for NAS”, “Wake Lab PC”. Durations are spoken in words, not “2:00”.</p>
+      <p>Live regions: the status summary and progress InfoBar are Polite; error and warning InfoBars are Assertive. A wake result is announced once, by the InfoBar, not again by the row.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

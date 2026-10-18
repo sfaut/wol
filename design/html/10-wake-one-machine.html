@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — Wake one machine</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="duo" style="width: 2160px; height: 760px">
+
+<div class="pane light">
+<div class="pane-h">Light · Wake one machine — row states and in-window notification</div>
+<div style="display: flex; gap: 40px; align-items: flex-start">
+<div style="width: 652px; display: flex; flex-direction: column; gap: 24px; flex: none; background: var(--layer); padding: 20px; border-radius: 8px; border: 1px solid var(--layer-stroke); background-color: var(--mica)">
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">1 · Sending — Wake pressed, CLI sending the magic packet</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Waking</span><span class="r-sub">Sending wake packet…</span></div>
+        <div class="r-act"><button class="btn dis" disabled>Cancel</button><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">2 · Waiting — packet sent, checking until the machine replies</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Waking</span><span class="r-sub">0:24 · waiting for reply</span></div>
+        <div class="r-act"><button class="btn" title="Stop waiting (Esc)">Cancel</button><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">3a · Online — success notification, closes by itself after 5 s</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Online</span><span class="r-sub">5 ms</span></div>
+        <div class="r-act"><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+    <div class="bar ok" role="status">
+      <span class="bar-ic"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+      <div class="bar-tx"><span class="bar-t">Meeting room PC is online</span><span>It woke up in 0:38.</span></div>
+      <button class="btn sub ico bar-x" aria-label="Close"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button>
+    </div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">3b · Timed out — warning notification stays until closed</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Timed out</span><span class="r-sub">No reply after 2:00</span></div>
+        <div class="r-act"><button class="btn acc" title="Wake again (Ctrl+W)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71M13.25 2.75v3h-3"></path></svg>Retry</button><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+    <div class="bar warn" role="alert">
+      <span class="bar-ic"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--caution)"></circle><path d="M8 4.4v4.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.2" r=".9" fill="var(--on-status)"></circle></svg></span>
+      <div class="bar-tx"><span class="bar-t">Meeting room PC did not wake up</span><span>No reply after 2:00. Check that Wake-on-LAN is turned on for this PC.</span></div>
+      <div class="bar-a"><button class="btn">Retry</button></div>
+      <button class="btn sub ico bar-x" aria-label="Close"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="vstack" style="gap: 12px; width: 264px; padding-top: 4px">
+  <div class="cap-t">Where it appears</div>
+  <div style="width: 264px; height: 188px; box-sizing: border-box; border-radius: 6px; border: 1px solid var(--win-stroke); background: var(--mica); position: relative; overflow: hidden" role="img" aria-label="Notifications stack at the bottom of the content area, above the list">
+    <div style="position: absolute; left: 0; top: 14px; width: 74px; bottom: 0"></div>
+    <div style="position: absolute; left: 74px; top: 14px; right: 0; bottom: 0; background: var(--layer); border-top-left-radius: 6px; border: 1px solid var(--layer-stroke)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; top: 30px; height: 8px; border-radius: 2px; background: var(--subtle2)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; top: 46px; height: 64px; border-radius: 3px; background: var(--card); border: 1px solid var(--card-stroke)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; bottom: 44px; height: 18px; border-radius: 3px; background: var(--success-bg); border: 1px solid var(--card-stroke)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; bottom: 20px; height: 18px; border-radius: 3px; background: var(--caution-bg); border: 1px solid var(--card-stroke)"></div>
+  </div>
+  <p class="help" style="margin: 0; font-size: 12px">InfoBars stack bottom-up inside the content area, 16 epx from its bottom edge, 8 epx apart, newest at the bottom, at most 3 (older ones fold into “+2 more”). The row is always updated as well, so nothing depends on the notification alone.</p>
+  <div class="cap-t" style="margin-top: 8px">Timing</div>
+  <p class="help" style="margin: 0; font-size: 12px">Status is polled every 2 s while waking. Elapsed time counts up (m:ss). Timeout comes from Settings › Monitoring (default 2:00). Cancel stops waiting only — the packet is already sent — and returns the row to its last checked state.</p>
+</div>
+</div>
+</div>
+
+<div class="pane dark">
+<div class="pane-h">Dark · Wake one machine — row states and in-window notification</div>
+<div style="display: flex; gap: 40px; align-items: flex-start">
+<div style="width: 652px; display: flex; flex-direction: column; gap: 24px; flex: none; background: var(--layer); padding: 20px; border-radius: 8px; border: 1px solid var(--layer-stroke); background-color: var(--mica)">
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">1 · Sending — Wake pressed, CLI sending the magic packet</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Waking</span><span class="r-sub">Sending wake packet…</span></div>
+        <div class="r-act"><button class="btn dis" disabled>Cancel</button><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">2 · Waiting — packet sent, checking until the machine replies</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Waking</span><span class="r-sub">0:24 · waiting for reply</span></div>
+        <div class="r-act"><button class="btn" title="Stop waiting (Esc)">Cancel</button><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">3a · Online — success notification, closes by itself after 5 s</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Online</span><span class="r-sub">5 ms</span></div>
+        <div class="r-act"><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+    <div class="bar ok" role="status">
+      <span class="bar-ic"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--success)"></circle><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+      <div class="bar-tx"><span class="bar-t">Meeting room PC is online</span><span>It woke up in 0:38.</span></div>
+      <button class="btn sub ico bar-x" aria-label="Close"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button>
+    </div>
+  </div>
+
+  <div class="vstack" style="gap: 8px">
+    <div class="cap-t">3b · Timed out — warning notification stays until closed</div>
+    <div class="grp"><div class="rows" style="border-top: 0">
+      <div class="row">
+        <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg>
+        <div class="r-n"><span class="r-t">Meeting room PC</span><span class="r-sub">meeting-pc.lan · 00:1B:21:3A:9C:44</span></div>
+        <div class="r-st"><span>Timed out</span><span class="r-sub">No reply after 2:00</span></div>
+        <div class="r-act"><button class="btn acc" title="Wake again (Ctrl+W)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71M13.25 2.75v3h-3"></path></svg>Retry</button><button class="btn sub ico" aria-label="More actions for Meeting room PC"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button></div>
+      </div>
+    </div></div>
+    <div class="bar warn" role="alert">
+      <span class="bar-ic"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--caution)"></circle><path d="M8 4.4v4.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.2" r=".9" fill="var(--on-status)"></circle></svg></span>
+      <div class="bar-tx"><span class="bar-t">Meeting room PC did not wake up</span><span>No reply after 2:00. Check that Wake-on-LAN is turned on for this PC.</span></div>
+      <div class="bar-a"><button class="btn">Retry</button></div>
+      <button class="btn sub ico bar-x" aria-label="Close"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="vstack" style="gap: 12px; width: 264px; padding-top: 4px">
+  <div class="cap-t">Where it appears</div>
+  <div style="width: 264px; height: 188px; box-sizing: border-box; border-radius: 6px; border: 1px solid var(--win-stroke); background: var(--mica); position: relative; overflow: hidden" role="img" aria-label="Notifications stack at the bottom of the content area, above the list">
+    <div style="position: absolute; left: 0; top: 14px; width: 74px; bottom: 0"></div>
+    <div style="position: absolute; left: 74px; top: 14px; right: 0; bottom: 0; background: var(--layer); border-top-left-radius: 6px; border: 1px solid var(--layer-stroke)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; top: 30px; height: 8px; border-radius: 2px; background: var(--subtle2)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; top: 46px; height: 64px; border-radius: 3px; background: var(--card); border: 1px solid var(--card-stroke)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; bottom: 44px; height: 18px; border-radius: 3px; background: var(--success-bg); border: 1px solid var(--card-stroke)"></div>
+    <div style="position: absolute; left: 86px; right: 12px; bottom: 20px; height: 18px; border-radius: 3px; background: var(--caution-bg); border: 1px solid var(--card-stroke)"></div>
+  </div>
+  <p class="help" style="margin: 0; font-size: 12px">InfoBars stack bottom-up inside the content area, 16 epx from its bottom edge, 8 epx apart, newest at the bottom, at most 3 (older ones fold into “+2 more”). The row is always updated as well, so nothing depends on the notification alone.</p>
+  <div class="cap-t" style="margin-top: 8px">Timing</div>
+  <p class="help" style="margin: 0; font-size: 12px">Status is polled every 2 s while waking. Elapsed time counts up (m:ss). Timeout comes from Settings › Monitoring (default 2:00). Cancel stops waiting only — the packet is already sent — and returns the row to its last checked state.</p>
+</div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

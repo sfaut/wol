@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wol — Controls and layout spec</title>
+<link rel="stylesheet" href="wol-fluent.css">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e92}
+</style>
+</head>
+<body>
+<div class="doc light" style="width: 1440px; min-height: 4660px; display: flex; flex-direction: column; gap: 28px">
+  <div class="vstack" style="gap: 8px">
+    <h1>Controls and layout</h1>
+    <p class="lead">Every element maps to a WinUI 3 or Windows Community Toolkit control. Measurements are in epx on the 4 epx grid, at 100% scale, for the wide layout unless noted.</p>
+  </div>
+
+  <div class="panel" style="gap: 12px">
+    <h2>Main window — redline (1000 × 700)</h2>
+    <div style="position: relative; width: 1000px; height: 700px; border: 1px solid var(--win-stroke); border-radius: 8px; background: var(--mica); overflow: hidden" role="img" aria-label="Main window wireframe with measurements">
+      <div class="rl-box" style="left: 0; top: 0; width: 1000px; height: 48px"></div>
+      <div class="rl" style="left: 360px; top: 16px">TitleBar · 48 · pane toggle 32 at x 4 · icon 16 at x 46 · caption buttons 46 wide</div>
+      <div class="rl-box" style="left: 0; top: 48px; width: 280px; height: 652px"></div>
+      <div class="rl" style="left: 12px; top: 64px; width: 256px">NavigationView pane · OpenPaneLength 280</div>
+      <div style="position: absolute; left: 4px; top: 100px; width: 272px; height: 36px; border-radius: 4px; background: var(--subtle2)"></div>
+      <div style="position: absolute; left: 4px; top: 110px; width: 3px; height: 16px; border-radius: 2px; background: var(--accent)"></div>
+      <div class="rl" style="left: 16px; top: 140px; width: 256px">Item 36 high · margin 4 / 2 · icon 16 at x 16 · label at x 44 · pill 3 × 16</div>
+      <div style="position: absolute; left: 280px; top: 48px; right: 0; bottom: 0; background: var(--layer); border-top: 1px solid var(--layer-stroke); border-left: 1px solid var(--layer-stroke); border-top-left-radius: 8px"></div>
+      <div class="rl" style="left: 292px; top: 54px">Content layer · LayerFillColorDefault · top-left radius 8</div>
+      <div class="rl-box" style="left: 317px; top: 69px; width: 300px; height: 36px"></div>
+      <div class="rl" style="left: 624px; top: 80px">Title 28/36 · top 20 · left 36</div>
+      <div class="rl-box" style="left: 317px; top: 109px; width: 420px; height: 20px"></div>
+      <div class="rl" style="left: 744px; top: 112px">Summary · 4 below title · items 16 apart</div>
+      <div class="rl-box" style="left: 307px; top: 137px; width: 340px; height: 36px"></div>
+      <div class="rl" style="left: 307px; top: 177px">CommandBar · buttons 36 high · 8 above, 12 below</div>
+      <div class="rl-box" style="left: 592px; top: 139px; width: 240px; height: 32px"></div>
+      <div class="rl-box" style="left: 840px; top: 139px; width: 128px; height: 32px"></div>
+      <div class="rl" style="left: 640px; top: 177px">AutoSuggestBox 148–240 (flexes) · 8 · Filter DropDownButton</div>
+      <div class="rl-box" style="left: 317px; top: 197px; width: 651px; height: 56px"></div>
+      <div class="rl" style="left: 327px; top: 203px">Expander header ≥ 56 · padding 16 / 8 · radius 4 · 12 below the toolbar</div>
+      <div class="rl-box" style="left: 317px; top: 253px; width: 651px; height: 48px"></div>
+      <div class="rl" style="left: 327px; top: 259px">ListViewItem 48 · padding 16, 6, 8, 6 · columns 16 | * | 172 | 132 · gap 12</div>
+      <div class="rl-box" style="left: 317px; top: 301px; width: 651px; height: 48px"></div>
+      <div class="rl-box" style="left: 317px; top: 357px; width: 651px; height: 56px"></div>
+      <div class="rl" style="left: 327px; top: 363px">8 between sections</div>
+      <div class="rl" style="left: 974px; top: 300px; width: 24px">32</div>
+      <div class="rl" style="left: 290px; top: 300px; width: 24px">36</div>
+      <div class="rl-box" style="left: 317px; top: 588px; width: 651px; height: 48px; border-style: solid"></div>
+      <div class="rl" style="left: 327px; top: 604px">Notification host · InfoBar stack · 16 from bottom · 8 apart</div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start">
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Window and navigation</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Window</td><td><span class="code">Window + MicaBackdrop</span></td><td>Mica (Base) on Windows 11; on Windows 10 fall back to SolidBackgroundFillColorBaseBrush. Default 1000 × 700, minimum 500 × 500 (OverlappedPresenter.PreferredMinimumWidth/Height), sizes multiplied by the monitor scale.</td></tr>
+          
+          <tr><td>Title bar</td><td><span class="code">TitleBar</span></td><td>ExtendsContentIntoTitleBar = true, height 48, IsPaneToggleButtonVisible = true, IsBackButtonVisible = false, icon 16, title “Wol” in CaptionTextBlockStyle.</td></tr>
+          
+          <tr><td>Navigation</td><td><span class="code">NavigationView</span></td><td>PaneDisplayMode Auto, OpenPaneLength 280, CompactModeThresholdWidth 641, ExpandedModeThresholdWidth 960 (so 1000 opens Expanded), IsSettingsVisible = true, IsPaneToggleButtonVisible = false (toggle is in the TitleBar).</td></tr>
+          
+          <tr><td>All machines</td><td><span class="code">NavigationViewItem</span></td><td>Icon FontIcon U+E71D AllApps.</td></tr>
+          
+          <tr><td>Groups header</td><td><span class="code">NavigationViewItemHeader</span></td><td>Text “Groups”; hidden when there are no groups.</td></tr>
+          
+          <tr><td>Group item</td><td><span class="code">NavigationViewItem + InfoBadge</span></td><td>Icon U+E8B7 Folder. InfoBadge Value = Offline + Timed out count, Visibility Collapsed at 0. ContextFlyout = MenuFlyout (Wake group, Rename…, Move up, Move down, Delete group…). CanDrag for reorder; AllowDrop for machines.</td></tr>
+          
+          <tr><td>Ungrouped</td><td><span class="code">NavigationViewItem</span></td><td>Shown only when at least one machine has no group. Always last, not reorderable.</td></tr>
+          
+          <tr><td>New group</td><td><span class="code">NavigationViewItem</span></td><td>Icon U+E710 Add, SelectsOnInvoked = false, opens the New group dialog (Ctrl+Shift+N).</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Machine list page</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Page grid</td><td><span class="code">Grid</span></td><td>Rows: InfoBar slot · header · toolbar · list. Side margins 36 / 32 (Expanded), 24 / 24 (Compact pane), 16 / 16 (Minimal).</td></tr>
+          
+          <tr><td>Title + summary</td><td><span class="code">TextBlock, ItemsRepeater</span></td><td>TitleTextBlockStyle. Summary = horizontal StackLayout, Spacing 16, each item FontIcon 14 + Body text in TextFillColorSecondaryBrush. Wraps (ItemsRepeater + WrapLayout from the Toolkit).</td></tr>
+          
+          <tr><td>Toolbar</td><td><span class="code">CommandBar</span></td><td>DefaultLabelPosition Right, Background transparent, IsDynamicOverflowEnabled. AppBarButton Add machine (U+E710), Refresh all (U+E72C), AppBarSeparator, AppBarToggleButton Select (U+E762).</td></tr>
+          
+          <tr><td>Search</td><td><span class="code">AutoSuggestBox</span></td><td>Width 148–240: takes the space the CommandBar leaves and shrinks before anything wraps; collapses to an AppBarButton below 640. QueryIcon Find, filters live on TextChanged; matches name, host and MAC.</td></tr>
+          
+          <tr><td>Filter</td><td><span class="code">DropDownButton + MenuFlyout</span></td><td>ToggleMenuFlyoutItem per state with its state glyph as Icon and count as KeyboardAcceleratorTextOverride-style trailing text; “Show all states”. Label shows “All states” or “n states”.</td></tr>
+          
+          <tr><td>Group section</td><td><span class="code">Expander</span></td><td>One per group in an ItemsRepeater (StackLayout, Spacing 8). Header: name (BodyStrong) + summary (Caption, secondary) + Button “Wake group”. Content padding 0; IsExpanded persisted per group.</td></tr>
+          
+          <tr><td>Machine rows</td><td><span class="code">ListView</span></td><td>SelectionMode Extended (Multiple while Select is on). Item MinHeight 48, Padding 16, 6, 8, 6. Template Grid 16 | * | 172 | Auto, ColumnSpacing 12. CanDragItems = true.</td></tr>
+          
+          <tr><td>Row actions</td><td><span class="code">Button</span></td><td>Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown or Error, collapsed when Online, replaced by Cancel while Waking. More: icon-only Button U+E712 with the row’s MenuFlyout.</td></tr>
+          
+          <tr><td>Cards (alternative)</td><td><span class="code">ItemsView + UniformGridLayout</span></td><td>MinItemWidth 196, MinItemHeight 148, spacing 8, card padding 16, radius 8.</td></tr>
+          
+          <tr><td>Empty state</td><td><span class="code">StackPanel</span></td><td>Centered, MaxWidth 420, Spacing 12: glyph 64, SubtitleTextBlockStyle, Body secondary, Buttons (Accent + default, Spacing 8), HyperlinkButton.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Add / Edit machine</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Dialog</td><td><span class="code">ContentDialog</span></td><td>Recommended over a page: short form, keeps list context. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548.</td></tr>
+          
+          <tr><td>Body</td><td><span class="code">ScrollViewer &gt; StackPanel</span></td><td>Spacing 16. Scrolls when Advanced is open or the window is short; buttons stay pinned.</td></tr>
+          
+          <tr><td>Name, MAC, Host</td><td><span class="code">TextBox</span></td><td>Header above (Body), Description below for help or the error (Caption). Validate on LostFocus and on submit; show the first error inline, never in a separate dialog.</td></tr>
+          
+          <tr><td>MAC address</td><td><span class="code">TextBox</span></td><td>Accepts AA:BB:CC:DD:EE:FF, AA-BB-…, AABBCC…, any case. Description previews the normalised value (“Will be saved as …”).</td></tr>
+          
+          <tr><td>Group</td><td><span class="code">ComboBox</span></td><td>IsEditable = true, Header “Group (optional)”. TextSubmitted with an unknown name stages a new group; Description says “New group … will be created”.</td></tr>
+          
+          <tr><td>Advanced</td><td><span class="code">Expander</span></td><td>Collapsed by default. TextBox Broadcast address (PlaceholderText “Automatic”), CheckBox “If ping gets no reply, try TCP ports”, TextBox ports (enabled by the CheckBox, indent 28).</td></tr>
+          
+          <tr><td>Validation</td><td><span class="code">TextBlock in Description</span></td><td>Error: FontIcon 14 U+EA39-style + text in SystemFillColorCriticalBrush, AutomationProperties.LiveSetting Assertive. Host not resolvable is a warning (SystemFillColorCautionBrush icon), not blocking.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Groups</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>New / Rename</td><td><span class="code">ContentDialog + TextBox</span></td><td>Title “New group” / “Rename group”; Primary Create / Rename, disabled while the name is empty or already used; inline error under the TextBox.</td></tr>
+          
+          <tr><td>Delete group</td><td><span class="code">ContentDialog + RadioButtons</span></td><td>Title names the group. RadioButtons: “Move them to Ungrouped” (default), “Delete them too”. PrimaryButtonText “Delete group”, CloseButtonText Cancel, DefaultButton Close.</td></tr>
+          
+          <tr><td>Reorder</td><td><span class="code">MenuFlyout + drag</span></td><td>Move up / Move down (Alt+Up / Alt+Down) on the item’s ContextFlyout; drag in the pane as a shortcut. Order is saved immediately.</td></tr>
+          
+          <tr><td>Move machines</td><td><span class="code">MenuFlyoutSubItem</span></td><td>“Move to group” lists groups in order, then Ungrouped, separator, “New group…”. The current group shows a check and is disabled.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Wake feedback</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Row while waking</td><td><span class="code">ProgressRing</span></td><td>16 × 16, IsIndeterminate; detail text “m:ss · waiting for reply” updated every second.</td></tr>
+          
+          <tr><td>Single result</td><td><span class="code">InfoBar</span></td><td>In the notification host. Success: IsClosable, auto-close after 5 s (paused while hovered or focused). Warning (timed out): stays until closed, ActionButton Retry.</td></tr>
+          
+          <tr><td>Group or selection</td><td><span class="code">InfoBar + ProgressBar</span></td><td>IsClosable false while running, Severity Informational, Content = ProgressBar (Maximum = machines in the run, Value = online). ActionButton Cancel. Replaced by the result InfoBar with “Retry n machines”.</td></tr>
+          
+          <tr><td>Notification host</td><td><span class="code">StackPanel</span></td><td>Bottom-aligned in the content grid, margins 36 / 32 / 16, Spacing 8, at most 3 bars, ChildrenTransitions: EntranceThemeTransition + RepositionThemeTransition.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Settings</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Page</td><td><span class="code">ScrollViewer &gt; StackPanel</span></td><td>MaxWidth 1000, margins as the list page, Spacing 4 between cards; section headers BodyStrongTextBlockStyle, Margin 1, 24, 0, 6.</td></tr>
+          
+          <tr><td>Theme, Language</td><td><span class="code">SettingsCard + ComboBox</span></td><td>Theme: Use system setting / Light / Dark (applies at once, sets RequestedTheme on the root). Language: Use system setting / English / Français (applies on restart; Description says so). ComboBox MinWidth 200.</td></tr>
+          
+          <tr><td>Behavior</td><td><span class="code">SettingsCard + ToggleSwitch</span></td><td>Start with Windows (StartupTask, off by default), Start minimized (off), Close to the notification area (on).</td></tr>
+          
+          <tr><td>Monitoring</td><td><span class="code">SettingsCard + NumberBox</span></td><td>Check interval 5–3600 s (default 30), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after.</td></tr>
+          
+          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Has an error); items disabled when the master is off.</td></tr>
+          
+          <tr><td>About</td><td><span class="code">SettingsExpander</span></td><td>Header: app icon, “Wol”, version, Copy button. Items: Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Notification area</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Icon</td><td><span class="code">Shell_NotifyIcon (Win32)</span></td><td>Not a XAML control: hosted through a notify-icon helper. 16 × 16 monochrome .ico per status and taskbar theme; tooltip states the status in words (max 127 chars).</td></tr>
+          
+          <tr><td>Menu</td><td><span class="code">MenuFlyout</span></td><td>Open Wol (default item, bold), separator, MenuFlyoutSubItem Wake ▸ group ▸ “Wake all offline (n)” + offline machines, Refresh, separator, Quit.</td></tr>
+          
+          <tr><td>Balloons</td><td><span class="code">NOTIFYICONDATA NIF_INFO</span></td><td>Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="panel" style="gap: 12px">
+      <h2>Errors and degraded states</h2>
+      <table class="tbl">
+        <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
+        <tbody>
+          
+          <tr><td>Slot</td><td><span class="code">InfoBar</span></td><td>Grid row 0 of every page, Margin 36, 12, 32, 0, IsOpen bound to app state, IsClosable false. One bar at a time; precedence: CLI missing → CLI incompatible → configuration invalid → network unavailable.</td></tr>
+          
+          <tr><td>CLI missing</td><td><span class="code">InfoBar Error</span></td><td>ActionButton “Locate…” (FileOpenPicker for the CLI executable) + HyperlinkButton “How to install”. Checks and wake disabled; editing still allowed.</td></tr>
+          
+          <tr><td>CLI incompatible</td><td><span class="code">InfoBar Error</span></td><td>Shows required and found versions; ActionButton “Check again”, HyperlinkButton “How to update”.</td></tr>
+          
+          <tr><td>Configuration invalid</td><td><span class="code">InfoBar Error</span></td><td>Message includes line (and column) from the CLI. ActionButtons “Open file” and “Reload”. The last valid list stays visible, read-only.</td></tr>
+          
+          <tr><td>Network unavailable</td><td><span class="code">InfoBar Warning</span></td><td>Driven by NetworkInformation.NetworkStatusChanged; hides automatically when connectivity returns, then a full refresh runs.</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+</div>
+</body>
+</html>
