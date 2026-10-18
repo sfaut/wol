@@ -18,7 +18,7 @@ use crate::{magic, scan, time, watch};
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
 
-/// Wake-on-LAN members.for_each(|machine| text.push_str(&line(machine))); manager: monitor remote machines and wake them up.
+/// Wake-on-LAN machine manager: monitor remote machines and wake them up.
 #[derive(Debug, Parser)]
 #[command(name = "wol", version)]
 struct Cli {
