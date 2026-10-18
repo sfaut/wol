@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "rust-lang.rust-analyzer",
+    "ms-dotnettools.csharp",
+    "tamasfe.even-better-toml",
+    "editorconfig.editorconfig"
+  ]
+}

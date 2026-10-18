@@ -1,0 +1,12 @@
+# Rust
+/cli/target/
+
+# .NET
+bin/
+obj/
+*.user
+.vs/
+
+# Local configuration used while developing
+wol.toml
+!docs/**/wol.toml
