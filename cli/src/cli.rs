@@ -18,16 +18,29 @@ use crate::{magic, scan, time, watch};
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
 
-/// Wake-on-LAN machine manager: monitor remote machines and wake them up.
+/// Wake-on-LAN machine manager: monitor machines of the local network and wake them up.
+///
+/// Machines are described in a wol.toml file, by their network interfaces (MAC addresses).
+/// Wol finds them by scanning the local network, which also gives their current IP address,
+/// and wakes them up with Wake-on-LAN magic packets.
+///
+/// Use -h for a summary, --help for details.
 #[derive(Debug, Parser)]
-#[command(name = "wol", version)]
+#[command(name = "wol", bin_name = "wol", version, max_term_width = 80)]
 struct Cli {
-    /// Print machine-readable JSON (see docs/cli-contract.md)
-    #[arg(long, global = true)]
+    /// Print machine-readable JSON
+    ///
+    /// Every command then prints one JSON document on stdout (errors: on stderr), or one JSON
+    /// line per event for `watch`. The format is described in docs/cli-contract.md.
+    #[arg(long, global = true, display_order = 100)]
     json: bool,
 
-    /// Configuration file to use instead of the default lookup
-    #[arg(long, global = true, value_name = "PATH")]
+    /// Use this configuration file
+    ///
+    /// The file is created on the first change if it does not exist. Without this option, wol
+    /// uses wol.toml next to the executable when present (portable mode), otherwise wol.toml in
+    /// the user configuration directory (e.g. %APPDATA%\wol on Windows, ~/.config/wol on Linux).
+    #[arg(long, global = true, value_name = "PATH", display_order = 101)]
     config: Option<PathBuf>,
 
     /// Command to run.
@@ -38,12 +51,18 @@ struct Cli {
 /// Top-level commands.
 #[derive(Debug, Subcommand)]
 enum Command {
-    /// List groups and machines
+    /// List groups and machines, with their network interfaces
+    ///
+    /// Groups come in their order, then machines without a group. MAC addresses used by several
+    /// machines are reported as warnings.
     List,
 
-    /// Send magic packets to wake machines up
+    /// Wake machines up
+    ///
+    /// Sends magic packets to every network interface of the machines. The machines must have
+    /// Wake-on-LAN enabled (firmware and network adapter settings).
     Wake {
-        /// Names of the machines to wake
+        /// Names of the machines to wake (case-insensitive)
         #[arg(required_unless_present = "groups")]
         machines: Vec<String>,
 
@@ -53,6 +72,9 @@ enum Command {
     },
 
     /// Check whether machines are online (all machines by default)
+    ///
+    /// Scans the local network once: a machine is online when any of its MAC addresses
+    /// answers, and its current IP address is shown.
     Status {
         /// Machines to check.
         #[command(flatten)]
@@ -60,28 +82,40 @@ enum Command {
     },
 
     /// Monitor machines and report every state change (all machines by default)
+    ///
+    /// Prints the state of every machine, then one line per change, until stopped (Ctrl+C).
+    /// Changes made to the configuration file meanwhile are taken into account.
     Watch {
         /// Machines to monitor.
         #[command(flatten)]
         selection: Selection,
 
-        /// Time between two checks, in seconds
+        /// Time between two scans, in seconds (1 to 3600)
+        ///
+        /// A machine that stops answering is reported offline only after two scans in a row,
+        /// so that a single missed answer does not count.
         #[arg(long, value_name = "SECONDS", default_value_t = 10, value_parser = clap::value_parser!(u64).range(1..=3_600))]
         interval: u64,
     },
 
     /// List the devices found on the local network
+    ///
+    /// Shows the IP and MAC address of every device that answers, and the machines using
+    /// each MAC address. Handy to find the MAC address of a machine to add.
     Scan,
 
     /// Add a machine
+    #[command(
+        after_help = "Examples:\n  wol add NAS --mac 00:11:32:BC:72:E9\n  wol add \"Office PC\" --mac A4BB6D123456=Ethernet --mac A4BB6D123457=Wi-Fi"
+    )]
     Add(AddArgs),
 
-    /// Change a machine
+    /// Change a machine (only the given options change)
     Edit(EditArgs),
 
     /// Remove a machine
     Remove {
-        /// Name of the machine to remove
+        /// Name of the machine to remove (case-insensitive)
         name: String,
     },
 
@@ -96,7 +130,7 @@ enum Command {
 /// Machines targeted by `status` and `watch`: every machine when nothing is given.
 #[derive(Debug, Args)]
 struct Selection {
-    /// Names of the machines
+    /// Names of the machines (case-insensitive); all machines when none is given
     machines: Vec<String>,
 
     /// Also include every machine of this group (repeatable)
@@ -107,22 +141,32 @@ struct Selection {
 /// Arguments of `wol add`.
 #[derive(Debug, Args)]
 struct AddArgs {
-    /// Unique machine name
+    /// Unique machine name (case-insensitive, up to 64 characters)
     name: String,
 
-    /// Network interface: MAC address, optionally followed by =LABEL (repeatable)
+    /// Network interface of the machine (repeatable, at least one)
+    ///
+    /// MAC address, optionally followed by =LABEL to tell interfaces apart, e.g.
+    /// A4:BB:6D:12:34:56=Ethernet. Accepted forms: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF,
+    /// AABB.CCDD.EEFF and AABBCCDDEEFF. A MAC address already used by another machine is
+    /// accepted with a warning.
     #[arg(long = "mac", value_name = "MAC[=LABEL]", required = true, value_parser = parse_interface)]
     interfaces: Vec<Interface>,
 
-    /// Group of the machine
+    /// Group of the machine (it must exist: see `wol group add`)
     #[arg(long)]
     group: Option<String>,
 
-    /// Destination address of the magic packet [default: 255.255.255.255]
+    /// Destination address of the magic packets [default: 255.255.255.255]
+    ///
+    /// The default reaches the whole local network. Use the broadcast address of a subnet
+    /// (e.g. 192.168.1.255) when the computer running wol has several networks.
     #[arg(long, value_name = "IPV4")]
     broadcast: Option<Ipv4Addr>,
 
-    /// UDP port of the magic packet [default: 9]
+    /// UDP port of the magic packets [default: 9]
+    ///
+    /// Network cards accept any port; some routers or firewalls only let port 7 or 9 through.
     #[arg(long)]
     port: Option<u16>,
 }
@@ -130,7 +174,7 @@ struct AddArgs {
 /// Arguments of `wol edit`: only the given options change.
 #[derive(Debug, Args)]
 struct EditArgs {
-    /// Name of the machine to change
+    /// Name of the machine to change (case-insensitive)
     name: String,
 
     /// New machine name
@@ -138,18 +182,25 @@ struct EditArgs {
     new_name: Option<String>,
 
     /// Replace all network interfaces (repeatable)
+    ///
+    /// Same format as `wol add --mac`. Cannot be combined with --add-mac or --remove-mac.
     #[arg(long = "mac", value_name = "MAC[=LABEL]", value_parser = parse_interface, conflicts_with_all = ["add_interfaces", "remove_interfaces"])]
     interfaces: Vec<Interface>,
 
-    /// Add a network interface, or change the label of an existing one (repeatable)
+    /// Add a network interface (repeatable)
+    ///
+    /// When the machine already has this MAC address, its label is replaced instead
+    /// (removed when no =LABEL is given).
     #[arg(long = "add-mac", value_name = "MAC[=LABEL]", value_parser = parse_interface)]
     add_interfaces: Vec<Interface>,
 
     /// Remove the network interface with this MAC address (repeatable)
+    ///
+    /// A machine keeps at least one interface.
     #[arg(long = "remove-mac", value_name = "MAC")]
     remove_interfaces: Vec<MacAddress>,
 
-    /// New group
+    /// Move the machine to this group
     #[arg(long, conflicts_with = "no_group")]
     group: Option<String>,
 
@@ -157,19 +208,19 @@ struct EditArgs {
     #[arg(long)]
     no_group: bool,
 
-    /// New destination address of the magic packet
+    /// New destination address of the magic packets
     #[arg(long, value_name = "IPV4", conflicts_with = "no_broadcast")]
     broadcast: Option<Ipv4Addr>,
 
-    /// Go back to the default destination address
+    /// Go back to the default destination address (255.255.255.255)
     #[arg(long)]
     no_broadcast: bool,
 
-    /// New UDP port of the magic packet
+    /// New UDP port of the magic packets
     #[arg(long, conflicts_with = "no_port")]
     port: Option<u16>,
 
-    /// Go back to the default UDP port
+    /// Go back to the default UDP port (9)
     #[arg(long)]
     no_port: bool,
 }
@@ -191,13 +242,13 @@ fn parse_interface(text: &str) -> std::result::Result<Interface, String> {
 enum GroupCommand {
     /// Add a group at the end of the list
     Add {
-        /// Unique group name
+        /// Unique group name (case-insensitive, up to 64 characters)
         name: String,
     },
 
     /// Rename a group (its machines follow)
     Rename {
-        /// Current name
+        /// Current name (case-insensitive)
         name: String,
 
         /// New name
@@ -206,20 +257,23 @@ enum GroupCommand {
 
     /// Remove a group
     Remove {
-        /// Name of the group to remove
+        /// Name of the group to remove (case-insensitive)
         name: String,
 
         /// Keep the group's machines, without a group
+        ///
+        /// Required when the group still has machines; machines are never removed with
+        /// their group.
         #[arg(long)]
         ungroup: bool,
     },
 
     /// Move a group to another position in the list
     Move {
-        /// Name of the group to move
+        /// Name of the group to move (case-insensitive)
         name: String,
 
-        /// New 1-based position
+        /// New position, starting at 1 (beyond the end: last)
         position: usize,
     },
 }
