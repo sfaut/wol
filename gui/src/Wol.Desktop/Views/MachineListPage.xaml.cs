@@ -34,6 +34,11 @@ public sealed partial class MachineListPage : UserControl
     private GroupSection? _only;
 
     /// <summary>
+    /// Empty state shown, if any.
+    /// </summary>
+    private EmptyKind _empty;
+
+    /// <summary>
     /// Builds the page.
     /// </summary>
     public MachineListPage()
@@ -89,12 +94,303 @@ public sealed partial class MachineListPage : UserControl
     /// </summary>
     private void UpdateHeader()
     {
-        var machines = (_only is null ? _viewModel?.Sections : [_only])?.SelectMany(section => section.Machines) ?? [];
-        SummaryText.Text = GroupSection.Summarize(machines);
-        EmptyState.Visibility = _viewModel is { HasMachines: false } && _only is null
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        var sections = (_only is null ? _viewModel?.Sections.ToList() : [_only]) ?? [];
+        SummaryText.Text = GroupSection.Summarize(sections.SelectMany(section => section.Machines));
         RefreshButton.IsEnabled = _viewModel?.CanUseCli == true;
+        AddButton.IsEnabled = _viewModel?.CanUseCli == true;
+
+        // Empty states, by precedence: no machine at all, empty group, nothing matches.
+        _empty = _viewModel is null ? EmptyKind.None
+            : _only is null && !_viewModel.HasMachines ? EmptyKind.First
+            : _only is { Machines.Count: 0 } ? EmptyKind.Group
+            : SearchBox.Text.Trim().Length > 0 && sections.All(section => section.Shown.Count == 0) ? EmptyKind.Search
+            : EmptyKind.None;
+        EmptyState.Visibility = _empty == EmptyKind.None ? Visibility.Collapsed : Visibility.Visible;
+        SectionsRepeater.Visibility = _empty is EmptyKind.None or EmptyKind.Search ? Visibility.Visible : Visibility.Collapsed;
+        EmptySecondaryButton.Visibility = _empty == EmptyKind.Search ? Visibility.Collapsed : Visibility.Visible;
+        EmptyPrimaryButton.IsEnabled = _empty == EmptyKind.Search || _viewModel?.CanUseCli == true;
+        EmptySecondaryButton.IsEnabled = _empty == EmptyKind.Group || _viewModel?.CanUseCli == true;
+        switch (_empty)
+        {
+            case EmptyKind.First:
+                EmptyTitle.Text = Strings.Get("Empty_First_Title");
+                EmptyBody.Text = Strings.Get("Empty_First_Body");
+                EmptyPrimaryButton.Content = Strings.Get("Empty_First_Add");
+                EmptySecondaryButton.Content = Strings.Get("Empty_First_CreateGroup");
+                break;
+            case EmptyKind.Group:
+                EmptyTitle.Text = Strings.Format("Empty_Group_Title", _only!.Title);
+                EmptyBody.Text = Strings.Get("Empty_Group_Body");
+                EmptyPrimaryButton.Content = Strings.Get("Empty_First_Add");
+                EmptySecondaryButton.Content = Strings.Get("Empty_Group_GoToAll");
+                break;
+            case EmptyKind.Search:
+                EmptyTitle.Text = Strings.Format("Empty_Search_Title", SearchBox.Text.Trim());
+                EmptyBody.Text = Strings.Get("Empty_Search_Body");
+                EmptyPrimaryButton.Content = Strings.Get("Empty_Search_Clear");
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Raised when the page asks to show every machine (empty group page).
+    /// </summary>
+    public event EventHandler? ShowAllRequested;
+
+    /// <summary>
+    /// Opens the Add machine dialog, with the group of the page pre-filled (Ctrl+N).
+    /// </summary>
+    /// <returns>A task completing when the dialog is closed.</returns>
+    public async Task AddMachineAsync()
+    {
+        if (_viewModel is { CanUseCli: true })
+        {
+            await new MachineDialog(_viewModel, editing: null, group: _only?.Group) { XamlRoot = XamlRoot }.ShowAsync();
+        }
+    }
+
+    /// <summary>
+    /// Opens the New group dialog (Ctrl+Shift+N).
+    /// </summary>
+    /// <returns>The group created, or null.</returns>
+    public async Task<string?> AddGroupAsync() =>
+        _viewModel is { CanUseCli: true } ? await Dialogs.GroupNameAsync(XamlRoot, _viewModel, renaming: null) : null;
+
+    /// <summary>
+    /// Opens the Edit machine dialog.
+    /// </summary>
+    /// <param name="machine">Machine to edit.</param>
+    /// <returns>A task completing when the dialog is closed.</returns>
+    private async Task EditAsync(MachineItem machine)
+    {
+        if (_viewModel is { CanUseCli: true })
+        {
+            await new MachineDialog(_viewModel, machine) { XamlRoot = XamlRoot }.ShowAsync();
+        }
+    }
+
+    /// <summary>
+    /// Asks, then removes a machine.
+    /// </summary>
+    /// <param name="machine">Machine to remove.</param>
+    /// <returns>A task completing once it is removed or kept.</returns>
+    private async Task RemoveAsync(MachineItem machine)
+    {
+        if (_viewModel is { CanUseCli: true } && await Dialogs.RemoveMachinesAsync(XamlRoot, [machine]))
+        {
+            await _viewModel.RemoveMachinesAsync([machine]);
+        }
+    }
+
+    /// <summary>
+    /// Fills the More menu of a row: Wake, Check now, Edit, Duplicate, Move to group,
+    /// Copy MAC address, Remove.
+    /// </summary>
+    /// <param name="sender">The menu.</param>
+    /// <param name="args">Unused.</param>
+    private void RowMenu_Opening(object? sender, object args)
+    {
+        if (sender is not MenuFlyout { Target: FrameworkElement { DataContext: MachineItem machine } } menu
+            || _viewModel is not { } viewModel)
+        {
+            return;
+        }
+
+        var enabled = viewModel.CanUseCli;
+        MenuFlyoutItem Item(string key, string glyph, Action action, bool isEnabled = true)
+        {
+            var item = new MenuFlyoutItem
+            {
+                Text = Strings.Get(key),
+                Icon = new FontIcon { Glyph = glyph },
+                IsEnabled = isEnabled && enabled,
+            };
+            item.Click += (_, _) => action();
+            return item;
+        }
+
+        menu.Items.Clear();
+        menu.Items.Add(Item("RowMenu_Wake", "\uE7E8", () => _ = viewModel.WakeAsync([machine]),
+            machine.State is not (MachineState.Online or MachineState.Waking or MachineState.Error)));
+        menu.Items.Add(Item("RowMenu_CheckNow", "\uE72C", () => _ = viewModel.CheckAsync([machine]),
+            machine.State != MachineState.Waking));
+        menu.Items.Add(new MenuFlyoutSeparator());
+        menu.Items.Add(Item("RowMenu_Edit", "\uE70F", () => _ = EditAsync(machine)));
+        menu.Items.Add(Item("RowMenu_Duplicate", "\uE8C8", () => _ = new MachineDialog(viewModel, editing: null, machine.Definition)
+        {
+            XamlRoot = XamlRoot,
+        }.ShowAsync()));
+
+        // Move to group: groups in order, then Ungrouped, then New group…
+        var move = new MenuFlyoutSubItem
+        {
+            Text = Strings.Get("RowMenu_MoveToGroup"),
+            Icon = new FontIcon { Glyph = "\uE8DE" },
+            IsEnabled = enabled,
+        };
+        foreach (var group in viewModel.GroupNames.Cast<string?>().Append(null))
+        {
+            var current = string.Equals(group, machine.Definition.Group, StringComparison.OrdinalIgnoreCase);
+            var target = new MenuFlyoutItem
+            {
+                Text = group ?? Strings.Get("Nav_Ungrouped"),
+                Icon = current ? new FontIcon { Glyph = "\uE73E" } : null,
+                IsEnabled = !current,
+            };
+            target.Click += (_, _) => _ = viewModel.MoveMachinesAsync([machine], group);
+            move.Items.Add(target);
+        }
+        move.Items.Add(new MenuFlyoutSeparator());
+        var newGroup = new MenuFlyoutItem { Text = Strings.Get("RowMenu_MoveToGroup_NewGroup") };
+        newGroup.Click += async (_, _) =>
+        {
+            if (await AddGroupAsync() is { } created)
+            {
+                await viewModel.MoveMachinesAsync([machine], created);
+            }
+        };
+        move.Items.Add(newGroup);
+        menu.Items.Add(move);
+
+        // Copy MAC address: one item, or a submenu for several interfaces.
+        var interfaces = machine.Definition.Interfaces;
+        if (interfaces.Count == 1)
+        {
+            menu.Items.Add(Item("RowMenu_CopyMac", "\uE8C8", () => Copy(interfaces[0].Mac), isEnabled: true));
+            ((MenuFlyoutItem)menu.Items[^1]).IsEnabled = true;
+        }
+        else
+        {
+            var copy = new MenuFlyoutSubItem { Text = Strings.Get("RowMenu_CopyMacs"), Icon = new FontIcon { Glyph = "\uE8C8" } };
+            foreach (var item in interfaces)
+            {
+                var entry = new MenuFlyoutItem
+                {
+                    Text = item.Label is { } label ? Strings.Format("RowMenu_CopyMac_Item", label, item.Mac) : item.Mac,
+                };
+                entry.Click += (_, _) => Copy(item.Mac);
+                copy.Items.Add(entry);
+            }
+            var all = new MenuFlyoutItem { Text = Strings.Get("RowMenu_CopyMac_All") };
+            all.Click += (_, _) => Copy(string.Join(Environment.NewLine, interfaces.Select(item => item.Mac)));
+            copy.Items.Add(all);
+            menu.Items.Add(copy);
+        }
+
+        menu.Items.Add(new MenuFlyoutSeparator());
+        menu.Items.Add(Item("RowMenu_Remove", "\uE74D", () => _ = RemoveAsync(machine)));
+    }
+
+    /// <summary>
+    /// Copies text to the clipboard.
+    /// </summary>
+    /// <param name="text">Text to copy.</param>
+    private static void Copy(string text)
+    {
+        var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
+        package.SetText(text);
+        Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
+    }
+
+    /// <summary>
+    /// Edits a machine on double click.
+    /// </summary>
+    /// <param name="sender">The row.</param>
+    /// <param name="args">Unused.</param>
+    private void Row_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs args)
+    {
+        if (sender is FrameworkElement { DataContext: MachineItem machine })
+        {
+            _ = EditAsync(machine);
+        }
+    }
+
+    /// <summary>
+    /// Enter edits the focused machine, Delete removes it.
+    /// </summary>
+    /// <param name="sender">The list.</param>
+    /// <param name="args">Key pressed.</param>
+    private void Rows_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs args)
+    {
+        if (args.OriginalSource is not ListViewItem { Content: MachineItem machine })
+        {
+            return;
+        }
+
+        switch (args.Key)
+        {
+            case Windows.System.VirtualKey.Enter:
+                _ = EditAsync(machine);
+                args.Handled = true;
+                break;
+            case Windows.System.VirtualKey.Delete:
+                _ = RemoveAsync(machine);
+                args.Handled = true;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Adds a machine (Ctrl+N).
+    /// </summary>
+    /// <param name="sender">The button.</param>
+    /// <param name="args">Unused.</param>
+    private void Add_Click(object sender, RoutedEventArgs args) => _ = AddMachineAsync();
+
+    /// <summary>
+    /// Main action of the empty state: add a machine, or clear the search.
+    /// </summary>
+    /// <param name="sender">The button.</param>
+    /// <param name="args">Unused.</param>
+    private void EmptyPrimary_Click(object sender, RoutedEventArgs args)
+    {
+        if (_empty == EmptyKind.Search)
+        {
+            SearchBox.Text = string.Empty;
+            return;
+        }
+        _ = AddMachineAsync();
+    }
+
+    /// <summary>
+    /// Second action of the empty state: create a group, or show every machine.
+    /// </summary>
+    /// <param name="sender">The button.</param>
+    /// <param name="args">Unused.</param>
+    private void EmptySecondary_Click(object sender, RoutedEventArgs args)
+    {
+        if (_empty == EmptyKind.Group)
+        {
+            ShowAllRequested?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+        _ = AddGroupAsync();
+    }
+
+    /// <summary>
+    /// Empty state shown.
+    /// </summary>
+    private enum EmptyKind
+    {
+        /// <summary>
+        /// The page has machines to show.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// No machine at all yet.
+        /// </summary>
+        First,
+
+        /// <summary>
+        /// The group shown has no machines.
+        /// </summary>
+        Group,
+
+        /// <summary>
+        /// No machine matches the search.
+        /// </summary>
+        Search,
     }
 
     /// <summary>
@@ -249,8 +545,11 @@ public sealed partial class MachineListPage : UserControl
     /// </summary>
     /// <param name="sender">The search box.</param>
     /// <param name="args">Unused.</param>
-    private void Search_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) =>
+    private void Search_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
         _viewModel?.ApplySearch(sender.Text);
+        UpdateHeader();
+    }
 
     /// <summary>
     /// Focuses the search box (Ctrl+F).

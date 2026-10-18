@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml;
 using Wol.Desktop.Services;
 
 namespace Wol.Desktop.Models;
@@ -36,6 +37,16 @@ public sealed partial class GroupSection : ObservableObject
     /// Machines shown, once the search is applied.
     /// </summary>
     public ObservableCollection<MachineItem> Shown { get; } = [];
+
+    /// <summary>
+    /// Whether a search is applied.
+    /// </summary>
+    private bool _searching;
+
+    /// <summary>
+    /// Visibility of the section: hidden while searching when none of its machines match.
+    /// </summary>
+    public Visibility ShownVisibility => _searching && Shown.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
 
     /// <summary>
     /// Whether the section is expanded.
@@ -76,11 +87,13 @@ public sealed partial class GroupSection : ObservableObject
     /// <param name="text">Text searched for; empty shows every machine.</param>
     public void ApplySearch(string text)
     {
+        _searching = !string.IsNullOrWhiteSpace(text);
         Shown.Clear();
         foreach (var machine in Machines.Where(machine => machine.Matches(text)))
         {
             Shown.Add(machine);
         }
+        OnPropertyChanged(nameof(ShownVisibility));
     }
 
     /// <summary>

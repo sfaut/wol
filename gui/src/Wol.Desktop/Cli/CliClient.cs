@@ -146,11 +146,12 @@ public sealed class CliClient
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8,
         };
+        // Global option first: names after a "--" separator may start with a dash.
+        info.ArgumentList.Add("--json");
         foreach (var arg in args)
         {
             info.ArgumentList.Add(arg);
         }
-        info.ArgumentList.Add("--json");
 
         try
         {

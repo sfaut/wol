@@ -163,6 +163,36 @@ public sealed record WakeEvent(
     ErrorDto? Error);
 
 /// <summary>
+/// Machine using a device found by a scan.
+/// </summary>
+/// <param name="Machine">Machine name.</param>
+/// <param name="Label">Label of the matching interface, if any.</param>
+public sealed record DeviceMachineDto(string Machine, string? Label);
+
+/// <summary>
+/// Device found on the local network.
+/// </summary>
+/// <param name="Address">Current IPv4 address.</param>
+/// <param name="Mac">MAC address, as <c>AA:BB:CC:DD:EE:FF</c>.</param>
+/// <param name="Machines">Machines using this MAC address; empty for unknown devices.</param>
+public sealed record DeviceDto(string Address, string Mac, List<DeviceMachineDto>? Machines);
+
+/// <summary>
+/// Output of <c>wol scan</c>.
+/// </summary>
+/// <param name="Schema">JSON schema version.</param>
+/// <param name="Devices">Devices found, sorted by address.</param>
+public sealed record ScanDocument(int Schema, List<DeviceDto>? Devices);
+
+/// <summary>
+/// Output of <c>wol add</c>, <c>wol edit</c> and <c>wol remove</c>.
+/// </summary>
+/// <param name="Schema">JSON schema version.</param>
+/// <param name="Machine">The machine as saved (or removed).</param>
+/// <param name="Warnings">Warnings about the MAC addresses of this machine.</param>
+public sealed record MachineDocument(int Schema, MachineDto? Machine, List<WarningDto>? Warnings);
+
+/// <summary>
 /// Source-generated serialization of the CLI documents (Native AOT, no reflection).
 /// </summary>
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
@@ -173,4 +203,6 @@ public sealed record WakeEvent(
 [JsonSerializable(typeof(WatchEvent))]
 [JsonSerializable(typeof(WakeEvent))]
 [JsonSerializable(typeof(MachineStateDto))]
+[JsonSerializable(typeof(ScanDocument))]
+[JsonSerializable(typeof(MachineDocument))]
 internal sealed partial class ContractContext : JsonSerializerContext;

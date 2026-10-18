@@ -29,6 +29,43 @@ internal static class Strings
     }
 
     /// <summary>
+    /// Gets a localized string that may not exist.
+    /// </summary>
+    /// <param name="key">Resource key, with <c>_</c> in place of <c>.</c>.</param>
+    /// <returns>The string, or null when there is none.</returns>
+    public static string? Find(string key)
+    {
+        var value = Loader.GetString(key);
+        return string.IsNullOrEmpty(value) ? null : value;
+    }
+
+    /// <summary>
+    /// Describes an error of the CLI in the user's language, from its stable code; falls back
+    /// to the English message of the CLI.
+    /// </summary>
+    /// <param name="error">The error.</param>
+    /// <returns>A sentence for the user.</returns>
+    public static string Describe(Cli.ErrorDto error)
+    {
+        if (Find($"CliError_{error.Code}") is not { } text)
+        {
+            return error.Message;
+        }
+
+        string? Detail(string name) =>
+            error.Details.ValueKind == System.Text.Json.JsonValueKind.Object
+            && error.Details.TryGetProperty(name, out var value)
+            && value.ValueKind == System.Text.Json.JsonValueKind.String
+                ? value.GetString()
+                : null;
+
+        return string.Format(
+            CultureInfo.CurrentCulture,
+            text,
+            Detail("machine") ?? Detail("group") ?? Detail("path") ?? Detail("field") ?? string.Empty);
+    }
+
+    /// <summary>
     /// Gets a string and fills its <c>{0}</c>, <c>{1}</c>… placeholders.
     /// </summary>
     /// <param name="key">Resource key.</param>
