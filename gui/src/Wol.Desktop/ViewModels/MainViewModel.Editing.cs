@@ -230,8 +230,22 @@ public sealed partial class MainViewModel
     public async Task MoveGroupAsync(GroupSection section, int offset)
     {
         var index = GroupNames.ToList().IndexOf(section.Group!);
-        var position = index + 1 + offset;
-        if (index < 0 || position < 1 || position > GroupNames.Count)
+        if (index >= 0)
+        {
+            await MoveGroupToAsync(section, index + 1 + offset);
+        }
+    }
+
+    /// <summary>
+    /// Moves a group to a position in the list (drag and drop); does nothing when it is already there.
+    /// </summary>
+    /// <param name="section">The group.</param>
+    /// <param name="position">New position, starting at 1.</param>
+    /// <returns>A task completing once the group is moved.</returns>
+    public async Task MoveGroupToAsync(GroupSection section, int position)
+    {
+        var index = GroupNames.ToList().IndexOf(section.Group!);
+        if (index < 0 || position < 1 || position > GroupNames.Count || position == index + 1)
         {
             return;
         }

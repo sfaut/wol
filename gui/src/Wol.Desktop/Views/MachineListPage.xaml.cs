@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Wol.Desktop.Models;
 using Wol.Desktop.Services;
 using Wol.Desktop.ViewModels;
@@ -70,6 +71,55 @@ public sealed partial class MachineListPage : UserControl
             }
             Show(null);
         }
+    }
+
+    /// <summary>
+    /// Reorders groups by dragging their cards, when set.
+    /// </summary>
+    public GroupReorder? Reorder { get; set; }
+
+    /// <summary>
+    /// Gives a group card its section, and lets it be dragged by its header and receive dropped groups.
+    /// </summary>
+    /// <param name="sender">The repeater.</param>
+    /// <param name="args">The card and its index.</param>
+    private void Sections_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+    {
+        if (args.Element is not Expander card)
+        {
+            return;
+        }
+
+        // The repeater leaves the data context of the card empty; its buttons read it.
+        card.DataContext = sender.ItemsSourceView.GetAt(args.Index);
+
+        // Cards are 8 px apart; machine rows and buttons keep their own pointer handling.
+        Reorder?.Attach(
+            card,
+            () => card.DataContext is GroupSection { Group: not null } section ? section : null,
+            args => !IsInside<Button>(args.OriginalSource, card) && !IsInside<ListViewBase>(args.OriginalSource, card),
+            gap: 4,
+            inset: 0);
+    }
+
+    /// <summary>
+    /// Tells whether an element is, or is inside, a control of a given type, below a container.
+    /// </summary>
+    /// <typeparam name="T">The control type.</typeparam>
+    /// <param name="source">The element.</param>
+    /// <param name="container">Where to stop looking.</param>
+    /// <returns>True when a control of that type is found.</returns>
+    private static bool IsInside<T>(object source, DependencyObject container)
+        where T : DependencyObject
+    {
+        for (var element = source as DependencyObject; element is not null && element != container; element = VisualTreeHelper.GetParent(element))
+        {
+            if (element is T)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>

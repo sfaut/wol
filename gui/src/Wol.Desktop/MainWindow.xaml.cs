@@ -55,6 +55,11 @@ public sealed partial class MainWindow : Window
     private string? _selectGroup;
 
     /// <summary>
+    /// Reorders groups by drag and drop, in the navigation pane and in the machine list.
+    /// </summary>
+    private readonly GroupReorder _reorder;
+
+    /// <summary>
     /// Builds the window, its navigation, and starts loading the machines.
     /// </summary>
     public MainWindow()
@@ -111,6 +116,8 @@ public sealed partial class MainWindow : Window
         };
         _viewModel.GroupsChanged += (_, _) => BuildNavigation();
         _viewModel.StatesChanged += (_, _) => UpdateBadges();
+        _reorder = new GroupReorder(_viewModel, DropLayer, DropMarker);
+        ListPage.Reorder = _reorder;
         ListPage.ViewModel = _viewModel;
         ListPage.ShowAllRequested += (_, _) => Navigation.SelectedItem = _allMachines;
         SettingsView.ViewModel = _viewModel;
@@ -168,6 +175,7 @@ public sealed partial class MainWindow : Window
         var selected = (Navigation.SelectedItem as NavigationViewItem)?.Tag as GroupSection;
         var selectedKey = _selectGroup ?? selected?.Group;
         var wasUngrouped = _selectGroup is null && selected is { Group: null };
+        var keepSettings = _selectGroup is null && ReferenceEquals(Navigation.SelectedItem, Navigation.SettingsItem);
         _selectGroup = null;
 
         Navigation.MenuItems.Clear();
@@ -193,6 +201,9 @@ public sealed partial class MainWindow : Window
             {
                 item.ContextFlyout = GroupMenu(section, groups.IndexOf(section), groups.Count);
                 item.KeyDown += (_, args) => GroupItem_KeyDown(section, args);
+
+                // Centered in the gap between two items, and as wide as their highlight.
+                _reorder.Attach(item, () => section, canStart: null, gap: 3, inset: 4);
             }
             Navigation.MenuItems.Add(item);
             if ((section.Group is not null && string.Equals(section.Group, selectedKey, StringComparison.OrdinalIgnoreCase))
@@ -202,6 +213,13 @@ public sealed partial class MainWindow : Window
             }
         }
         Navigation.MenuItems.Add(_newGroup);
+
+        // A reload from the settings page (Check again) stays there.
+        if (keepSettings)
+        {
+            UpdateBadges();
+            return;
+        }
 
         var target = reselect ?? _allMachines;
         if (ReferenceEquals(Navigation.SelectedItem, target))
