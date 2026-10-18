@@ -45,7 +45,8 @@ dotnet publish src/Wol.Desktop -c Release -r win-x64   # or win-arm64
 
 The GUI build copies `cli/target/release/wol.exe` (or the debug build when there is no release
 one) next to `wol-gui.exe`: build the CLI first, and rebuild it after changing it. A `wol.toml`
-dropped in the GUI output folder is picked up in portable mode (ignored by Git).
+dropped in the GUI output folder is picked up in portable mode (ignored by Git); the GUI then
+keeps its own settings in `wol-gui.json` next to it, otherwise in `%APPDATA%\wol\wol-gui.json`.
 
 The `.ico` files in `gui/src/Wol.Desktop/Assets/` are generated from `design/assets/*.svg` by
 `gui/tools/Build-Icons.ps1` (renders with Edge headless); run it again after changing the SVGs.

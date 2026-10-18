@@ -591,4 +591,259 @@
   <data name="CliError_scan_failed" xml:space="preserve">
     <value>L’analyse du réseau a échoué.</value>
   </data>
+  <data name="SettingsTitle.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="SettingsAppearance.Text" xml:space="preserve">
+    <value>Apparence</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>Thème de l’application</value>
+  </data>
+  <data name="SettingsThemeDescription.Text" xml:space="preserve">
+    <value>Clair, sombre ou comme Windows</value>
+  </data>
+  <data name="SettingsThemeBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Thème de l’application</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="SettingsLanguageDescription.Text" xml:space="preserve">
+    <value>Le changement s’applique au prochain démarrage de Wol</value>
+  </data>
+  <data name="SettingsLanguageBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="SettingsBehavior.Text" xml:space="preserve">
+    <value>Comportement</value>
+  </data>
+  <data name="SettingsStartWithWindowsHeader.Text" xml:space="preserve">
+    <value>Démarrer avec Windows</value>
+  </data>
+  <data name="SettingsStartWithWindowsDescription.Text" xml:space="preserve">
+    <value>Ajoute un raccourci dans votre dossier Démarrage pour que Wol se lance dans la zone de notification à l’ouverture de session</value>
+  </data>
+  <data name="SettingsStartWithWindowsSwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Démarrer avec Windows</value>
+  </data>
+  <data name="SettingsStartWithWindowsSwitch.OnContent" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="SettingsStartWithWindowsSwitch.OffContent" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="SettingsStartMinimizedHeader.Text" xml:space="preserve">
+    <value>Démarrer réduit</value>
+  </data>
+  <data name="SettingsStartMinimizedDescription.Text" xml:space="preserve">
+    <value>Ouvrir dans la zone de notification sans afficher la fenêtre</value>
+  </data>
+  <data name="SettingsStartMinimizedSwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Démarrer réduit</value>
+  </data>
+  <data name="SettingsStartMinimizedSwitch.OnContent" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="SettingsStartMinimizedSwitch.OffContent" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="SettingsCloseToTrayHeader.Text" xml:space="preserve">
+    <value>Fermer vers la zone de notification</value>
+  </data>
+  <data name="SettingsCloseToTrayDescription.Text" xml:space="preserve">
+    <value>Fermer la fenêtre laisse Wol actif pour surveiller les machines et vous avertir. Quittez depuis l’icône de la zone de notification.</value>
+  </data>
+  <data name="SettingsCloseToTraySwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Fermer vers la zone de notification</value>
+  </data>
+  <data name="SettingsCloseToTraySwitch.OnContent" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="SettingsCloseToTraySwitch.OffContent" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="SettingsMonitoring.Text" xml:space="preserve">
+    <value>Surveillance</value>
+  </data>
+  <data name="SettingsCheckIntervalHeader.Text" xml:space="preserve">
+    <value>Intervalle de vérification</value>
+  </data>
+  <data name="SettingsCheckIntervalDescription.Text" xml:space="preserve">
+    <value>Fréquence à laquelle Wol vérifie si les machines sont en ligne (1 à 3600 secondes)</value>
+  </data>
+  <data name="SettingsCheckIntervalBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Intervalle de vérification, en secondes</value>
+  </data>
+  <data name="SettingsWakeTimeoutHeader.Text" xml:space="preserve">
+    <value>Délai de réveil</value>
+  </data>
+  <data name="SettingsWakeTimeoutDescription.Text" xml:space="preserve">
+    <value>Durée après laquelle Wol cesse d’attendre et marque la machine « Délai dépassé » (30 à 900 secondes)</value>
+  </data>
+  <data name="SettingsWakeTimeoutBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Délai de réveil, en secondes</value>
+  </data>
+  <data name="SettingsUnitSeconds.Text" xml:space="preserve">
+    <value>secondes</value>
+  </data>
+  <data name="SettingsUnitSeconds2.Text" xml:space="preserve">
+    <value>secondes</value>
+  </data>
+  <data name="SettingsNotifications.Text" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SettingsNotifyHeader.Text" xml:space="preserve">
+    <value>Notifications des machines</value>
+  </data>
+  <data name="SettingsNotifyDescription.Text" xml:space="preserve">
+    <value>Notifications Windows depuis l’icône de la zone de notification</value>
+  </data>
+  <data name="SettingsNotifySwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Notifications des machines</value>
+  </data>
+  <data name="SettingsNotifySwitch.OnContent" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="SettingsNotifySwitch.OffContent" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="SettingsNotifyIntro.Text" xml:space="preserve">
+    <value>M’avertir quand une machine…</value>
+  </data>
+  <data name="SettingsNotifyOnline.Content" xml:space="preserve">
+    <value>Passe en ligne</value>
+  </data>
+  <data name="SettingsNotifyOffline.Content" xml:space="preserve">
+    <value>Passe hors ligne</value>
+  </data>
+  <data name="SettingsNotifyTimedOut.Content" xml:space="preserve">
+    <value>Ne se réveille pas (délai dépassé)</value>
+  </data>
+  <data name="SettingsNotifyError.Content" xml:space="preserve">
+    <value>Ne peut pas être vérifiée (aucun réseau local à analyser)</value>
+  </data>
+  <data name="SettingsAbout.Text" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="SettingsAboutCopy.Content" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="SettingsAboutCopy.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Copier les informations de version</value>
+  </data>
+  <data name="SettingsAboutCliHeader.Text" xml:space="preserve">
+    <value>CLI associée</value>
+  </data>
+  <data name="SettingsAboutCliCheckAgain.Content" xml:space="preserve">
+    <value>Vérifier à nouveau</value>
+  </data>
+  <data name="SettingsAboutConfigHeader.Text" xml:space="preserve">
+    <value>Fichier de configuration</value>
+  </data>
+  <data name="SettingsAboutConfigOpenLocation.Content" xml:space="preserve">
+    <value>Ouvrir l’emplacement du fichier</value>
+  </data>
+  <data name="SettingsAboutDocs.Content" xml:space="preserve">
+    <value>Documentation</value>
+  </data>
+  <data name="SettingsAboutReport.Content" xml:space="preserve">
+    <value>Signaler un problème</value>
+  </data>
+  <data name="Settings_Theme_System" xml:space="preserve">
+    <value>Utiliser le paramètre système</value>
+  </data>
+  <data name="Settings_Theme_Light" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="Settings_Theme_Dark" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="Settings_Language_System" xml:space="preserve">
+    <value>Utiliser le paramètre système</value>
+  </data>
+  <data name="Settings_About_Version" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="Settings_About_Cli_Description" xml:space="preserve">
+    <value>wol.exe {0}, à côté de wol-gui.exe</value>
+  </data>
+  <data name="Settings_About_Cli_Connected" xml:space="preserve">
+    <value>Connectée</value>
+  </data>
+  <data name="Settings_About_Cli_NotFound" xml:space="preserve">
+    <value>Introuvable</value>
+  </data>
+  <data name="Settings_About_Cli_Incompatible" xml:space="preserve">
+    <value>Non prise en charge</value>
+  </data>
+  <data name="Tray_Tooltip_AllOnline" xml:space="preserve">
+    <value>Wol — {0} machines en ligne</value>
+  </data>
+  <data name="Tray_Tooltip_Mixed" xml:space="preserve">
+    <value>Wol — {0} en ligne · {1} hors ligne</value>
+  </data>
+  <data name="Tray_Tooltip_Error" xml:space="preserve">
+    <value>Wol — {0}</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Ouvrir Wol</value>
+  </data>
+  <data name="Tray_Menu_Wake" xml:space="preserve">
+    <value>Réveiller</value>
+  </data>
+  <data name="Tray_Menu_WakeAll" xml:space="preserve">
+    <value>Réveiller toutes les machines hors ligne ({0})</value>
+  </data>
+  <data name="Tray_Menu_GroupAllOnline" xml:space="preserve">
+    <value>{0} — tout est en ligne</value>
+  </data>
+  <data name="Tray_Menu_Refresh" xml:space="preserve">
+    <value>Actualiser</value>
+  </data>
+  <data name="Tray_Menu_Quit" xml:space="preserve">
+    <value>Quitter</value>
+  </data>
+  <data name="Balloon_Online_Title" xml:space="preserve">
+    <value>{0} est en ligne</value>
+  </data>
+  <data name="Balloon_Online_Woken" xml:space="preserve">
+    <value>Réveil en {0}.</value>
+  </data>
+  <data name="Balloon_Online_Passive" xml:space="preserve">
+    <value>La machine vient de passer en ligne.</value>
+  </data>
+  <data name="Balloon_Offline_Title" xml:space="preserve">
+    <value>{0} est passée hors ligne</value>
+  </data>
+  <data name="Balloon_Offline_Text" xml:space="preserve">
+    <value>Dernière réponse {0}.</value>
+  </data>
+  <data name="Balloon_TimedOut_Title" xml:space="preserve">
+    <value>{0} ne s’est pas réveillée</value>
+  </data>
+  <data name="Balloon_TimedOut_Text" xml:space="preserve">
+    <value>Aucune réponse après {0}. Vérifiez que Wake-on-LAN est activé.</value>
+  </data>
+  <data name="Balloon_Error_Title" xml:space="preserve">
+    <value>Impossible de vérifier vos machines</value>
+  </data>
+  <data name="Balloon_Error_Text" xml:space="preserve">
+    <value>Aucun réseau local à analyser.</value>
+  </data>
+  <data name="Balloon_Group_Title" xml:space="preserve">
+    <value>{0} : {1} machines sur {2} en ligne</value>
+  </data>
+  <data name="Balloon_Group_Text_One" xml:space="preserve">
+    <value>{0} ne s’est pas réveillée.</value>
+  </data>
+  <data name="Balloon_Group_Text_Other" xml:space="preserve">
+    <value>{0} machines ne se sont pas réveillées.</value>
+  </data>
+  <data name="Balloon_StillRunning_Title" xml:space="preserve">
+    <value>Wol est toujours actif</value>
+  </data>
+  <data name="Balloon_StillRunning_Text" xml:space="preserve">
+    <value>Retrouvez-le dans la zone de notification. Vous pouvez changer ce comportement dans les paramètres.</value>
+  </data>
 </root>

@@ -26,6 +26,10 @@
     <!-- LibraryImport (Win32 calls) generates unsafe marshalling code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
+    <!-- Program.cs is the entry point (single instance), not the one generated from App.xaml. -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+
+    <Version>0.1.0</Version>
     <ApplicationIcon>Assets/wol-gui.ico</ApplicationIcon>
   </PropertyGroup>
 

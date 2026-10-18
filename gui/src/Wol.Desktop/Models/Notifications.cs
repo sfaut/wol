@@ -24,6 +24,40 @@ public sealed record Notification(
 }
 
 /// <summary>
+/// Kind of event worth a Windows notification (each one can be turned off in Settings).
+/// </summary>
+public enum AlertKind
+{
+    /// <summary>
+    /// A machine came online, by itself or after a wake-up.
+    /// </summary>
+    Online,
+
+    /// <summary>
+    /// A machine went offline.
+    /// </summary>
+    Offline,
+
+    /// <summary>
+    /// A machine did not wake up in time.
+    /// </summary>
+    TimedOut,
+
+    /// <summary>
+    /// Machines cannot be checked (no local network).
+    /// </summary>
+    Error,
+}
+
+/// <summary>
+/// Event worth a Windows notification, shown when the window is not in front.
+/// </summary>
+/// <param name="Kind">What happened.</param>
+/// <param name="Title">Title of the notification.</param>
+/// <param name="Text">Text of the notification.</param>
+public sealed record Alert(AlertKind Kind, string Title, string Text);
+
+/// <summary>
 /// Degraded states shown in the bar at the top of the page, by precedence.
 /// </summary>
 public enum BannerKind

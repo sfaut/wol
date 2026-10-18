@@ -33,12 +33,15 @@
             ExpandedModeThresholdWidth="960"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
-            IsSettingsVisible="False"
+            IsSettingsVisible="True"
             OpenPaneLength="280"
             PaneDisplayMode="Auto"
             ItemInvoked="Navigation_ItemInvoked"
             SelectionChanged="Navigation_SelectionChanged">
-            <views:MachineListPage x:Name="ListPage" />
+            <Grid>
+                <views:MachineListPage x:Name="ListPage" />
+                <views:SettingsPage x:Name="SettingsView" Visibility="Collapsed" />
+            </Grid>
         </NavigationView>
     </Grid>
 </Window>

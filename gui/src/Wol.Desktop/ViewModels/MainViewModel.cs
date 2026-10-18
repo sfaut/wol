@@ -17,16 +17,6 @@ namespace Wol.Desktop.ViewModels;
 public sealed partial class MainViewModel : ObservableObject
 {
     /// <summary>
-    /// Time between two scans of <c>wol watch</c>, in seconds.
-    /// </summary>
-    public const int CheckInterval = 10;
-
-    /// <summary>
-    /// How long a wake run waits for the machines to come online.
-    /// </summary>
-    public static readonly TimeSpan WakeTimeout = TimeSpan.FromSeconds(120);
-
-    /// <summary>
     /// Delay before starting <c>wol watch</c> again after it stopped.
     /// </summary>
     private static readonly TimeSpan WatchRestartDelay = TimeSpan.FromSeconds(5);
@@ -77,6 +67,11 @@ public sealed partial class MainViewModel : ObservableObject
     private ErrorDto? _configError;
 
     /// <summary>
+    /// Time between two scans of <c>wol watch</c>, in seconds.
+    /// </summary>
+    private int _checkInterval = 10;
+
+    /// <summary>
     /// Builds the view model; call <see cref="StartAsync"/> once the window is shown.
     /// </summary>
     /// <param name="dispatcher">Dispatcher of the UI thread.</param>
@@ -122,6 +117,59 @@ public sealed partial class MainViewModel : ObservableObject
     /// Whether checks and wake-ups are possible.
     /// </summary>
     public bool CanUseCli => !_cliMissing && _cliIncompatible is null;
+
+    /// <summary>
+    /// Raised for events worth a Windows notification when the window is not in front: machines
+    /// coming online or going offline, wake-ups that time out, the network lost.
+    /// </summary>
+    public event EventHandler<Alert>? Alerted;
+
+    /// <summary>
+    /// Time between two scans of <c>wol watch</c>, in seconds; monitoring restarts on change.
+    /// </summary>
+    public int CheckInterval
+    {
+        get => _checkInterval;
+        set
+        {
+            if (value == _checkInterval)
+            {
+                return;
+            }
+
+            _checkInterval = value;
+            if (_watch is not null)
+            {
+                StopWatching();
+                StartWatching();
+            }
+        }
+    }
+
+    /// <summary>
+    /// How long a wake run waits for the machines to come online.
+    /// </summary>
+    public TimeSpan WakeTimeout { get; set; } = TimeSpan.FromSeconds(120);
+
+    /// <summary>
+    /// Version of the companion CLI, once checked.
+    /// </summary>
+    public string? CliVersion { get; private set; }
+
+    /// <summary>
+    /// Path of the CLI executable.
+    /// </summary>
+    public string CliPath => _cli.Path;
+
+    /// <summary>
+    /// State of the companion CLI: <c>connected</c>, <c>missing</c> or <c>incompatible</c>.
+    /// </summary>
+    public string CliStatus => _cliMissing ? "missing" : _cliIncompatible is not null ? "incompatible" : "connected";
+
+    /// <summary>
+    /// Configuration file used by the CLI, once known.
+    /// </summary>
+    public string? ConfigPath { get; private set; }
 
     /// <summary>
     /// Checks the CLI, loads the machines and starts monitoring them. Safe to call again
@@ -289,6 +337,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             var result = await _cli.RunAsync(["version"]);
             var version = CliClient.Parse(result.Stdout, ContractContext.Default.VersionDocument);
+            CliVersion = version?.Version;
             if (version?.Schema == Contract.Schema)
             {
                 return true;
@@ -330,6 +379,7 @@ public sealed partial class MainViewModel : ObservableObject
         }
 
         _configError = null;
+        ConfigPath = document.Config?.Path ?? ConfigPath;
         var definitions = document.Machines ?? [];
         var shared = SharedMacs(document.Warnings ?? []);
 
@@ -528,6 +578,8 @@ public sealed partial class MainViewModel : ObservableObject
                     run.Online.Add(woken);
                     if (run.Machines.Count == 1)
                     {
+                        Alert(AlertKind.Online, Strings.Format("Balloon_Online_Title", woken.Name),
+                            Strings.Format("Balloon_Online_Woken", TimeText.Words(TimeSpan.FromSeconds(wakeEvent.ElapsedS ?? 0))));
                         Notify(new Notification(
                             InfoBarSeverity.Success,
                             Strings.Format("Wake_Success_Title", woken.Name),
@@ -542,6 +594,8 @@ public sealed partial class MainViewModel : ObservableObject
                     run.TimedOut.Add(late);
                     if (run.Machines.Count == 1)
                     {
+                        Alert(AlertKind.TimedOut, Strings.Format("Balloon_TimedOut_Title", late.Name),
+                            Strings.Format("Balloon_TimedOut_Text", TimeText.Words(WakeTimeout)));
                         Notify(new Notification(
                             InfoBarSeverity.Warning,
                             Strings.Format("Wake_TimedOut_Title", late.Name),
@@ -574,6 +628,15 @@ public sealed partial class MainViewModel : ObservableObject
         {
             return;
         }
+
+        Alert(
+            run.TimedOut.Count == 0 ? AlertKind.Online : AlertKind.TimedOut,
+            Strings.Format("Balloon_Group_Title", run.Title, run.Online.Count, total),
+            run.TimedOut.Count == 0
+                ? Strings.Format("Wake_Result_AllOnline_Message", TimeText.Words(DateTimeOffset.Now - run.StartedAt))
+                : run.TimedOut.Count == 1
+                    ? Strings.Format("Balloon_Group_Text_One", run.TimedOut.First().Name)
+                    : Strings.Format("Balloon_Group_Text_Other", run.TimedOut.Count));
 
         if (run.TimedOut.Count == 0)
         {
@@ -630,6 +693,7 @@ public sealed partial class MainViewModel : ObservableObject
             }
 
             machine.IsChecking = false;
+            var previous = machine.State;
             switch (state.State)
             {
                 case "online":
@@ -650,11 +714,41 @@ public sealed partial class MainViewModel : ObservableObject
                     break;
             }
             machine.Refresh();
+            AlertTransition(machine, previous);
         }
 
         UpdateBanner();
         OnStatesChanged();
     }
+
+    /// <summary>
+    /// Raises an alert when a scan shows a machine coming online or going offline by itself.
+    /// The first state of a machine (from Unknown) is not a change worth telling.
+    /// </summary>
+    /// <param name="machine">Machine whose state was applied.</param>
+    /// <param name="previous">State before the scan.</param>
+    private void AlertTransition(MachineItem machine, MachineState previous)
+    {
+        if (machine.State == MachineState.Online && previous is MachineState.Offline or MachineState.TimedOut)
+        {
+            Alert(AlertKind.Online, Strings.Format("Balloon_Online_Title", machine.Name), Strings.Get("Balloon_Online_Passive"));
+        }
+        else if (machine.State == MachineState.Offline && previous == MachineState.Online)
+        {
+            Alert(
+                AlertKind.Offline,
+                Strings.Format("Balloon_Offline_Title", machine.Name),
+                Strings.Format("Balloon_Offline_Text", TimeText.Ago(machine.LastSeen ?? DateTimeOffset.Now)));
+        }
+    }
+
+    /// <summary>
+    /// Raises an alert.
+    /// </summary>
+    /// <param name="kind">What happened.</param>
+    /// <param name="title">Title.</param>
+    /// <param name="text">Text.</param>
+    private void Alert(AlertKind kind, string title, string text) => Alerted?.Invoke(this, new Alert(kind, title, text));
 
     /// <summary>
     /// Shows a machine online, with the interface that answered.
@@ -680,6 +774,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             case "config_invalid":
                 _configError = error;
+                ConfigPath = ConfigErrorPath ?? ConfigPath;
                 break;
             case "no_local_network" or "scan_failed":
                 foreach (var machine in _machines.Values.Where(machine => machine.State != MachineState.Waking))
@@ -699,6 +794,7 @@ public sealed partial class MainViewModel : ObservableObject
     /// </summary>
     private void UpdateBanner()
     {
+        var hadNoNetwork = Banner?.Kind == BannerKind.NoNetwork;
         Banner = true switch
         {
             _ when _cliMissing => new Banner(
@@ -721,6 +817,10 @@ public sealed partial class MainViewModel : ObservableObject
                 Strings.Get("Error_NoNetwork_Message")),
             _ => null,
         };
+        if (Banner?.Kind == BannerKind.NoNetwork && !hadNoNetwork)
+        {
+            Alert(AlertKind.Error, Strings.Get("Balloon_Error_Title"), Strings.Get("Balloon_Error_Text"));
+        }
         OnPropertyChanged(nameof(Banner));
         OnPropertyChanged(nameof(CanUseCli));
     }
