@@ -54,6 +54,9 @@ tests and future front-ends (`wol serve`) reuse the same code.
 
 - `cli.rs`: clap definitions, command execution, human / JSON output. Each command returns an
   `Outcome` (JSON value, text, exit code); `run` prints it and adds the `schema` field.
+  Help texts: doc comments, first paragraph for `-h`, further paragraphs for `--help`; explain
+  what each option is for, keep every help line within 80 columns (`max_term_width`), and check
+  with `wol <command> --help`.
 - `config.rs`: `wol.toml` model and edits. Reads with `toml` (typed, validated model) and edits
   with `toml_edit` (`DocumentMut`) so hand-written comments survive. Every mutation edits the
   document, then `refresh()` re-parses and re-validates it: the file on disk can never become
