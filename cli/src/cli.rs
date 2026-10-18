@@ -70,6 +70,14 @@ enum Command {
         /// Also wake every machine of this group (repeatable)
         #[arg(long = "group", value_name = "GROUP")]
         groups: Vec<String>,
+
+        /// Wait until the machines are online, up to SECONDS [default: 120]
+        ///
+        /// Scans the local network every 2 seconds and reports each machine as it comes
+        /// online. Machines still offline after SECONDS are reported as timed out (exit
+        /// code 6). The value needs an equals sign: --wait=300.
+        #[arg(long, value_name = "SECONDS", num_args = 0..=1, require_equals = true, default_missing_value = "120", value_parser = clap::value_parser!(u64).range(1..=3_600))]
+        wait: Option<u64>,
     },
 
     /// Check whether machines are online (all machines by default)
@@ -289,6 +297,10 @@ pub struct Outcome {
 
     /// Process exit code (non-zero for partial failures).
     pub(crate) exit: u8,
+
+    /// Whether the command already printed its output as it went (`wake --wait`): only the
+    /// configuration line is left to print.
+    pub(crate) streamed: bool,
 }
 
 impl Outcome {
@@ -298,6 +310,7 @@ impl Outcome {
             json,
             text,
             exit: 0,
+            streamed: false,
         }
     }
 }
@@ -344,7 +357,9 @@ where
     match result {
         Ok(outcome) => {
             if cli.json {
-                println!("{}", document(Some(config), outcome.json));
+                if !outcome.streamed {
+                    println!("{}", document(Some(config), outcome.json));
+                }
             } else {
                 print!("{}", outcome.text);
                 eprintln!("{}", config_line(&file));
@@ -426,7 +441,19 @@ fn print_json_error(code: &str, message: &str, details: Value) {
 fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
         Command::List => Ok(list(file)),
-        Command::Wake { machines, groups } => wake::wake(file, machines, groups),
+        Command::Wake {
+            machines,
+            groups,
+            wait,
+        } => wake::wake(
+            file,
+            &wake::Options {
+                names: machines,
+                groups,
+                wait: wait.map(std::time::Duration::from_secs),
+                json: cli.json,
+            },
+        ),
         Command::Scan => scan_network(file),
         Command::Status { selection } => status(file, selection),
         Command::Watch {
@@ -789,6 +816,7 @@ fn status(file: &ConfigFile, selection: &Selection) -> Result<Outcome> {
         json,
         text: status_text(config, &machines, &probes),
         exit: if scan.is_err() { EXIT_NETWORK } else { 0 },
+        streamed: false,
     })
 }
 

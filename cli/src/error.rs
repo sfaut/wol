@@ -22,6 +22,9 @@ pub const EXIT_NOT_FOUND: u8 = 4;
 /// Exit code: network error.
 pub const EXIT_NETWORK: u8 = 5;
 
+/// Exit code: machines did not come online in time (`wake --wait`).
+pub const EXIT_TIMEOUT: u8 = 6;
+
 /// Any error the CLI can report.
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
