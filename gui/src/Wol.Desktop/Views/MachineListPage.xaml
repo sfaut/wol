@@ -177,7 +177,7 @@
 
         <!-- Sections. -->
         <ScrollViewer Grid.Row="3" Padding="36,0,32,24">
-            <ItemsRepeater x:Name="SectionsRepeater">
+            <ItemsRepeater x:Name="SectionsRepeater" ElementPrepared="Sections_ElementPrepared">
                 <ItemsRepeater.Layout>
                     <StackLayout Spacing="8" />
                 </ItemsRepeater.Layout>

@@ -73,6 +73,22 @@ public sealed partial class MachineListPage : UserControl
     }
 
     /// <summary>
+    /// Gives a group card its section.
+    /// </summary>
+    /// <param name="sender">The repeater.</param>
+    /// <param name="args">The card and its index.</param>
+    private void Sections_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+    {
+        if (args.Element is not Expander card)
+        {
+            return;
+        }
+
+        // The repeater leaves the data context of the card empty; its buttons read it.
+        card.DataContext = sender.ItemsSourceView.GetAt(args.Index);
+    }
+
+    /// <summary>
     /// Shows every section, or one section alone.
     /// </summary>
     /// <param name="only">Section to show alone; every section when null.</param>
