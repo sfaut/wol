@@ -41,7 +41,7 @@ internal static partial class StartupShortcut
                 return true;
             }
 
-            var executable = Environment.ProcessPath!;
+            var executable = AppFolder.Launcher;
             var clsid = new Guid("00021401-0000-0000-C000-000000000046");
             var iid = new Guid("00000000-0000-0000-C000-000000000046");
             Marshal.ThrowExceptionForHR(CoCreateInstance(in clsid, 0, CLSCTX_INPROC_SERVER, in iid, out var unknown));

@@ -1,5 +1,6 @@
 # Rust
 /cli/target/
+/gui/launcher/target/
 
 # .NET
 bin/

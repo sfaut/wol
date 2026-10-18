@@ -43,6 +43,15 @@ dotnet run --project src/Wol.Desktop
 dotnet publish src/Wol.Desktop -c Release -r win-x64   # or win-arm64
 ```
 
+Launcher (run from `gui/launcher/`, needed by `dotnet publish`): `cargo build --release`.
+
+A release keeps only the executables at the root of the publish folder: `wol-gui.exe`, a small
+Rust launcher (`gui/launcher`) that starts `runtime\wol-gui.exe` with the same arguments, and
+`wol.exe`. The GUI and the ~80 files of the Windows App SDK go to `runtime\`. The GUI finds its
+root in `Services/AppFolder.cs`: `wol.exe`, the portable `wol.toml` / `wol-gui.json` and the
+"Start with Windows" shortcut target all live at the root. A debug build keeps everything in
+one folder.
+
 The Native AOT link of `dotnet publish` runs `vswhere.exe`: put
 `C:\Program Files (x86)\Microsoft Visual Studio\Installer` on the `PATH` if it is not found.
 

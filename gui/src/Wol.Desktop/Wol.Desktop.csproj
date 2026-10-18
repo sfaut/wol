@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="PublishDir">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -71,16 +71,35 @@
   </Target>
 
   <!--
-    The GUI runs wol.exe from its own folder. During development, copy the CLI built in
-    cli/target: the release build when present, the debug build otherwise.
+    The GUI runs wol.exe from the root of the app (Services/AppFolder.cs). During development,
+    copy the CLI built in cli/target next to the GUI: the release build when present, the debug
+    build otherwise.
   -->
   <PropertyGroup>
     <CliTarget>$(MSBuildThisFileDirectory)..\..\..\cli\target\</CliTarget>
     <CliExecutable Condition="Exists('$(CliTarget)release\wol.exe')">$(CliTarget)release\wol.exe</CliExecutable>
     <CliExecutable Condition="'$(CliExecutable)' == '' And Exists('$(CliTarget)debug\wol.exe')">$(CliTarget)debug\wol.exe</CliExecutable>
+    <LauncherExecutable>$(MSBuildThisFileDirectory)..\..\launcher\target\release\wol-gui.exe</LauncherExecutable>
   </PropertyGroup>
   <ItemGroup Condition="'$(CliExecutable)' != ''">
-    <None Include="$(CliExecutable)" Link="wol.exe" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(CliExecutable)" Link="wol.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
   </ItemGroup>
+
+  <!--
+    A release keeps its executables at the root, out of the ~80 files of the Windows App SDK:
+    the launcher (gui/launcher) and wol.exe at the root of the publish folder, the GUI in its
+    runtime subfolder. PublishDir is a local property so that it also applies with -o.
+  -->
+  <Target Name="PublishIntoRuntimeFolder" BeforeTargets="PrepareForPublish">
+    <Error Condition="!Exists('$(LauncherExecutable)')" Text="The launcher is not built: run cargo build --release in gui/launcher." />
+    <Error Condition="'$(CliExecutable)' == ''" Text="The CLI is not built: run cargo build --release in cli." />
+    <PropertyGroup>
+      <ReleaseDir>$([MSBuild]::EnsureTrailingSlash('$(PublishDir)'))</ReleaseDir>
+      <PublishDir>$(ReleaseDir)runtime\</PublishDir>
+    </PropertyGroup>
+  </Target>
+  <Target Name="CopyRootExecutables" AfterTargets="Publish">
+    <Copy SourceFiles="$(LauncherExecutable);$(CliExecutable)" DestinationFolder="$(ReleaseDir)" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>
