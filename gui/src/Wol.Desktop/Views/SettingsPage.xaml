@@ -277,6 +277,22 @@
                     </Grid>
                 </Expander.Header>
                 <StackPanel Spacing="4">
+                    <!-- Name and address are not localized. -->
+                    <Grid MinHeight="40" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Sébastien Faut" />
+                            <TextBlock x:Uid="SettingsAboutAuthorDescription" Style="{StaticResource CardDescriptionStyle}" />
+                        </StackPanel>
+                        <HyperlinkButton
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Content="sebastien.faut@gmail.com"
+                            NavigateUri="mailto:sebastien.faut@gmail.com" />
+                    </Grid>
                     <Grid MinHeight="40" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
