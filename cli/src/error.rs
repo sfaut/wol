@@ -5,6 +5,8 @@ use std::path::PathBuf;
 
 use serde_json::{Value, json};
 
+use crate::probe::Reason;
+
 /// Exit code: generic failure.
 pub const EXIT_FAILURE: u8 = 1;
 
@@ -76,6 +78,10 @@ pub enum Error {
         /// Machines belonging to the group.
         machines: Vec<String>,
     },
+
+    /// The local network cannot be scanned.
+    #[error("{}", .0.message())]
+    Scan(Reason),
 }
 
 impl Error {
@@ -90,6 +96,8 @@ impl Error {
             Self::MachineAlreadyExists(_) => "machine_already_exists",
             Self::GroupAlreadyExists(_) => "group_already_exists",
             Self::GroupNotEmpty { .. } => "group_not_empty",
+            Self::Scan(Reason::NoLocalNetwork) => "no_local_network",
+            Self::Scan(Reason::ScanFailed) => "scan_failed",
         }
     }
 
@@ -103,6 +111,7 @@ impl Error {
             | Self::GroupAlreadyExists(_)
             | Self::GroupNotEmpty { .. } => EXIT_USAGE,
             Self::MachineNotFound(_) | Self::GroupNotFound(_) => EXIT_NOT_FOUND,
+            Self::Scan(_) => EXIT_NETWORK,
         }
     }
 
@@ -119,6 +128,7 @@ impl Error {
             Self::GroupNotEmpty { name, machines } => {
                 json!({ "group": name, "machines": machines })
             }
+            Self::Scan(_) => json!({}),
         }
     }
 }

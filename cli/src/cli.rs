@@ -70,6 +70,9 @@ enum Command {
         interval: u64,
     },
 
+    /// List the devices found on the local network
+    Scan,
+
     /// Add a machine
     Add(AddArgs),
 
@@ -353,6 +356,7 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
         Command::List => Ok(list(file)),
         Command::Wake { machines, groups } => wake(file, machines, groups),
+        Command::Scan => scan_network(file),
         Command::Status { selection } => status(file, selection),
         Command::Watch {
             selection,
@@ -629,6 +633,68 @@ fn machine_outcome(file: &ConfigFile, machine: &Machine, text: String) -> Outcom
         json!({ "machine": machine, "warnings": warnings_json(&shared) }),
         text + &warnings_text(&shared),
     )
+}
+
+/// Lists the devices found on the local network, with the machines that use their MAC address.
+///
+/// # Errors
+///
+/// Returns [`Error::Scan`] when the local network cannot be scanned.
+fn scan_network(file: &ConfigFile) -> Result<Outcome> {
+    let devices = scan::scan().map_err(|error| Error::Scan(error.into()))?;
+    let config = file.config();
+
+    // Machines (and the label of their interface) using a MAC address.
+    let users = |mac: MacAddress| -> Vec<(&str, Option<&str>)> {
+        config
+            .machines
+            .iter()
+            .filter_map(|machine| {
+                machine
+                    .interfaces
+                    .iter()
+                    .find(|interface| interface.mac == mac)
+                    .map(|interface| (machine.name.as_str(), interface.label.as_deref()))
+            })
+            .collect()
+    };
+
+    let json = json!({
+        "scanned_at": time::now(),
+        "devices": devices.iter().map(|device| json!({
+            "address": device.address.to_string(),
+            "mac": device.mac,
+            "machines": users(device.mac).into_iter().map(|(machine, label)| json!({ "machine": machine, "label": label })).collect::<Vec<_>>(),
+        })).collect::<Vec<_>>(),
+    });
+
+    if devices.is_empty() {
+        return Ok(Outcome::ok(json, "No devices found.\n".to_owned()));
+    }
+    let mut text = String::new();
+    for device in &devices {
+        let known: Vec<String> = users(device.mac)
+            .into_iter()
+            .map(|(machine, label)| match label {
+                Some(label) => format!("{machine} ({label})"),
+                None => machine.to_owned(),
+            })
+            .collect();
+        let _ = writeln!(
+            text,
+            "{:<15}  {}  {}",
+            device.address.to_string(),
+            device.mac,
+            known.join(", ")
+        );
+    }
+    let text = text
+        .lines()
+        .map(str::trim_end)
+        .collect::<Vec<_>>()
+        .join("\n")
+        + "\n";
+    Ok(Outcome::ok(json, text))
 }
 
 /// Checks the selected machines once, with one scan of the local network.

@@ -391,3 +391,25 @@ fn shared_mac_addresses_are_allowed_with_a_warning() {
             "Warning: MAC address 00:11:22:33:44:55 is used by several machines (\"VM 1\", \"VM 2\")",
         ));
 }
+
+#[test]
+fn scan_lists_devices_and_known_machines() {
+    let wol = Wol::new().network("192.168.1.30=66:77:88:99:AA:BB, 192.168.1.20=00:11:22:33:44:55");
+    wol.ok(&["add", "Desk", "--mac", "001122334455=Wi-Fi"]);
+
+    let (code, stdout, _) = wol.json(&["scan"]);
+    assert_eq!(code, 0);
+    let devices = stdout.unwrap()["devices"].as_array().unwrap().clone();
+    assert_eq!(devices.len(), 2);
+    assert_eq!(devices[0]["address"], "192.168.1.20");
+    assert_eq!(
+        devices[0]["machines"],
+        serde_json::json!([{ "machine": "Desk", "label": "Wi-Fi" }])
+    );
+    assert_eq!(devices[1]["mac"], "66:77:88:99:AA:BB");
+    assert_eq!(devices[1]["machines"], serde_json::json!([]));
+
+    let (code, _, stderr) = Wol::new().network("none").json(&["scan"]);
+    assert_eq!(code, 5);
+    assert_eq!(stderr.unwrap()["error"]["code"], "no_local_network");
+}
