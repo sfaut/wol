@@ -4,8 +4,8 @@
 > the interface between the `wol` CLI and any front-end (the Windows GUI today, a macOS GUI or
 > a `wol serve` service later). Any change to the JSON output must be reflected here first.
 >
-> Implemented: `list`, `status`, `watch`, `scan`, `wake`, `add`, `edit`, `remove`, `group …`.
-> Not implemented yet: `wake --wait`, `version --json`, `--lang`, localized output.
+> Implemented: `list`, `status`, `watch`, `scan`, `wake` (with `--wait`), `add`, `edit`, `remove`, `group …`.
+> Not implemented yet: `version --json`, `--lang`, localized output.
 
 ## Configuration file: `wol.toml`
 
@@ -77,7 +77,7 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 | `wol status [<machine>…] [--group <name>]…` | Check the state of machines once (all machines by default) |
 | `wol watch [<machine>…] [--group <name>]… [--interval <s>]` | Monitor machines continuously, one event per state change (all machines by default) |
 | `wol scan` | List the devices found on the local network |
-| `wol wake [<machine>…] [--group <name>]…` | Send magic packets to every interface (a machine named twice is woken once) |
+| `wol wake [<machine>…] [--group <name>]… [--wait[=<s>]]` | Send magic packets to every interface (a machine named twice is woken once); with `--wait`, wait until the machines are online (default 120 s, 1 to 3600) |
 | `wol add <name> --mac <mac[=label]>… [--group <g>] [--broadcast <ipv4>] [--port <p>]` | Add a machine; `--mac` is repeatable, at least one |
 | `wol edit <name> [--name <new>] [--mac <mac[=label]>… \| [--add-mac <mac[=label]>]… [--remove-mac <mac>]…] [--group <g> \| --no-group] [--broadcast <ipv4> \| --no-broadcast] [--port <p> \| --no-port]` | Change a machine; only given options change. `--mac` replaces all interfaces; `--add-mac` adds one, or replaces the label of an existing one |
 | `wol remove <name>` | Remove a machine |
@@ -163,6 +163,7 @@ Warning:
 | `watch` | NDJSON events, see below |
 | `scan` | `{ "schema", "config", "scanned_at": "<RFC 3339 UTC>", "devices": [{ "address", "mac", "machines": [{ "machine", "label" }…] }…] }`, sorted by address; `machines` is empty for unknown devices |
 | `wake` | `{ "schema", "config", "results": [{ "machine", "target": "<ip>:<port>", "macs": ["<mac>"…], "status": "sent" \| "failed", "error"?: { "code", "message" } }…] }` |
+| `wake --wait` | NDJSON events, see below |
 | `add`, `edit` | `{ "schema", "config", "machine": Machine, "warnings": [Warning…] }` (warnings about the MAC addresses of this machine) |
 | `remove` | `{ "schema", "config", "machine": Machine }` (the removed machine) |
 | `group add`, `group move` | `{ "schema", "config", "group": Group, "position": <1-based> }` |
@@ -192,6 +193,21 @@ re-reads the configuration file whenever it changes on disk.
 Leaving `online` is reported only after 2 consecutive scans agree, so that a single missed
 answer does not trigger a notification; every other change is reported at once.
 
+### `wake --wait` events
+
+After sending the magic packets, `wake --wait` scans the local network every 2 seconds until
+every machine whose packets were sent is online, or the time is up.
+
+| `event` | Fields | When |
+|---|---|---|
+| `sent` | `config`, `timeout_s`, `results`: [same as `wake`] | Once, after sending |
+| `online` | `elapsed_s`, `machine`: Machine state | A machine came online (seconds since sending) |
+| `error` | `error`: { `code`, `message`, `details` } | The local network cannot be scanned (reported once; scans go on until the time is up) |
+| `timed_out` | `elapsed_s`, `machine`: "<name>" | A machine was still offline when the time was up |
+| `finished` | `online`, `timed_out`, `failed`: ["<machine>"…] | Last event |
+
+Exit code: 5 if a send failed, otherwise 6 if a machine timed out, otherwise 0.
+
 ### Errors
 
 ```json
@@ -219,7 +235,7 @@ answer does not trigger a notification; every other change is reported at once.
 
 `online`, `offline`, `error` (see "Local network scan").
 Front-ends add `unknown` (not checked yet) on their side.
-Planned for `wake --wait`: `waking`, `timed_out`.
+Front-ends show `waking` while `wake --wait` runs, and `timed_out` after a `timed_out` event.
 
 ## Exit codes
 
@@ -231,7 +247,7 @@ Planned for `wake --wait`: `waking`, `timed_out`.
 | 3 | Configuration file invalid |
 | 4 | Machine or group not found |
 | 5 | Network error (including no local network to scan) |
-| 6 | *(planned)* Wake timed out |
+| 6 | Machines did not come online in time (`wake --wait`) |
 
 ## Contract tests
 
