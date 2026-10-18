@@ -29,4 +29,17 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
   </ItemGroup>
 
+  <!--
+    The GUI runs wol.exe from its own folder. During development, copy the CLI built in
+    cli/target: the release build when present, the debug build otherwise.
+  -->
+  <PropertyGroup>
+    <CliTarget>$(MSBuildThisFileDirectory)..\..\..\cli\target\</CliTarget>
+    <CliExecutable Condition="Exists('$(CliTarget)release\wol.exe')">$(CliTarget)release\wol.exe</CliExecutable>
+    <CliExecutable Condition="'$(CliExecutable)' == '' And Exists('$(CliTarget)debug\wol.exe')">$(CliTarget)debug\wol.exe</CliExecutable>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(CliExecutable)' != ''">
+    <None Include="$(CliExecutable)" Link="wol.exe" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
