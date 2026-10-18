@@ -9,7 +9,7 @@ use std::net::Ipv4Addr;
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use toml_edit::{Array, ArrayOfTables, DocumentMut, Item, Table, value};
+use toml_edit::{Array, ArrayOfTables, DocumentMut, InlineTable, Item, Table, value};
 
 use crate::error::{Error, Result};
 use crate::mac::MacAddress;
@@ -23,8 +23,8 @@ pub const APP_DIR: &str = "wol";
 /// Maximum length of a machine or group name, in characters.
 pub const MAX_NAME_LEN: usize = 64;
 
-/// Maximum length of a host name, in characters (DNS limit).
-pub const MAX_HOST_LEN: usize = 253;
+/// Maximum length of an interface label, in characters.
+pub const MAX_LABEL_LEN: usize = 32;
 
 /// Languages the CLI can be configured with.
 pub const LANGUAGES: [&str; 2] = ["en", "fr"];
@@ -73,11 +73,9 @@ pub struct Machine {
     #[serde(default)]
     pub group: Option<String>,
 
-    /// MAC address the magic packet targets.
-    pub mac: MacAddress,
-
-    /// IP address or host name used for status checks.
-    pub host: String,
+    /// Network interfaces (at least one): magic packets go to each of them, and the machine is
+    /// online when any of them answers.
+    pub interfaces: Vec<Interface>,
 
     /// Destination address of the magic packet; limited broadcast when absent.
     #[serde(default)]
@@ -86,10 +84,18 @@ pub struct Machine {
     /// UDP port of the magic packet; port 9 when absent.
     #[serde(default)]
     pub port: Option<u16>,
+}
 
-    /// TCP ports tried when ICMP is unavailable.
+/// A network interface of a machine.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Interface {
+    /// MAC address of the interface.
+    pub mac: MacAddress,
+
+    /// Free label shown to the user, e.g. "Ethernet" or "Wi-Fi".
     #[serde(default)]
-    pub check_ports: Vec<u16>,
+    pub label: Option<String>,
 }
 
 /// Tells whether two machine or group names designate the same entity (case-insensitive).
@@ -123,25 +129,38 @@ fn check_name(name: &str) -> std::result::Result<(), String> {
 fn check_machine(machine: &Machine) -> std::result::Result<(), (&'static str, String)> {
     check_name(&machine.name).map_err(|reason| ("name", reason))?;
 
-    let host = machine.host.trim();
-    if host.is_empty()
-        || host != machine.host
-        || host.chars().count() > MAX_HOST_LEN
-        || host.contains(char::is_whitespace)
-    {
+    if machine.interfaces.is_empty() {
         return Err((
-            "host",
-            format!("expected an IP address or a host name of at most {MAX_HOST_LEN} characters"),
+            "interfaces",
+            "a machine needs at least one network interface".to_owned(),
         ));
+    }
+    for (index, interface) in machine.interfaces.iter().enumerate() {
+        if machine.interfaces[..index]
+            .iter()
+            .any(|other| other.mac == interface.mac)
+        {
+            return Err((
+                "interfaces",
+                format!("MAC address {} is listed twice", interface.mac),
+            ));
+        }
+        if let Some(label) = &interface.label {
+            if label.trim().is_empty()
+                || label.trim() != label
+                || label.chars().count() > MAX_LABEL_LEN
+            {
+                return Err((
+                    "label",
+                    format!(
+                        "labels must be 1 to {MAX_LABEL_LEN} characters, without leading or trailing spaces"
+                    ),
+                ));
+            }
+        }
     }
     if machine.port == Some(0) {
         return Err(("port", "port must be between 1 and 65535".to_owned()));
-    }
-    if machine.check_ports.contains(&0) {
-        return Err((
-            "check_ports",
-            "ports must be between 1 and 65535".to_owned(),
-        ));
     }
     Ok(())
 }
@@ -309,8 +328,7 @@ fn set_optional(table: &mut Table, key: &str, item: Option<Item>) {
 fn write_machine(table: &mut Table, machine: &Machine) {
     table["name"] = value(&machine.name);
     set_optional(table, "group", machine.group.as_deref().map(value));
-    table["mac"] = value(machine.mac.to_string());
-    table["host"] = value(&machine.host);
+    table["interfaces"] = value(interfaces_array(&machine.interfaces));
     set_optional(
         table,
         "broadcast",
@@ -321,19 +339,32 @@ fn write_machine(table: &mut Table, machine: &Machine) {
         "port",
         machine.port.map(|port| value(i64::from(port))),
     );
-    set_optional(
-        table,
-        "check_ports",
-        (!machine.check_ports.is_empty()).then(|| {
-            value(
-                machine
-                    .check_ports
-                    .iter()
-                    .map(|&port| i64::from(port))
-                    .collect::<Array>(),
-            )
-        }),
-    );
+}
+
+/// Builds the inline array of interfaces: on one line for a single interface, otherwise one
+/// interface per line.
+fn interfaces_array(interfaces: &[Interface]) -> Array {
+    let mut array: Array = interfaces
+        .iter()
+        .map(|interface| {
+            let mut entry = InlineTable::new();
+            entry.insert("mac", interface.mac.to_string().into());
+            if let Some(label) = &interface.label {
+                entry.insert("label", label.as_str().into());
+            }
+            entry
+        })
+        .collect();
+
+    if interfaces.len() > 1 {
+        for entry in array.iter_mut() {
+            entry.decor_mut().set_prefix("\n    ");
+            entry.decor_mut().set_suffix("");
+        }
+        array.set_trailing_comma(true);
+        array.set_trailing("\n");
+    }
+    array
 }
 
 /// What happened to the configuration file during a command.
@@ -779,8 +810,10 @@ name = "Servers"
 [[machine]]
 name = "Office PC"
 group = "Office"
-mac = "a4-bb-6d-12-34-56"
-host = "192.168.1.20"
+interfaces = [
+    { mac = "a4-bb-6d-12-34-56", label = "Ethernet" },
+    { mac = "a4-bb-6d-12-34-57", label = "Wi-Fi" },
+]
 "#;
 
     /// Loads `text` as if it were a configuration file.
@@ -801,11 +834,12 @@ host = "192.168.1.20"
         Machine {
             name: name.to_owned(),
             group: None,
-            mac: "00:11:22:33:44:55".parse().unwrap(),
-            host: "nas.local".to_owned(),
+            interfaces: vec![Interface {
+                mac: "00:11:22:33:44:55".parse().unwrap(),
+                label: None,
+            }],
             broadcast: None,
             port: None,
-            check_ports: Vec::new(),
         }
     }
 
@@ -814,7 +848,14 @@ host = "192.168.1.20"
         let file = load(SAMPLE).unwrap();
         let config = file.config();
         assert_eq!(config.groups.len(), 2);
-        assert_eq!(config.machines[0].mac.to_string(), "A4:BB:6D:12:34:56");
+        assert_eq!(
+            config.machines[0].interfaces[1].mac.to_string(),
+            "A4:BB:6D:12:34:57"
+        );
+        assert_eq!(
+            config.machines[0].interfaces[1].label.as_deref(),
+            Some("Wi-Fi")
+        );
         assert_eq!(config.group_machines("office").count(), 1);
     }
 
@@ -920,6 +961,41 @@ host = "192.168.1.20"
         assert_eq!(ungrouped, ["Office PC"]);
         assert_eq!(file.config().machines[0].group, None);
         assert_eq!(file.config().groups.len(), 1);
+    }
+
+    #[test]
+    fn writes_interfaces_inline() {
+        let mut file = load("").unwrap();
+        file.add_machine(&machine("NAS")).unwrap();
+        file.add_machine(&Machine {
+            interfaces: vec![
+                Interface {
+                    mac: "00:11:22:33:44:66".parse().unwrap(),
+                    label: Some("Ethernet".to_owned()),
+                },
+                Interface {
+                    mac: "00:11:22:33:44:77".parse().unwrap(),
+                    label: None,
+                },
+            ],
+            ..machine("PC")
+        })
+        .unwrap();
+
+        assert_eq!(
+            file.document.to_string(),
+            "[[machine]]
+name = \"NAS\"
+interfaces = [{ mac = \"00:11:22:33:44:55\" }]
+
+[[machine]]
+name = \"PC\"
+interfaces = [
+    { mac = \"00:11:22:33:44:66\", label = \"Ethernet\" },
+    { mac = \"00:11:22:33:44:77\" },
+]
+"
+        );
     }
 
     #[test]

@@ -1,12 +1,11 @@
-//! Machine states, deduced from a scan of the local network: a machine is online when its
-//! MAC address answers.
+//! Machine states, deduced from a scan of the local network: a machine is online when any of
+//! its network interfaces answers.
 
 use std::net::Ipv4Addr;
 
 use serde::Serialize;
 
-use crate::config::Machine;
-use crate::mac::MacAddress;
+use crate::config::{Interface, Machine};
 use crate::scan::{Device, ScanError};
 
 /// State of a machine, as reported in JSON (see `docs/cli-contract.md`).
@@ -70,8 +69,8 @@ pub struct Probe {
     /// Resulting state.
     pub state: State,
 
-    /// MAC address that answered, when online.
-    pub mac: Option<MacAddress>,
+    /// Interface that answered (the first one in configuration order), when online.
+    pub interface: Option<Interface>,
 
     /// Current IPv4 address of the machine, when online.
     pub address: Option<Ipv4Addr>,
@@ -90,20 +89,25 @@ pub fn probe_all(machines: &[&Machine], scan: &Result<Vec<Device>, ScanError>) -
         .map(|machine| match scan {
             Err(error) => Probe {
                 state: State::Error,
-                mac: None,
+                interface: None,
                 address: None,
                 reason: Some((*error).into()),
             },
-            Ok(devices) => match devices.iter().find(|device| device.mac == machine.mac) {
-                Some(device) => Probe {
+            Ok(devices) => match machine.interfaces.iter().find_map(|interface| {
+                devices
+                    .iter()
+                    .find(|device| device.mac == interface.mac)
+                    .map(|device| (interface, device))
+            }) {
+                Some((interface, device)) => Probe {
                     state: State::Online,
-                    mac: Some(device.mac),
+                    interface: Some(interface.clone()),
                     address: Some(device.address),
                     reason: None,
                 },
                 None => Probe {
                     state: State::Offline,
-                    mac: None,
+                    interface: None,
                     address: None,
                     reason: None,
                 },
@@ -116,31 +120,37 @@ pub fn probe_all(machines: &[&Machine], scan: &Result<Vec<Device>, ScanError>) -
 mod tests {
     use super::*;
 
-    /// Builds a machine with the given MAC address.
-    fn machine(mac: &str) -> Machine {
+    /// Builds a machine with the given MAC addresses (labels "1", "2"...).
+    fn machine(macs: &[&str]) -> Machine {
         Machine {
             name: "Test".to_owned(),
             group: None,
-            mac: mac.parse().unwrap(),
-            host: "test".to_owned(),
+            interfaces: macs
+                .iter()
+                .enumerate()
+                .map(|(index, mac)| Interface {
+                    mac: mac.parse().unwrap(),
+                    label: Some((index + 1).to_string()),
+                })
+                .collect(),
             broadcast: None,
             port: None,
-            check_ports: Vec::new(),
         }
     }
 
     #[test]
     fn states_follow_the_scan() {
-        let on = machine("00:11:22:33:44:55");
-        let off = machine("00:11:22:33:44:66");
+        let on = machine(&["00:11:22:33:44:55", "00:11:22:33:44:56"]);
+        let off = machine(&["00:11:22:33:44:66"]);
         let devices = vec![Device {
             address: Ipv4Addr::new(192, 168, 1, 20),
-            mac: on.mac,
+            mac: on.interfaces[1].mac,
         }];
 
         let probes = probe_all(&[&on, &off], &Ok(devices));
         assert_eq!(probes[0].state, State::Online);
         assert_eq!(probes[0].address, Some(Ipv4Addr::new(192, 168, 1, 20)));
+        assert_eq!(probes[0].interface.as_ref(), Some(&on.interfaces[1]));
         assert_eq!(probes[1].state, State::Offline);
 
         let probes = probe_all(&[&on], &Err(ScanError::NoLocalNetwork));
