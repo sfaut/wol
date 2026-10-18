@@ -1,0 +1,29 @@
+[package]
+name = "wol"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Wake-on-LAN machine manager: monitor remote machines and wake them up"
+authors = ["Sébastien Faut <sebastien.faut@gmail.com>"]
+license = "MIT"
+publish = false
+
+[dependencies]
+clap = { version = "4.6.7", features = ["derive"] }
+dirs = "7.0.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+thiserror = "2.0.21"
+toml = "1.1.8"
+toml_edit = "0.25.17"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[dev-dependencies]
+assert_cmd = "2.2.2"
+predicates = "3.1.4"
+tempfile = "3.27.0"
