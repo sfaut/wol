@@ -71,6 +71,12 @@ public sealed partial class MainWindow : Window
     private bool _maximizeOnShow;
 
     /// <summary>
+    /// Presenter of the window, kept rather than read back from <c>AppWindow.Presenter</c>:
+    /// under Native AOT, that one cannot be cast to <see cref="OverlappedPresenter"/>.
+    /// </summary>
+    private readonly OverlappedPresenter _presenter = OverlappedPresenter.Create();
+
+    /// <summary>
     /// Builds the window, its navigation, and starts loading the machines.
     /// </summary>
     public MainWindow()
@@ -172,11 +178,9 @@ public sealed partial class MainWindow : Window
     private void ApplyPlacement()
     {
         var scale = GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
-        if (AppWindow.Presenter is OverlappedPresenter presenter)
-        {
-            presenter.PreferredMinimumWidth = (int)(MinimumSize.Width * scale);
-            presenter.PreferredMinimumHeight = (int)(MinimumSize.Height * scale);
-        }
+        _presenter.PreferredMinimumWidth = (int)(MinimumSize.Width * scale);
+        _presenter.PreferredMinimumHeight = (int)(MinimumSize.Height * scale);
+        AppWindow.SetPresenter(_presenter);
 
         var saved = AppSettings.Current.Window;
         var area = saved is null
@@ -184,11 +188,12 @@ public sealed partial class MainWindow : Window
             : DisplayArea.GetFromRect(new RectInt32(saved.X, saved.Y, saved.Width, saved.Height), DisplayAreaFallback.None);
         if (saved is not null && area is not null)
         {
-            var work = area.WorkArea;
+            // The display bounds, not its work area: a snapped window overlaps it with its invisible borders.
+            var screen = area.OuterBounds;
             _restoredBounds = saved with
             {
-                Width = Math.Min(saved.Width, work.Width),
-                Height = Math.Min(saved.Height, work.Height),
+                Width = Math.Min(saved.Width, screen.Width),
+                Height = Math.Min(saved.Height, screen.Height),
             };
             _maximizeOnShow = AppSettings.Current.WindowMaximized;
         }
@@ -218,7 +223,7 @@ public sealed partial class MainWindow : Window
     {
         if ((args.DidPositionChange || args.DidSizeChange)
             && sender.IsVisible
-            && sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
+            && _presenter.State == OverlappedPresenterState.Restored)
         {
             _restoredBounds = new WindowBounds(sender.Position.X, sender.Position.Y, sender.Size.Width, sender.Size.Height);
         }
@@ -229,7 +234,7 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private void SavePlacement()
     {
-        var state = (AppWindow.Presenter as OverlappedPresenter)?.State;
+        var state = _presenter.State;
         AppSettings.Current.Window = _restoredBounds;
         if (state != OverlappedPresenterState.Minimized)
         {

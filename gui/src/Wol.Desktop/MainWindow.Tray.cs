@@ -26,19 +26,19 @@ public sealed partial class MainWindow
     /// </summary>
     public void ShowFromTray()
     {
-        if (_maximizeOnShow && AppWindow.Presenter is OverlappedPresenter maximizable)
+        if (_maximizeOnShow)
         {
             // Maximizing also shows the window, without first showing it restored.
             _maximizeOnShow = false;
-            maximizable.Maximize();
+            _presenter.Maximize();
         }
         else
         {
             AppWindow.Show();
         }
-        if (AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
+        if (_presenter.State == OverlappedPresenterState.Minimized)
         {
-            presenter.Restore();
+            _presenter.Restore();
         }
         Activate();
         SetForegroundWindow(WinRT.Interop.WindowNative.GetWindowHandle(this));
