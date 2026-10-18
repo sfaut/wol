@@ -4,8 +4,8 @@
 > the interface between the `wol` CLI and any front-end (the Windows GUI today, a macOS GUI or
 > a `wol serve` service later). Any change to the JSON output must be reflected here first.
 >
-> Implemented: `list`, `status`, `watch`, `scan`, `wake` (with `--wait`), `add`, `edit`, `remove`, `group …`.
-> Not implemented yet: `version --json`, `--lang`, localized output.
+> Implemented: `list`, `status`, `watch`, `scan`, `wake` (with `--wait`), `version`, `add`, `edit`, `remove`, `group …`.
+> Not implemented yet: `--lang`, localized output.
 
 ## Configuration file: `wol.toml`
 
@@ -81,6 +81,7 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 | `wol add <name> --mac <mac[=label]>… [--group <g>] [--broadcast <ipv4>] [--port <p>]` | Add a machine; `--mac` is repeatable, at least one |
 | `wol edit <name> [--name <new>] [--mac <mac[=label]>… \| [--add-mac <mac[=label]>]… [--remove-mac <mac>]…] [--group <g> \| --no-group] [--broadcast <ipv4> \| --no-broadcast] [--port <p> \| --no-port]` | Change a machine; only given options change. `--mac` replaces all interfaces; `--add-mac` adds one, or replaces the label of an existing one |
 | `wol remove <name>` | Remove a machine |
+| `wol version` | Print the CLI version and the JSON schema version; reads no configuration file |
 | `wol group add <name>` | Add a group at the end of the list |
 | `wol group rename <name> <new-name>` | Rename a group; its machines follow |
 | `wol group remove <name> [--ungroup]` | Remove a group; fails if not empty unless `--ungroup` |
@@ -166,6 +167,7 @@ Warning:
 | `wake --wait` | NDJSON events, see below |
 | `add`, `edit` | `{ "schema", "config", "machine": Machine, "warnings": [Warning…] }` (warnings about the MAC addresses of this machine) |
 | `remove` | `{ "schema", "config", "machine": Machine }` (the removed machine) |
+| `version` | `{ "schema", "version": "<CLI version>" }` (no `config`: the file is not read). Front-ends check `schema` to detect an incompatible CLI |
 | `group add`, `group move` | `{ "schema", "config", "group": Group, "position": <1-based> }` |
 | `group rename` | `{ "schema", "config", "group": Group }` |
 | `group remove` | `{ "schema", "config", "group": Group, "ungrouped": ["<machine>"…] }` |
