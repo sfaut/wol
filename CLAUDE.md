@@ -61,10 +61,10 @@ tests and future front-ends (`wol serve`) reuse the same code.
   `[[group]]` array indexes in the document.
 - `error.rs`: one `Error` enum; each variant maps to a stable JSON `code`, `details` and an exit code.
 - `mac.rs`, `magic.rs`: MAC address parsing, magic packet building and sending.
-- `icmp.rs`, `probe.rs`: state checks. `icmp.rs` holds the only platform-specific code
-  (`#[cfg(windows)]` `IcmpSendEcho` via `windows-sys`, `#[cfg(unix)]` ICMP datagram sockets via
-  `socket2`); `probe.rs` resolves the host, pings, falls back to TCP, and runs one thread per
-  machine (`std::thread::scope`, no async runtime).
+- `scan.rs`: local network scan (MAC and IPv4 address of every device that answers); it holds
+  the platform-specific code (`SendARP` / `GetAdaptersAddresses` via `windows-sys`, netlink on
+  Linux and `sysctl` on macOS via `libc`). `WOL_FAKE_SCAN` replaces the scan in tests.
+  `probe.rs` turns a scan into machine states (online when any interface answers).
 - `watch.rs`: the `watch` loop (config reload on file change, debounced state tracking, NDJSON
   events). `time.rs`: RFC 3339 timestamps without a date library.
 
@@ -74,7 +74,7 @@ Platform-specific code cannot run here: after touching it, at least lint the oth
 ### The GUI drives the CLI
 
 - The GUI ships `wol.exe` next to its own executable and runs it with `System.Diagnostics.Process`.
-- One-shot commands (`list`, `status`, `wake`, `add`, `edit`, `remove`, `group …`) are run with
+- One-shot commands (`list`, `status`, `scan`, `wake`, `add`, `edit`, `remove`, `group …`) are run with
   `--json`; continuous monitoring uses a single long-lived `wol watch --json` process whose
   `stdout` is NDJSON (one event per line).
 - The GUI never reads or writes `wol.toml`: every change goes through CLI commands.
@@ -97,8 +97,9 @@ config directory (`%APPDATA%\wol\`, `~/.config/wol/`, `~/Library/Application Sup
 
 ### State checks
 
-ICMP ping without elevated privileges (Windows: `IcmpSendEcho`; Linux / macOS: unprivileged
-ICMP datagram sockets), with an optional TCP-connect fallback on configured ports.
+Local network only: machines are found by their MAC addresses through an ARP scan of the local
+subnets, without elevated privileges, which also gives their current IP address (see
+`docs/cli-contract.md`, section "Local network scan").
 
 ## Constraints
 

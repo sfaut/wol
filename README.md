@@ -16,23 +16,27 @@ Wol comes in two parts:
 
 ### Machines and groups
 
-- Describe each machine by a name, a MAC address and a host (IP address or hostname),
-  with an optional broadcast address and TCP ports for status checks.
+- Describe each machine by a name and its network interfaces (one or more MAC addresses,
+  each with an optional label such as "Ethernet" or "Wi-Fi"), with an optional broadcast
+  address and port for the magic packet.
+- A MAC address shared by several machines (cloned virtual machines) is allowed, and flagged.
 - Organise machines in ordered groups (Office, Home, Servers…).
 - Everything is stored in a single, human-readable `wol.toml` file, editable by hand
   or through `wol` commands.
 
 ### Monitoring
 
-- See at a glance which machines are online, offline, waking up or unreachable,
-  with latency and last-seen time.
-- Status checks use ICMP ping without administrator rights, with a TCP fallback for
-  machines or networks that block ping.
+- See at a glance which machines are online, offline or waking up, with their current
+  IP address and the interface that answered, even when DHCP changes it.
+- Machines are found by scanning the local network for their MAC addresses, without
+  administrator rights; `wol scan` lists every device found, to add one without typing
+  its MAC address.
 - Continuous monitoring (`wol watch`) reports every state change as it happens.
 
 ### Wake-up
 
-- Wake a machine, several machines or a whole group in one command or one click.
+- Wake a machine, several machines or a whole group in one command or one click; the magic
+  packet goes to every interface of each machine. Local network only.
 - Optionally wait until machines are actually online, with a timeout and a clear
   outcome for each machine.
 
