@@ -25,6 +25,13 @@
     <SelfContained>true</SelfContained>
     <PublishAot>true</PublishAot>
 
+    <!-- Smaller release: native code optimized for size, no .NET resource strings or symbols. -->
+    <OptimizationPreference>Size</OptimizationPreference>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <StackTraceSupport>false</StackTraceSupport>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    <SatelliteResourceLanguages>en;fr</SatelliteResourceLanguages>
+
     <!-- LibraryImport (Win32 calls) generates unsafe marshalling code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
@@ -41,9 +48,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <!--
+      Windows App SDK components the app uses, rather than the Microsoft.WindowsAppSDK
+      metapackage: it would also ship the AI, ML, search and widgets runtimes (~60 MB).
+      InteractiveExperiences is pinned because WinUI asks for a version that is not published.
+    -->
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
   </ItemGroup>
+
+  <!--
+    WinUI translations (.mui) come in one folder per language, ~90 of them: keep the languages
+    of the app only, English and French.
+  -->
+  <Target Name="KeepAppLanguagesOnly" AfterTargets="AddMicrosoftWindowsAppSDKPayloadFilesFromComponents">
+    <ItemGroup>
+      <_Mui Include="@(None)" Condition="'%(None.Extension)' == '.mui'" />
+      <_OtherLanguageMui Include="@(_Mui)" Condition="$([System.String]::Copy('%(_Mui.Link)').Contains('\')) and !$([System.String]::Copy('%(_Mui.Link)').ToLowerInvariant().StartsWith('en-')) and !$([System.String]::Copy('%(_Mui.Link)').ToLowerInvariant().StartsWith('fr-'))" />
+      <None Remove="@(_OtherLanguageMui)" />
+    </ItemGroup>
+  </Target>
 
   <!--
     The GUI runs wol.exe from its own folder. During development, copy the CLI built in
