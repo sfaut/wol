@@ -244,3 +244,91 @@ fn group_lifecycle() {
     assert_eq!(stdout["groups"], serde_json::json!([{ "name": "Servers" }]));
     assert_eq!(stdout["machines"][0]["group"], Value::Null);
 }
+
+#[test]
+fn status_reports_states() {
+    let listener = std::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
+    let port = listener.local_addr().unwrap().port().to_string();
+
+    let wol = Wol::new();
+    wol.ok(&[
+        "add",
+        "Local",
+        "--mac",
+        "001122334455",
+        "--host",
+        "127.0.0.1",
+        "--check-port",
+        &port,
+    ]);
+    wol.ok(&[
+        "add",
+        "Nowhere",
+        "--mac",
+        "001122334456",
+        "--host",
+        "nowhere.invalid",
+    ]);
+
+    let (code, stdout, _) = wol.json(&["status"]);
+    assert_eq!(code, 0);
+    let stdout = stdout.unwrap();
+    assert!(stdout["checked_at"].as_str().unwrap().ends_with('Z'));
+
+    let machines = stdout["machines"].as_array().unwrap();
+    assert_eq!(machines[0]["machine"], "Local");
+    assert_eq!(machines[0]["state"], "online");
+    assert!(machines[0]["latency_ms"].is_u64());
+    assert_eq!(machines[1]["state"], "error");
+    assert_eq!(machines[1]["reason"], "host_not_found");
+
+    let (_, stdout, _) = wol.json(&["status", "nowhere"]);
+    assert_eq!(stdout.unwrap()["machines"].as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn watch_emits_snapshots_and_reloads_config() {
+    use std::io::{BufRead, BufReader};
+    use std::process::Stdio;
+
+    let wol = Wol::new();
+    wol.ok(&[
+        "add",
+        "Local",
+        "--mac",
+        "001122334455",
+        "--host",
+        "127.0.0.1",
+    ]);
+
+    let mut child = std::process::Command::new(assert_cmd::cargo::cargo_bin("wol"))
+        .arg("--config")
+        .arg(wol.config())
+        .args(["watch", "--json", "--interval", "1", "--timeout", "300"])
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut lines = BufReader::new(child.stdout.take().unwrap()).lines();
+    let mut next_event = || serde_json::from_str::<Value>(&lines.next().unwrap().unwrap()).unwrap();
+
+    let first = next_event();
+    assert_eq!(first["schema"], 1);
+    assert_eq!(first["event"], "snapshot");
+    assert_eq!(first["machines"].as_array().unwrap().len(), 1);
+
+    // Editing the file while watching produces a new snapshot including the new machine.
+    wol.ok(&[
+        "add",
+        "Other",
+        "--mac",
+        "001122334456",
+        "--host",
+        "127.0.0.1",
+    ]);
+    let second = next_event();
+    child.kill().unwrap();
+    child.wait().unwrap();
+
+    assert_eq!(second["event"], "snapshot");
+    assert_eq!(second["machines"].as_array().unwrap().len(), 2);
+}

@@ -5,14 +5,16 @@ use std::fmt::Write as _;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::PathBuf;
 use std::process::ExitCode;
+use std::time::Duration;
 
 use clap::{Args, Parser, Subcommand};
 use serde_json::{Value, json};
 
-use crate::config::{self, ConfigFile, ConfigStatus, Machine};
+use crate::config::{self, Config, ConfigFile, ConfigStatus, Machine};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
-use crate::magic;
+use crate::probe::{self, Method, Probe, Reason, State};
+use crate::{magic, time, watch};
 
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
@@ -51,6 +53,32 @@ enum Command {
         groups: Vec<String>,
     },
 
+    /// Check whether machines are online (all machines by default)
+    Status {
+        /// Machines to check.
+        #[command(flatten)]
+        selection: Selection,
+
+        /// Check options.
+        #[command(flatten)]
+        check: CheckArgs,
+    },
+
+    /// Monitor machines and report every state change (all machines by default)
+    Watch {
+        /// Machines to monitor.
+        #[command(flatten)]
+        selection: Selection,
+
+        /// Check options.
+        #[command(flatten)]
+        check: CheckArgs,
+
+        /// Time between two checks, in seconds
+        #[arg(long, value_name = "SECONDS", default_value_t = 10, value_parser = clap::value_parser!(u64).range(1..=3_600))]
+        interval: u64,
+    },
+
     /// Add a machine
     Add(AddArgs),
 
@@ -69,6 +97,25 @@ enum Command {
         #[command(subcommand)]
         command: GroupCommand,
     },
+}
+
+/// Machines targeted by `status` and `watch`: every machine when nothing is given.
+#[derive(Debug, Args)]
+struct Selection {
+    /// Names of the machines
+    machines: Vec<String>,
+
+    /// Also include every machine of this group (repeatable)
+    #[arg(long = "group", value_name = "GROUP")]
+    groups: Vec<String>,
+}
+
+/// Options of state checks.
+#[derive(Debug, Args)]
+struct CheckArgs {
+    /// Time to wait for each answer (ping, then each TCP port), in milliseconds
+    #[arg(long, value_name = "MS", default_value_t = 1_000, value_parser = clap::value_parser!(u64).range(100..=60_000))]
+    timeout: u64,
 }
 
 /// Arguments of `wol add`.
@@ -196,7 +243,7 @@ enum GroupCommand {
 }
 
 /// Result of a successful command: what to print in each output mode, and the exit code.
-struct Outcome {
+pub struct Outcome {
     /// JSON document (without the `schema` field, added when printing).
     json: Value,
 
@@ -275,7 +322,7 @@ where
 }
 
 /// Builds a JSON document: `schema` first, then `config` when known, then the `body` fields.
-fn document(config: Option<Value>, body: Value) -> Value {
+pub(crate) fn document(config: Option<Value>, body: Value) -> Value {
     let mut object = serde_json::Map::new();
     object.insert("schema".to_owned(), json!(SCHEMA));
     if let Some(config) = config {
@@ -327,6 +374,23 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
         Command::List => Ok(list(file)),
         Command::Wake { machines, groups } => wake(file, machines, groups),
+        Command::Status { selection, check } => {
+            status(file, selection, Duration::from_millis(check.timeout))
+        }
+        Command::Watch {
+            selection,
+            check,
+            interval,
+        } => watch::watch(
+            file,
+            &watch::Options {
+                names: &selection.machines,
+                groups: &selection.groups,
+                interval: Duration::from_secs(*interval),
+                timeout: Duration::from_millis(check.timeout),
+                json: cli.json,
+            },
+        ),
         Command::Add(args) => {
             let machine = Machine {
                 name: args.name.clone(),
@@ -508,6 +572,98 @@ fn list(file: &ConfigFile) -> Outcome {
     Outcome::ok(json, text)
 }
 
+/// Checks the selected machines once.
+///
+/// # Errors
+///
+/// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`]; check failures are
+/// reported as machine states.
+fn status(file: &ConfigFile, selection: &Selection, timeout: Duration) -> Result<Outcome> {
+    let config = file.config();
+    let machines = config.select(&selection.machines, &selection.groups)?;
+
+    let probes = probe::probe_all(&machines, timeout);
+    let json = json!({
+        "checked_at": time::now(),
+        "machines": machines.iter().zip(&probes).map(|(machine, probe)| probe_json(machine, probe)).collect::<Vec<_>>(),
+    });
+
+    Ok(Outcome::ok(json, status_text(config, &machines, &probes)))
+}
+
+/// Describes the state of machines for humans, by group (groups without selected machines are skipped).
+pub(crate) fn status_text(config: &Config, machines: &[&Machine], probes: &[Probe]) -> String {
+    if machines.is_empty() {
+        return "No machines to check.\n".to_owned();
+    }
+
+    let width = machines
+        .iter()
+        .map(|machine| machine.name.chars().count())
+        .max()
+        .unwrap_or(0);
+    let mut text = String::new();
+    let mut section = |title: Option<&str>, filter: &dyn Fn(&Machine) -> bool| {
+        let mut rows = machines
+            .iter()
+            .zip(probes)
+            .filter(|(machine, _)| filter(machine))
+            .peekable();
+        if rows.peek().is_none() {
+            return;
+        }
+        if let Some(title) = title {
+            let _ = writeln!(text, "{title}");
+        }
+        for (machine, probe) in rows {
+            let _ = writeln!(text, "  {:<width$}  {}", machine.name, probe_text(probe));
+        }
+    };
+
+    for group in &config.groups {
+        section(Some(&group.name), &|machine| {
+            machine.group.as_deref() == Some(group.name.as_str())
+        });
+    }
+    let title = (!config.groups.is_empty()).then_some("Ungrouped");
+    section(title, &|machine| machine.group.is_none());
+
+    text
+}
+
+/// JSON entry describing the state of a machine.
+pub(crate) fn probe_json(machine: &Machine, probe: &Probe) -> Value {
+    json!({
+        "machine": machine.name,
+        "state": probe.state,
+        "address": probe.address.map(|address| address.to_string()),
+        "method": probe.method,
+        "port": probe.port,
+        "latency_ms": probe.latency.map(|latency| latency.as_millis() as u64),
+        "reason": probe.reason,
+    })
+}
+
+/// Short human-readable description of a state, e.g. `online  3 ms` or `offline`.
+pub(crate) fn probe_text(probe: &Probe) -> String {
+    let latency = probe
+        .latency
+        .map(|latency| latency.as_millis())
+        .unwrap_or_default();
+    match (probe.state, probe.method, probe.port) {
+        (State::Online, Some(Method::Tcp), Some(port)) => {
+            format!("online   {latency} ms (TCP {port})")
+        }
+        (State::Online, ..) => format!("online   {latency} ms"),
+        (State::Offline, ..) => "offline".to_owned(),
+        (state, ..) => format!(
+            "{:<8} {}",
+            state.code(),
+            probe.reason.map(Reason::message).unwrap_or_default()
+        ),
+    }
+}
+
 /// Sends magic packets to the named machines and to every machine of the named groups.
 ///
 /// # Errors
@@ -515,27 +671,7 @@ fn list(file: &ConfigFile) -> Outcome {
 /// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`] before sending anything;
 /// send failures are reported per machine, with exit code [`EXIT_NETWORK`].
 fn wake(file: &ConfigFile, names: &[String], groups: &[String]) -> Result<Outcome> {
-    let config = file.config();
-
-    let mut targets: Vec<&Machine> = Vec::new();
-    for name in names {
-        let index = config
-            .machine_index(name)
-            .ok_or_else(|| Error::MachineNotFound(name.clone()))?;
-        targets.push(&config.machines[index]);
-    }
-    for group in groups {
-        let group = config
-            .group(group)
-            .ok_or_else(|| Error::GroupNotFound(group.clone()))?;
-        targets.extend(config.group_machines(&group.name));
-    }
-    let mut seen = Vec::new();
-    targets.retain(|machine| {
-        let new = !seen.contains(&machine.name);
-        seen.push(machine.name.clone());
-        new
-    });
+    let targets = file.config().select(names, groups)?;
 
     let mut results = Vec::new();
     let mut text = String::new();
