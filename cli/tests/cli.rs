@@ -134,10 +134,19 @@ fn reports_config_file_and_status() {
     assert_eq!(status(&["group", "add", "Home"]), "updated");
     assert_eq!(status(&["list"]), "loaded");
 
-    // Human output names the file on stderr, keeping stdout for data.
+    // Human output names the file only for `wol` alone, between usage and commands.
     let output = wol.command(&["list"]).output().unwrap();
-    let stderr = String::from_utf8(output.stderr).unwrap();
-    assert_eq!(stderr.trim_end(), format!("Configuration: {path}"));
+    assert!(output.stderr.is_empty());
+    let output = wol.command(&[]).output().unwrap();
+    assert!(output.status.success());
+    let help = String::from_utf8(output.stdout).unwrap();
+    let line = format!(
+        "Configuration: {path}
+"
+    );
+    let at = help.find(&line).unwrap();
+    assert!(help.find("Usage:").unwrap() < at, "{help}");
+    assert!(at < help.find("Commands:").unwrap(), "{help}");
 
     // Errors after loading also name the file.
     let (_, _, stderr) = wol.json(&["wake", "Ghost"]);
