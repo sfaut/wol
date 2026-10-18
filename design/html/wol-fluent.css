@@ -96,7 +96,7 @@
 }
 
 /* High contrast preview (spec sheets only): every fill maps to SystemColorWindowTextColor */
-.hc{--success:#fff;--neutral:#fff;--accent:#1aebff;--caution:#fff;--critical:#fff;--on-status:#000;--text:#fff}
+.hc{--success:#fff;--neutral:#fff;--accent:#1aebff;--caution:#fff;--critical:#fff;--on-status:#000;--text:#fff;--text2:#fff}
 
 /* ---------- canvas framing ---------- */
 .duo{display:flex;align-items:stretch}
@@ -239,6 +239,17 @@
 .r-t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .r-sub{font-size:12px;line-height:16px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .r-act{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.r-tw{display:flex;align-items:center;gap:6px;min-width:0}
+.r-tn{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.warn-ic{color:var(--caution);flex:none}
+.tip.multi{white-space:normal;max-width:320px;display:flex;flex-direction:column;gap:2px}
+
+/* ---------- Add / Edit machine: network interfaces ---------- */
+.if-grid{display:grid;grid-template-columns:minmax(0,1fr) 148px 32px;column-gap:8px;row-gap:4px;align-items:start}
+.if-msg{grid-column:1 / 4}
+.if-actions{display:flex;flex-wrap:wrap;gap:8px}
+.dev{width:100%;box-sizing:border-box;min-height:44px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:center;padding:4px 11px;margin:0;border:0;border-radius:4px;background:transparent;color:var(--text);font:inherit;text-align:left}
+.dev.hov{background:var(--subtle2)}
 .r-pb{grid-column:2 / 5;margin-top:6px}
 
 /* ---------- cards (ItemsView + UniformGridLayout) ---------- */
@@ -280,8 +291,8 @@
 .exp-c{border-top:1px solid var(--divider);background:var(--card2);padding:16px;display:flex;flex-direction:column;gap:16px}
 
 /* ---------- InfoBar ---------- */
-.bar{box-sizing:border-box;min-height:48px;display:flex;align-items:flex-start;gap:12px;padding:0 4px 0 16px;border:1px solid var(--card-stroke);border-radius:4px;background:var(--info-bg);color:var(--text)}
-.bar.err{background:var(--critical-bg)}
+.bar{box-sizing:border-box;min-height:48px;display:flex;align-items:flex-start;gap:12px;padding:0 4px 0 16px;border:1px solid var(--card-stroke);border-radius:4px;background:var(--info-bg);color:var(--text);font-size:14px;line-height:20px}
+.bar.crit{background:var(--critical-bg)}
 .bar.warn{background:var(--caution-bg)}
 .bar.ok{background:var(--success-bg)}
 .bar-ic{padding-top:16px;flex:none;display:flex}

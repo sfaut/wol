@@ -30,9 +30,9 @@ a{color:#005fb8}a:hover{color:#003e92}
   <div class="vstack" style="gap: 8px; width: 300px">
     <div style="height: 48px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 0 12px; background: var(--mica); border: 1px solid var(--win-stroke); border-radius: 8px">
       <span class="btn sub ico" aria-hidden="true" style="height: 40px"><svg class="ic" viewbox="0 0 16 16"><path d="M4 10l4-4 4 4"></path></svg></span>
-      <span class="btn sub ico hov" style="height: 40px; width: 40px" role="img" aria-label="Wol — 2 online · 6 not online"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true" style="color: var(--text)"><path d="M8 2v5M4.9 3.9a5 5 0 1 0 6.2 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="12.4" cy="12.4" r="3.9" fill="var(--mica)"></circle><circle cx="12.4" cy="12.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="" fill="var(--caution)"></path><path d="" stroke="var(--on-status)" stroke-width="1.2" stroke-linecap="round"></path></svg></span>
+      <span class="btn sub ico hov" style="height: 40px; width: 40px" role="img" aria-label="Wol — 2 online · 8 not online"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true" style="color: var(--text)"><path d="M8 2v5M4.9 3.9a5 5 0 1 0 6.2 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="12.4" cy="12.4" r="3.9" fill="var(--mica)"></circle><circle cx="12.4" cy="12.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="" fill="var(--caution)"></path><path d="" stroke="var(--on-status)" stroke-width="1.2" stroke-linecap="round"></path></svg></span>
     </div>
-    <div style="display: flex; justify-content: flex-end"><div class="tip" style="position: static">Wol — 2 online · 6 not online</div></div>
+    <div style="display: flex; justify-content: flex-end"><div class="tip" style="position: static">Wol — 2 online · 8 not online</div></div>
     <span class="help">Some offline: hollow ring badge, the same shape as the Offline state.</span>
   </div>
   
@@ -61,10 +61,9 @@ a{color:#005fb8}a:hover{color:#003e92}
       </div>
       <div class="menu" role="menu" aria-label="Wake" style="left: 196px; top: 40px; width: 184px">
         <button class="mi hov" role="menuitem" aria-haspopup="true" aria-expanded="true"><span class="mi-l">Office</span><span class="mi-k" style="margin-left: 8px">2</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
+        <button class="mi" role="menuitem" aria-haspopup="true"><span class="mi-l">Servers</span><span class="mi-k" style="margin-left: 8px">1</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
         <button class="mi" role="menuitem" aria-haspopup="true"><span class="mi-l">Home</span><span class="mi-k" style="margin-left: 8px">2</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
         <button class="mi" role="menuitem" aria-haspopup="true"><span class="mi-l">Ungrouped</span><span class="mi-k" style="margin-left: 8px">1</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
-        <div class="msep" role="separator"></div>
-        <button class="mi dis" role="menuitem" aria-disabled="true"><span class="mi-l">Servers — all online</span></button>
       </div>
       <div class="menu" role="menu" aria-label="Wake Office" style="left: 376px; top: 40px; width: 220px">
         <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg><span class="mi-l">Wake all offline (2)</span></button>
@@ -73,7 +72,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         <button class="mi" role="menuitem"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span class="mi-l">Lab PC</span></button>
       </div>
     </div>
-    <span class="help" style="max-width: 560px">Servers has nothing offline, so it is listed but disabled. Groups follow the user-defined order; Ungrouped comes last. A machine that is already waking shows “Waking…” and is disabled.</span>
+    <span class="help" style="max-width: 560px">Groups follow the user-defined order; Ungrouped comes last. A group with nothing offline stays listed but disabled, and a machine already waking shows “Waking…” and is disabled. Each wake goes to every interface of the machine.</span>
   </div>
 
   <div class="vstack" style="gap: 8px">
@@ -116,9 +115,9 @@ a{color:#005fb8}a:hover{color:#003e92}
   <div class="vstack" style="gap: 8px; width: 300px">
     <div style="height: 48px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 0 12px; background: var(--mica); border: 1px solid var(--win-stroke); border-radius: 8px">
       <span class="btn sub ico" aria-hidden="true" style="height: 40px"><svg class="ic" viewbox="0 0 16 16"><path d="M4 10l4-4 4 4"></path></svg></span>
-      <span class="btn sub ico hov" style="height: 40px; width: 40px" role="img" aria-label="Wol — 2 online · 6 not online"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true" style="color: var(--text)"><path d="M8 2v5M4.9 3.9a5 5 0 1 0 6.2 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="12.4" cy="12.4" r="3.9" fill="var(--mica)"></circle><circle cx="12.4" cy="12.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="" fill="var(--caution)"></path><path d="" stroke="var(--on-status)" stroke-width="1.2" stroke-linecap="round"></path></svg></span>
+      <span class="btn sub ico hov" style="height: 40px; width: 40px" role="img" aria-label="Wol — 2 online · 8 not online"><svg width="16" height="16" viewbox="0 0 16 16" aria-hidden="true" style="color: var(--text)"><path d="M8 2v5M4.9 3.9a5 5 0 1 0 6.2 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="12.4" cy="12.4" r="3.9" fill="var(--mica)"></circle><circle cx="12.4" cy="12.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="" fill="var(--caution)"></path><path d="" stroke="var(--on-status)" stroke-width="1.2" stroke-linecap="round"></path></svg></span>
     </div>
-    <div style="display: flex; justify-content: flex-end"><div class="tip" style="position: static">Wol — 2 online · 6 not online</div></div>
+    <div style="display: flex; justify-content: flex-end"><div class="tip" style="position: static">Wol — 2 online · 8 not online</div></div>
     <span class="help">Some offline: hollow ring badge, the same shape as the Offline state.</span>
   </div>
   
@@ -147,10 +146,9 @@ a{color:#005fb8}a:hover{color:#003e92}
       </div>
       <div class="menu" role="menu" aria-label="Wake" style="left: 196px; top: 40px; width: 184px">
         <button class="mi hov" role="menuitem" aria-haspopup="true" aria-expanded="true"><span class="mi-l">Office</span><span class="mi-k" style="margin-left: 8px">2</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
+        <button class="mi" role="menuitem" aria-haspopup="true"><span class="mi-l">Servers</span><span class="mi-k" style="margin-left: 8px">1</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
         <button class="mi" role="menuitem" aria-haspopup="true"><span class="mi-l">Home</span><span class="mi-k" style="margin-left: 8px">2</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
         <button class="mi" role="menuitem" aria-haspopup="true"><span class="mi-l">Ungrouped</span><span class="mi-k" style="margin-left: 8px">1</span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"></path></svg></button>
-        <div class="msep" role="separator"></div>
-        <button class="mi dis" role="menuitem" aria-disabled="true"><span class="mi-l">Servers — all online</span></button>
       </div>
       <div class="menu" role="menu" aria-label="Wake Office" style="left: 376px; top: 40px; width: 220px">
         <button class="mi" role="menuitem"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg><span class="mi-l">Wake all offline (2)</span></button>
@@ -159,7 +157,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         <button class="mi" role="menuitem"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span class="mi-l">Lab PC</span></button>
       </div>
     </div>
-    <span class="help" style="max-width: 560px">Servers has nothing offline, so it is listed but disabled. Groups follow the user-defined order; Ungrouped comes last. A machine that is already waking shows “Waking…” and is disabled.</span>
+    <span class="help" style="max-width: 560px">Groups follow the user-defined order; Ungrouped comes last. A group with nothing offline stays listed but disabled, and a machine already waking shows “Waking…” and is disabled. Each wake goes to every interface of the machine.</span>
   </div>
 
   <div class="vstack" style="gap: 8px">

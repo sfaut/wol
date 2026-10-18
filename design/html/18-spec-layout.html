@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 4660px; display: flex; flex-direction: column; gap: 28px">
+<div class="doc light" style="width: 1440px; min-height: 5080px; display: flex; flex-direction: column; gap: 28px">
   <div class="vstack" style="gap: 8px">
     <h1>Controls and layout</h1>
     <p class="lead">Every element maps to a WinUI 3 or Windows Community Toolkit control. Measurements are in epx on the 4 epx grid, at 100% scale, for the wide layout unless noted.</p>
@@ -91,7 +91,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Toolbar</td><td><span class="code">CommandBar</span></td><td>DefaultLabelPosition Right, Background transparent, IsDynamicOverflowEnabled. AppBarButton Add machine (U+E710), Refresh all (U+E72C), AppBarSeparator, AppBarToggleButton Select (U+E762).</td></tr>
           
-          <tr><td>Search</td><td><span class="code">AutoSuggestBox</span></td><td>Width 148–240: takes the space the CommandBar leaves and shrinks before anything wraps; collapses to an AppBarButton below 640. QueryIcon Find, filters live on TextChanged; matches name, host and MAC.</td></tr>
+          <tr><td>Search</td><td><span class="code">AutoSuggestBox</span></td><td>Width 148–240: takes the space the CommandBar leaves and shrinks before anything wraps; collapses to an AppBarButton below 640. QueryIcon Find, filters live on TextChanged; matches name, MAC addresses, interface labels and current IP.</td></tr>
           
           <tr><td>Filter</td><td><span class="code">DropDownButton + MenuFlyout</span></td><td>ToggleMenuFlyoutItem per state with its state glyph as Icon and count as KeyboardAcceleratorTextOverride-style trailing text; “Show all states”. Label shows “All states” or “n states”.</td></tr>
           
@@ -99,7 +99,11 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Machine rows</td><td><span class="code">ListView</span></td><td>SelectionMode Extended (Multiple while Select is on). Item MinHeight 48, Padding 16, 6, 8, 6. Template Grid 16 | * | 172 | Auto, ColumnSpacing 12. CanDragItems = true.</td></tr>
           
-          <tr><td>Row actions</td><td><span class="code">Button</span></td><td>Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown or Error, collapsed when Online, replaced by Cancel while Waking. More: icon-only Button U+E712 with the row’s MenuFlyout.</td></tr>
+          <tr><td>Row second line</td><td><span class="code">TextBlock + ToolTip</span></td><td>Online: label and current IP of the interface that answered, “Wi-Fi · 192.168.1.35” (no label: the IP alone). Otherwise the first MAC address, plus “+N” when there are more; the ToolTip lists every interface as “Label · MAC”.</td></tr>
+          
+          <tr><td>Shared MAC warning</td><td><span class="code">FontIcon + ToolTip</span></td><td>U+E7BA Warning, 16, SystemFillColorCautionBrush, 6 after the name, on every machine sharing a MAC. ToolTip names the other machines; the text is also part of the row automation name.</td></tr>
+          
+          <tr><td>Row actions</td><td><span class="code">Button</span></td><td>Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown, disabled in Error (no network to send on), collapsed when Online, replaced by Cancel while Waking. More: icon-only Button U+E712 with the row’s MenuFlyout.</td></tr>
           
           <tr><td>Cards (alternative)</td><td><span class="code">ItemsView + UniformGridLayout</span></td><td>MinItemWidth 196, MinItemHeight 148, spacing 8, card padding 16, radius 8.</td></tr>
           
@@ -115,19 +119,25 @@ a{color:#005fb8}a:hover{color:#003e92}
         <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
         <tbody>
           
-          <tr><td>Dialog</td><td><span class="code">ContentDialog</span></td><td>Recommended over a page: short form, keeps list context. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548.</td></tr>
+          <tr><td>Dialog</td><td><span class="code">ContentDialog</span></td><td>Recommended over a page: the form stays short and keeps the list in view. Order: Name, Group, Network interfaces, Advanced. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548.</td></tr>
           
           <tr><td>Body</td><td><span class="code">ScrollViewer &gt; StackPanel</span></td><td>Spacing 16. Scrolls when Advanced is open or the window is short; buttons stay pinned.</td></tr>
           
-          <tr><td>Name, MAC, Host</td><td><span class="code">TextBox</span></td><td>Header above (Body), Description below for help or the error (Caption). Validate on LostFocus and on submit; show the first error inline, never in a separate dialog.</td></tr>
-          
-          <tr><td>MAC address</td><td><span class="code">TextBox</span></td><td>Accepts AA:BB:CC:DD:EE:FF, AA-BB-…, AABBCC…, any case. Description previews the normalised value (“Will be saved as …”).</td></tr>
+          <tr><td>Name</td><td><span class="code">TextBox</span></td><td>First field. 1–64 characters, unique regardless of case. Header above (Body), Description below for help or the error (Caption). Validate on LostFocus and on submit; never in a separate dialog.</td></tr>
           
           <tr><td>Group</td><td><span class="code">ComboBox</span></td><td>IsEditable = true, Header “Group (optional)”. TextSubmitted with an unknown name stages a new group; Description says “New group … will be created”.</td></tr>
           
-          <tr><td>Advanced</td><td><span class="code">Expander</span></td><td>Collapsed by default. TextBox Broadcast address (PlaceholderText “Automatic”), CheckBox “If ping gets no reply, try TCP ports”, TextBox ports (enabled by the CheckBox, indent 28).</td></tr>
+          <tr><td>Network interfaces</td><td><span class="code">ItemsRepeater of Grid rows</span></td><td>Section title (BodyStrong) + Caption description, then column headers “MAC address” and “Label (optional)”. One row per interface: Grid * | 148 | 32, ColumnSpacing 8, RowSpacing 4 — TextBox MAC, editable ComboBox label (items Ethernet, Wi-Fi; free text), icon Button remove (U+E74D, disabled on the last row). Row messages span the three columns.</td></tr>
           
-          <tr><td>Validation</td><td><span class="code">TextBlock in Description</span></td><td>Error: FontIcon 14 U+EA39-style + text in SystemFillColorCriticalBrush, AutomationProperties.LiveSetting Assertive. Host not resolvable is a warning (SystemFillColorCautionBrush icon), not blocking.</td></tr>
+          <tr><td>MAC address</td><td><span class="code">TextBox</span></td><td>Accepts AA:BB:CC:DD:EE:FF, AA-BB-…, AABBCC…, any case; a message under the row previews the normalised value (“Will be saved as …”).</td></tr>
+          
+          <tr><td>Add interface</td><td><span class="code">Button</span></td><td>U+E710 + label, below the list, 8 before “Add from network…”. Adds an empty row and focuses its MAC.</td></tr>
+          
+          <tr><td>Add from network…</td><td><span class="code">Button + Flyout</span></td><td>Flyout 320 wide: title, Caption “Not used by any machine yet”, ListView (IsItemClickEnabled) of devices found on the local network — MAC (Body) over current IP (Caption) — then a ProgressRing “Still scanning…” footer, or “No new devices found”. Picking one fills the empty row (or adds a row) and closes the flyout.</td></tr>
+          
+          <tr><td>Advanced</td><td><span class="code">Expander</span></td><td>Collapsed by default. TextBox Broadcast address (PlaceholderText 255.255.255.255) and NumberBox UDP port (1–65535, PlaceholderText 9), each with a Caption explaining the default.</td></tr>
+          
+          <tr><td>Validation</td><td><span class="code">TextBlock under the field or row</span></td><td>Errors (block Save): invalid MAC, MAC repeated within the machine, duplicate name. Warning (does not block): MAC already used by another machine, naming it. Error = FontIcon 14 in SystemFillColorCriticalBrush + text; warning = caution glyph + primary text. LiveSetting Assertive.</td></tr>
           
         </tbody>
       </table>
@@ -157,7 +167,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
         <tbody>
           
-          <tr><td>Row while waking</td><td><span class="code">ProgressRing</span></td><td>16 × 16, IsIndeterminate; detail text “m:ss · waiting for reply” updated every second.</td></tr>
+          <tr><td>Row while waking</td><td><span class="code">ProgressRing</span></td><td>16 × 16, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine.</td></tr>
           
           <tr><td>Single result</td><td><span class="code">InfoBar</span></td><td>In the notification host. Success: IsClosable, auto-close after 5 s (paused while hovered or focused). Warning (timed out): stays until closed, ActionButton Retry.</td></tr>
           
@@ -179,11 +189,11 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Theme, Language</td><td><span class="code">SettingsCard + ComboBox</span></td><td>Theme: Use system setting / Light / Dark (applies at once, sets RequestedTheme on the root). Language: Use system setting / English / Français (applies on restart; Description says so). ComboBox MinWidth 200.</td></tr>
           
-          <tr><td>Behavior</td><td><span class="code">SettingsCard + ToggleSwitch</span></td><td>Start with Windows (StartupTask, off by default), Start minimized (off), Close to the notification area (on).</td></tr>
+          <tr><td>Behavior</td><td><span class="code">SettingsCard + ToggleSwitch</span></td><td>Start with Windows (opt-in shortcut in shell:startup, off by default — no registry writes), Start minimized (off), Close to the notification area (on).</td></tr>
           
-          <tr><td>Monitoring</td><td><span class="code">SettingsCard + NumberBox</span></td><td>Check interval 5–3600 s (default 30), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after.</td></tr>
+          <tr><td>Monitoring</td><td><span class="code">SettingsCard + NumberBox</span></td><td>Check interval 1–3600 s (default 10, passed to wol watch --interval), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after.</td></tr>
           
-          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Has an error); items disabled when the master is off.</td></tr>
+          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off.</td></tr>
           
           <tr><td>About</td><td><span class="code">SettingsExpander</span></td><td>Header: app icon, “Wol”, version, Copy button. Items: Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons.</td></tr>
           
@@ -213,15 +223,15 @@ a{color:#005fb8}a:hover{color:#003e92}
         <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
         <tbody>
           
-          <tr><td>Slot</td><td><span class="code">InfoBar</span></td><td>Grid row 0 of every page, Margin 36, 12, 32, 0, IsOpen bound to app state, IsClosable false. One bar at a time; precedence: CLI missing → CLI incompatible → configuration invalid → network unavailable.</td></tr>
+          <tr><td>Slot</td><td><span class="code">InfoBar</span></td><td>Grid row 0 of every page, Margin 36, 12, 32, 0, IsOpen bound to app state, IsClosable false. One bar at a time; precedence: CLI missing → CLI incompatible → configuration invalid → no local network.</td></tr>
           
-          <tr><td>CLI missing</td><td><span class="code">InfoBar Error</span></td><td>ActionButton “Locate…” (FileOpenPicker for the CLI executable) + HyperlinkButton “How to install”. Checks and wake disabled; editing still allowed.</td></tr>
+          <tr><td>CLI missing</td><td><span class="code">InfoBar Error</span></td><td>wol.exe is expected next to wol-gui.exe. ActionButton “Check again” + HyperlinkButton “How to install”. Checks and wake disabled; editing still allowed.</td></tr>
           
           <tr><td>CLI incompatible</td><td><span class="code">InfoBar Error</span></td><td>Shows required and found versions; ActionButton “Check again”, HyperlinkButton “How to update”.</td></tr>
           
           <tr><td>Configuration invalid</td><td><span class="code">InfoBar Error</span></td><td>Message includes line (and column) from the CLI. ActionButtons “Open file” and “Reload”. The last valid list stays visible, read-only.</td></tr>
           
-          <tr><td>Network unavailable</td><td><span class="code">InfoBar Warning</span></td><td>Driven by NetworkInformation.NetworkStatusChanged; hides automatically when connectivity returns, then a full refresh runs.</td></tr>
+          <tr><td>No local network</td><td><span class="code">InfoBar Error</span></td><td>The network can’t be scanned: every machine shows Error, Wake and Refresh are disabled. HyperlinkButton “Network settings” (ms-settings:network). Hides by itself when scanning works again, then a full refresh runs.</td></tr>
           
         </tbody>
       </table>

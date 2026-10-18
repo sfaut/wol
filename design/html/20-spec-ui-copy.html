@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 7280px; display: flex; flex-direction: column; gap: 28px">
+<div class="doc light" style="width: 1440px; min-height: 7980px; display: flex; flex-direction: column; gap: 28px">
   <div class="vstack" style="gap: 8px">
     <h1>UI copy — en-US</h1>
     <p class="lead">Every string shown in the mockups, keyed for Resources.resw. {0}, {1}… are runtime values; strings whose noun changes with the count have .One and .Other. Relative times and durations come from the locale formatter, so “il y a 2 min” needs no extra key.</p>
@@ -85,13 +85,15 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error</td><td>Error</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Online.Detail</td><td>{0} ms<div class="help">Latency</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Online.Seen</td><td>Seen just now<div class="help">Cards only</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Offline.Detail</td><td>Last seen {0}<div class="help">Relative time from the formatter</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Offline.Never</td><td>Never seen</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Sending</td><td>Sending wake packet…</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Sending.One</td><td>Sending wake packet…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Sending.Other</td><td>Sending to {0} interfaces…<div class="help">The packet goes to every interface</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Detail</td><td>{0} · waiting for reply<div class="help">Elapsed time, m:ss</div></td></tr>
           
@@ -103,11 +105,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Unknown.CliUnavailable</td><td>Not checked · CLI unavailable</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.HostNotFound</td><td>Host not found</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.NetworkUnreachable</td><td>Network unreachable</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.Generic</td><td>Check failed</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Error.NoNetwork</td><td>Can’t scan the network</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Row.AutomationName</td><td>{0}, {1}, {2}<div class="help">Name, state, detail spelled out</div></td></tr>
           
@@ -141,6 +139,8 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Unavailable.Other</td><td>{0} machines · status unavailable</td></tr>
           
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.NoNetwork.Other</td><td>{0} machines · can’t scan the network</td></tr>
+          
           <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.Empty</td><td>No machines</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Summary.AutomationName</td><td>Status summary</td></tr>
@@ -169,7 +169,9 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Toolbar.MoreGroupActions</td><td>More group actions</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.Placeholder</td><td>Search machines</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.Placeholder</td><td>Search</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Search.Name</td><td>Search by name, MAC address, label or IP<div class="help">Automation name and tooltip</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Search.PlaceholderInGroup</td><td>Search in {0}</td></tr>
           
@@ -241,9 +243,23 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Row.More.Name</td><td>More actions for {0}</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Card.AlreadyOnline</td><td>Already online · {0} ms<div class="help">Group wake detail</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Online.Line</td><td>{0} · {1}<div class="help">Label · current IP of the interface that answered</div></td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Card.WokeIn</td><td>Woke in {0} · {1} ms<div class="help">Group wake detail</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Online.LineNoLabel</td><td>{0}<div class="help">Current IP when that interface has no label</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Mac.More</td><td>{0} +{1}<div class="help">First MAC address + number of other interfaces</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.Interfaces.Tooltip.Line</td><td>{0} · {1}<div class="help">One line per interface: label · MAC (MAC alone without a label)</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.SharedMac.Tooltip.One</td><td>Same MAC address as {0}. Wol can’t tell these machines apart when this address answers.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.SharedMac.Tooltip.Other</td><td>Same MAC address as {0} and {1} other machines. Wol can’t tell these machines apart when this address answers.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.SharedMac.Name</td><td>Shares its MAC address with {0}<div class="help">Appended to the row automation name</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.AlreadyOnline</td><td>Already online<div class="help">Group wake detail</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.WokeIn</td><td>Woke in {0}<div class="help">Group wake detail</div></td></tr>
           
         </tbody>
       </table>
@@ -271,7 +287,13 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.MoveToGroup.NewGroup</td><td>New group…</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CopyMac</td><td>Copy MAC address</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CopyMac</td><td>Copy MAC address<div class="help">Machine with one interface</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CopyMacs</td><td>Copy MAC addresses<div class="help">Submenu when there are several interfaces</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CopyMac.Item</td><td>{0} · {1}<div class="help">Label · MAC</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.CopyMac.All</td><td>All, one per line</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">RowMenu.Remove</td><td>Remove</td></tr>
           
@@ -309,7 +331,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Title</td><td>Add your first machine</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Body</td><td>Wol wakes computers on your network by sending them a Wake-on-LAN packet. Add a machine with its MAC address to get started.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Body</td><td>Wol wakes computers on your local network by sending them a Wake-on-LAN packet. Add a machine by its MAC address, or pick it from the devices Wol finds on your network.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.First.Add</td><td>Add machine</td></tr>
           
@@ -325,7 +347,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Title</td><td>No machines match “{0}”</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Body</td><td>Check the spelling, or search by name, host or MAC address. A state filter may also be hiding machines.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Body</td><td>Check the spelling, or search by name, MAC address, label or IP address. A state filter may also be hiding machines.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Empty.Search.Clear</td><td>Clear search</td></tr>
           
@@ -351,39 +373,71 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Name.Header</td><td>Name</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Mac.Header</td><td>MAC address</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Mac.Preview</td><td>Will be saved as {0}</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Host.Header</td><td>Host</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Host.Help</td><td>IP address or host name used to check whether the machine is online</td></tr>
-          
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.Header</td><td>Group (optional)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.Placeholder</td><td>No group</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.ShowList</td><td>Show groups</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Group.New</td><td>New group “{0}” will be created</td></tr>
           
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interfaces.Header</td><td>Network interfaces</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interfaces.Description</td><td>Wol wakes every interface and shows the machine online as soon as one of them answers.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Mac.Header</td><td>MAC address</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Mac.Placeholder</td><td>AA:BB:CC:DD:EE:FF</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Mac.Name</td><td>MAC address, interface {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Mac.Preview</td><td>Will be saved as {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Label.Header</td><td>Label (optional)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Label.Placeholder</td><td>Label</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Label.Name</td><td>Label, interface {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Label.Ethernet</td><td>Ethernet<div class="help">Suggested label</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Label.WiFi</td><td>Wi-Fi<div class="help">Suggested label</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Label.ShowList</td><td>Show labels</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Remove.Name</td><td>Remove interface {0}</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Interface.Remove.LastName</td><td>Remove interface {0} (a machine needs at least one)</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AddInterface</td><td>Add interface</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AddFromNetwork</td><td>Add from network…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Discovery.Title</td><td>Devices on your network</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Discovery.Subtitle</td><td>Not used by any machine yet · pick one to add it</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Discovery.Scanning</td><td>Still scanning…</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Discovery.Empty</td><td>No new devices found</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Discovery.Item.Name</td><td>{0}, {1}<div class="help">MAC address, current IP</div></td></tr>
+          
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Header</td><td>Advanced</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Description</td><td>Broadcast address, status check</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Description</td><td>Broadcast address, UDP port</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Header</td><td>Broadcast address</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Placeholder</td><td>Automatic</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Placeholder</td><td>255.255.255.255</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Help</td><td>Leave empty to use the broadcast address of the local subnet</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Broadcast.Help</td><td>Leave empty to send the packet to the whole local network</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Check.Header</td><td>Status check</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Port.Header</td><td>UDP port</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Check.Help</td><td>Wol pings the host (ICMP). Some firewalls block ping — TCP ports can be tried as a fallback.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Port.Placeholder</td><td>9</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Check.UseTcp</td><td>If ping gets no reply, try TCP ports</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Ports.Name</td><td>TCP ports</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Ports.Help</td><td>Separate ports with commas (1–65535)</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Port.Help</td><td>Port of the magic packet (1–65535). Leave empty for 9.</td></tr>
           
         </tbody>
       </table>
@@ -397,21 +451,21 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Name.Required</td><td>Enter a name.</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Name.Duplicate</td><td>A machine named “{0}” already exists. Choose another name.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Name.TooLong</td><td>Use 64 characters or fewer.</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Required</td><td>Enter the MAC address.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Name.Duplicate</td><td>A machine named “{0}” already exists. Names don’t depend on capital letters.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Required</td><td>Enter the MAC address, or remove this interface.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Invalid</td><td>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Host.Required</td><td>Enter an IP address or host name.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Repeated</td><td>This MAC address is already in the list.</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Host.Invalid</td><td>“{0}” isn’t a valid IP address or host name.</td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Host.Unresolved</td><td>Can’t resolve “{0}” right now. You can still save; the machine will show Error until it resolves.<div class="help">Warning, does not block saving</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Mac.Shared</td><td>{0} uses this MAC address too. Wol can’t tell the two machines apart when it answers. You can still save.<div class="help">Warning, does not block saving</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Broadcast.Invalid</td><td>Enter an IPv4 broadcast address, for example 192.168.1.255.</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Ports.Invalid</td><td>Use numbers from 1 to 65535, separated by commas.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Port.Invalid</td><td>Use a port from 1 to 65535.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Validation.Group.Required</td><td>Enter a group name.</td></tr>
           
@@ -543,15 +597,15 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Title</td><td>Companion CLI not found</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Message</td><td>Wol needs the command-line tool to check and wake machines. It was not found at {0}.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Message</td><td>Wol needs wol.exe, its command-line tool, in the same folder as wol-gui.exe ({0}).<div class="help">App folder</div></td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Locate</td><td>Locate…</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.CheckAgain</td><td>Check again</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliMissing.Help</td><td>How to install</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.Title</td><td>Companion CLI version not supported</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.Message</td><td>This version of Wol needs CLI {0} or later. Found {1}.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.Message</td><td>This version of Wol needs wol.exe {0} or later. Found {1}.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Error.CliIncompatible.CheckAgain</td><td>Check again</td></tr>
           
@@ -567,9 +621,11 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Config.Reload</td><td>Reload</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Network.Title</td><td>No network connection</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.NoNetwork.Title</td><td>No local network to scan</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.Network.Message</td><td>Checks are paused and machines can’t be woken. Wol resumes automatically when you’re back online.</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.NoNetwork.Message</td><td>Connect this PC to a local network (Ethernet or Wi-Fi) to find and wake your machines. Wol tries again automatically.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Error.NoNetwork.Settings</td><td>Network settings<div class="help">Opens ms-settings:network</div></td></tr>
           
         </tbody>
       </table>
@@ -609,7 +665,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartWithWindows.Header</td><td>Start with Windows</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartWithWindows.Description</td><td>Run Wol in the notification area when you sign in</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartWithWindows.Description</td><td>Adds a shortcut to your Startup folder so Wol runs in the notification area when you sign in</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.StartMinimized.Header</td><td>Start minimized</td></tr>
           
@@ -623,7 +679,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CheckInterval.Header</td><td>Check interval</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CheckInterval.Description</td><td>How often Wol checks whether machines are online (5–3600 seconds)</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.CheckInterval.Description</td><td>How often Wol checks whether machines are online (1–3600 seconds)</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.WakeTimeout.Header</td><td>Wake timeout</td></tr>
           
@@ -649,7 +705,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.TimedOut</td><td>Doesn’t wake up (timed out)</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Error</td><td>Has an error (host not found, network unreachable)</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.Notify.Error</td><td>Can’t be checked (no local network to scan)</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About</td><td>About</td></tr>
           
@@ -659,7 +715,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Header</td><td>Companion CLI</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Description</td><td>Version {0} · {1}<div class="help">{1} = path</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Description</td><td>wol.exe {0}, next to wol-gui.exe<div class="help">CLI version</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Settings.About.Cli.Connected</td><td>Connected</td></tr>
           
@@ -727,9 +783,9 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.TimedOut.Text</td><td>No reply after {0}. Check that Wake-on-LAN is turned on.</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Error.Title</td><td>Can’t check {0}</td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Error.Title</td><td>Can’t check your machines</td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Error.Text</td><td>{0}<div class="help">Error detail</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Error.Text</td><td>No local network to scan.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Balloon.Group.Title</td><td>{0}: {1} of {2} machines online</td></tr>
           

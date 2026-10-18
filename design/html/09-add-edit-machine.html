@@ -10,14 +10,14 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div style="width: 1804px; height: 2088px; display: flex; flex-direction: column">
+<div style="width: 1804px; height: 1840px; display: flex; flex-direction: column">
 
 <div class="pane light">
 <div class="pane-h">Light · ContentDialog at full length — inside a 700 epx window the content area scrolls, buttons stay pinned</div>
 <div class="hstack" style="align-items: flex-start">
 
   <div class="vstack" style="gap: 8px">
-    <div class="cap-t">1 · Add — required fields, Advanced collapsed</div>
+    <div class="cap-t">1 · Add — two interfaces, Advanced collapsed</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add1-light">
       <div class="dlg-top">
         <h2 class="dlg-t" id="add1-light">Add machine</h2>
@@ -26,22 +26,28 @@ a{color:#005fb8}a:hover{color:#003e92}
           <div class="tb"><input id="n1-light" value="Living room PC"></div>
         </div>
         <div class="fld">
-          <label class="lbl" for="m1-light">MAC address</label>
-          <div class="tb focus"><input id="m1-light" value="1c-69-7a-0b-33-e8" aria-describedby="m1h-light"></div>
-          <span class="help" id="m1h-light">Will be saved as 1C:69:7A:0B:33:E8</span>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="h1-light">Host</label>
-          <div class="tb"><input id="h1-light" value="192.168.1.40" aria-describedby="h1h-light"></div>
-          <span class="help" id="h1h-light">IP address or host name used to check whether the machine is online</span>
-        </div>
-        <div class="fld">
           <label class="lbl" for="g1-light">Group (optional)</label>
-          <div class="tb"><input id="g1-light" value="Studio" role="combobox" aria-expanded="false" aria-describedby="g1h-light"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
-          <span class="help" id="g1h-light">New group “Studio” will be created</span>
+          <div class="tb"><input id="g1-light" value="Home" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="fld" role="group" aria-labelledby="if1-light">
+          <div style="display: flex; flex-direction: column"><span class="lbl" id="if1-light" style="font-weight: 600">Network interfaces</span><span class="help">Wol wakes every interface and shows the machine online as soon as one of them answers.</span></div>
+          <div class="if-grid">
+            <span class="lbl">MAC address</span><span class="lbl">Label (optional)</span><span></span>
+            <div class="tb focus"><input value="1c-69-7a-0b-33-e8" aria-label="MAC address, interface 1" aria-describedby="m1a-light"></div>
+            <div class="tb"><input value="Ethernet" role="combobox" aria-label="Label, interface 1" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 1"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <span class="help if-msg" id="m1a-light">Will be saved as 1C:69:7A:0B:33:E8</span>
+            <div class="tb"><input value="1C:69:7A:0B:33:E9" aria-label="MAC address, interface 2"></div>
+            <div class="tb"><input value="Wi-Fi" role="combobox" aria-label="Label, interface 2" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 2"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+          </div>
+          <div class="if-actions">
+            <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
+            <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
+          </div>
         </div>
         <div class="exp">
-          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
         </div>
       </div>
       <div class="dlg-b">
@@ -51,8 +57,8 @@ a{color:#005fb8}a:hover{color:#003e92}
     </div>
   </div>
 
-  <div class="vstack" style="gap: 8px">
-    <div class="cap-t">2 · Add — Advanced expanded</div>
+  <div class="vstack" style="gap: 8px; position: relative">
+    <div class="cap-t">2 · Add from network (flyout open), Advanced expanded</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add2-light">
       <div class="dlg-top">
         <h2 class="dlg-t" id="add2-light">Add machine</h2>
@@ -61,31 +67,34 @@ a{color:#005fb8}a:hover{color:#003e92}
           <div class="tb"><input id="n2-light" value="Gaming PC"></div>
         </div>
         <div class="fld">
-          <label class="lbl" for="m2-light">MAC address</label>
-          <div class="tb"><input id="m2-light" value="04:42:1A:C6:58:9D"></div>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="h2-light">Host</label>
-          <div class="tb"><input id="h2-light" value="gaming-pc.lan"></div>
-        </div>
-        <div class="fld">
           <label class="lbl" for="g2-light">Group (optional)</label>
           <div class="tb"><input id="g2-light" value="Home" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
         </div>
+        <div class="fld" role="group" aria-labelledby="if2-light">
+          <div style="display: flex; flex-direction: column"><span class="lbl" id="if2-light" style="font-weight: 600">Network interfaces</span><span class="help">Wol wakes every interface and shows the machine online as soon as one of them answers.</span></div>
+          <div class="if-grid">
+            <span class="lbl">MAC address</span><span class="lbl">Label (optional)</span><span></span>
+            <div class="tb"><input value="04:42:1A:C6:58:9D" aria-label="MAC address, interface 1"></div>
+            <div class="tb"><input value="Ethernet" role="combobox" aria-label="Label, interface 1" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico dis" disabled aria-label="Remove interface 1 (a machine needs at least one)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+          </div>
+          <div class="if-actions">
+            <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
+            <button class="btn focus" aria-haspopup="dialog" aria-expanded="true"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
+          </div>
+        </div>
         <div class="exp">
-          <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
           <div class="exp-c">
             <div class="fld">
               <label class="lbl" for="b2-light">Broadcast address</label>
-              <div class="tb"><input id="b2-light" placeholder="Automatic" aria-describedby="b2h-light"></div>
-              <span class="help" id="b2h-light">Leave empty to use the broadcast address of the local subnet</span>
+              <div class="tb"><input id="b2-light" placeholder="255.255.255.255" aria-describedby="b2h-light"></div>
+              <span class="help" id="b2h-light">Leave empty to send the packet to the whole local network</span>
             </div>
-            <div class="fld" role="group" aria-labelledby="c2-light">
-              <span class="lbl" id="c2-light">Status check</span>
-              <span class="help">Wol pings the host (ICMP). Some firewalls block ping — TCP ports can be tried as a fallback.</span>
-              <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" checked><span class="cb on"><svg viewbox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span><span>If ping gets no reply, try TCP ports</span></label>
-              <div class="tb" style="margin-left: 28px"><input value="22, 445, 3389" aria-label="TCP ports" aria-describedby="p2h-light"></div>
-              <span class="help" id="p2h-light" style="margin-left: 28px">Separate ports with commas (1–65535)</span>
+            <div class="fld">
+              <label class="lbl" for="p2-light">UDP port</label>
+              <div class="tb" style="width: 132px"><input id="p2-light" placeholder="9" inputmode="numeric" aria-describedby="p2h-light"><button class="tbb" aria-label="Increase"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button><button class="tbb" aria-label="Decrease"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+              <span class="help" id="p2h-light">Port of the magic packet (1–65535). Leave empty for 9.</span>
             </div>
           </div>
         </div>
@@ -95,34 +104,58 @@ a{color:#005fb8}a:hover{color:#003e92}
         <button class="btn">Cancel</button>
       </div>
     </div>
+    <div class="menu" role="dialog" aria-label="Devices on your network" style="left: 186px; top: 406px; width: 320px; padding: 4px">
+      <div style="display: flex; flex-direction: column; padding: 8px 11px 6px"><span style="font-weight: 600">Devices on your network</span><span class="help">Not used by any machine yet · pick one to add it</span></div>
+      
+      <button class="dev hov"><span style="display: flex; flex-direction: column"><span style="font-variant-numeric: tabular-nums">04:42:1A:C6:58:9E</span><span class="r-sub">192.168.1.53</span></span><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></button>
+      
+      <button class="dev "><span style="display: flex; flex-direction: column"><span style="font-variant-numeric: tabular-nums">F0:2F:74:1B:88:01</span><span class="r-sub">192.168.1.60</span></span><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></button>
+      
+      <button class="dev "><span style="display: flex; flex-direction: column"><span style="font-variant-numeric: tabular-nums">DC:A6:32:5E:0B:7C</span><span class="r-sub">192.168.1.71</span></span><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></button>
+      
+      <div class="msep" role="separator"></div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 8px 11px" role="status"><svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg><span class="help" style="font-size: 14px; line-height: 20px">Still scanning…</span></div>
+    </div>
   </div>
 
   <div class="vstack" style="gap: 8px">
-    <div class="cap-t">3 · Edit — inline validation</div>
+    <div class="cap-t">3 · Edit — errors block saving, a shared MAC only warns</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ed3-light">
       <div class="dlg-top">
         <h2 class="dlg-t" id="ed3-light">Edit machine</h2>
         <div class="fld">
           <label class="lbl" for="n3-light">Name</label>
-          <div class="tb bad"><input id="n3-light" value="NAS" aria-invalid="true" aria-describedby="n3e-light"></div>
-          <div class="err" id="n3e-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A machine named “NAS” already exists. Choose another name.</span></div>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="m3-light">MAC address</label>
-          <div class="tb bad focus"><input id="m3-light" value="D0:50:99:A4:3E" aria-invalid="true" aria-describedby="m3e-light"></div>
-          <div class="err" id="m3e-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</span></div>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="h3-light">Host</label>
-          <div class="tb"><input id="h3-light" value="backup.lan" aria-describedby="h3w-light"></div>
-          <div class="err" id="h3w-light" style="color: var(--text)"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span>Can’t resolve “backup.lan” right now. You can still save; the machine will show Error until it resolves.</span></div>
+          <div class="tb bad"><input id="n3-light" value="test vm" aria-invalid="true" aria-describedby="n3e-light"></div>
+          <div class="err" id="n3e-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A machine named “Test VM” already exists. Names don’t depend on capital letters.</span></div>
         </div>
         <div class="fld">
           <label class="lbl" for="g3-light">Group (optional)</label>
-          <div class="tb"><input id="g3-light" value="Servers" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+          <div class="tb"><input id="g3-light" value="" placeholder="No group" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="fld" role="group" aria-labelledby="if3-light">
+          <div style="display: flex; flex-direction: column"><span class="lbl" id="if3-light" style="font-weight: 600">Network interfaces</span><span class="help">Wol wakes every interface and shows the machine online as soon as one of them answers.</span></div>
+          <div class="if-grid">
+            <span class="lbl">MAC address</span><span class="lbl">Label (optional)</span><span></span>
+            <div class="tb"><input value="52:54:00:12:34:56" aria-label="MAC address, interface 1" aria-describedby="m3a-light"></div>
+            <div class="tb"><input value="Ethernet" role="combobox" aria-label="Label, interface 1" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 1"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <div class="err if-msg" id="m3a-light" style="color: var(--text)"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span>Test VM uses this MAC address too. Wol can’t tell the two machines apart when it answers. You can still save.</span></div>
+            <div class="tb bad"><input value="52:54:00:12:34:56" aria-label="MAC address, interface 2" aria-invalid="true" aria-describedby="m3b-light"></div>
+            <div class="tb"><input value="" placeholder="Label" role="combobox" aria-label="Label, interface 2" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 2"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <div class="err if-msg" id="m3b-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>This MAC address is already in the list.</span></div>
+            <div class="tb bad focus"><input value="52:54:00:9A:7" aria-label="MAC address, interface 3" aria-invalid="true" aria-describedby="m3c-light"></div>
+            <div class="tb"><input value="Wi-Fi" role="combobox" aria-label="Label, interface 3" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 3"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <div class="err if-msg" id="m3c-light"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</span></div>
+          </div>
+          <div class="if-actions">
+            <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
+            <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
+          </div>
         </div>
         <div class="exp">
-          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
         </div>
       </div>
       <div class="dlg-b">
@@ -140,7 +173,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 <div class="hstack" style="align-items: flex-start">
 
   <div class="vstack" style="gap: 8px">
-    <div class="cap-t">1 · Add — required fields, Advanced collapsed</div>
+    <div class="cap-t">1 · Add — two interfaces, Advanced collapsed</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add1-dark">
       <div class="dlg-top">
         <h2 class="dlg-t" id="add1-dark">Add machine</h2>
@@ -149,22 +182,28 @@ a{color:#005fb8}a:hover{color:#003e92}
           <div class="tb"><input id="n1-dark" value="Living room PC"></div>
         </div>
         <div class="fld">
-          <label class="lbl" for="m1-dark">MAC address</label>
-          <div class="tb focus"><input id="m1-dark" value="1c-69-7a-0b-33-e8" aria-describedby="m1h-dark"></div>
-          <span class="help" id="m1h-dark">Will be saved as 1C:69:7A:0B:33:E8</span>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="h1-dark">Host</label>
-          <div class="tb"><input id="h1-dark" value="192.168.1.40" aria-describedby="h1h-dark"></div>
-          <span class="help" id="h1h-dark">IP address or host name used to check whether the machine is online</span>
-        </div>
-        <div class="fld">
           <label class="lbl" for="g1-dark">Group (optional)</label>
-          <div class="tb"><input id="g1-dark" value="Studio" role="combobox" aria-expanded="false" aria-describedby="g1h-dark"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
-          <span class="help" id="g1h-dark">New group “Studio” will be created</span>
+          <div class="tb"><input id="g1-dark" value="Home" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="fld" role="group" aria-labelledby="if1-dark">
+          <div style="display: flex; flex-direction: column"><span class="lbl" id="if1-dark" style="font-weight: 600">Network interfaces</span><span class="help">Wol wakes every interface and shows the machine online as soon as one of them answers.</span></div>
+          <div class="if-grid">
+            <span class="lbl">MAC address</span><span class="lbl">Label (optional)</span><span></span>
+            <div class="tb focus"><input value="1c-69-7a-0b-33-e8" aria-label="MAC address, interface 1" aria-describedby="m1a-dark"></div>
+            <div class="tb"><input value="Ethernet" role="combobox" aria-label="Label, interface 1" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 1"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <span class="help if-msg" id="m1a-dark">Will be saved as 1C:69:7A:0B:33:E8</span>
+            <div class="tb"><input value="1C:69:7A:0B:33:E9" aria-label="MAC address, interface 2"></div>
+            <div class="tb"><input value="Wi-Fi" role="combobox" aria-label="Label, interface 2" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 2"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+          </div>
+          <div class="if-actions">
+            <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
+            <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
+          </div>
         </div>
         <div class="exp">
-          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
         </div>
       </div>
       <div class="dlg-b">
@@ -174,8 +213,8 @@ a{color:#005fb8}a:hover{color:#003e92}
     </div>
   </div>
 
-  <div class="vstack" style="gap: 8px">
-    <div class="cap-t">2 · Add — Advanced expanded</div>
+  <div class="vstack" style="gap: 8px; position: relative">
+    <div class="cap-t">2 · Add from network (flyout open), Advanced expanded</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="add2-dark">
       <div class="dlg-top">
         <h2 class="dlg-t" id="add2-dark">Add machine</h2>
@@ -184,31 +223,34 @@ a{color:#005fb8}a:hover{color:#003e92}
           <div class="tb"><input id="n2-dark" value="Gaming PC"></div>
         </div>
         <div class="fld">
-          <label class="lbl" for="m2-dark">MAC address</label>
-          <div class="tb"><input id="m2-dark" value="04:42:1A:C6:58:9D"></div>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="h2-dark">Host</label>
-          <div class="tb"><input id="h2-dark" value="gaming-pc.lan"></div>
-        </div>
-        <div class="fld">
           <label class="lbl" for="g2-dark">Group (optional)</label>
           <div class="tb"><input id="g2-dark" value="Home" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
         </div>
+        <div class="fld" role="group" aria-labelledby="if2-dark">
+          <div style="display: flex; flex-direction: column"><span class="lbl" id="if2-dark" style="font-weight: 600">Network interfaces</span><span class="help">Wol wakes every interface and shows the machine online as soon as one of them answers.</span></div>
+          <div class="if-grid">
+            <span class="lbl">MAC address</span><span class="lbl">Label (optional)</span><span></span>
+            <div class="tb"><input value="04:42:1A:C6:58:9D" aria-label="MAC address, interface 1"></div>
+            <div class="tb"><input value="Ethernet" role="combobox" aria-label="Label, interface 1" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico dis" disabled aria-label="Remove interface 1 (a machine needs at least one)"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+          </div>
+          <div class="if-actions">
+            <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
+            <button class="btn focus" aria-haspopup="dialog" aria-expanded="true"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
+          </div>
+        </div>
         <div class="exp">
-          <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
+          <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
           <div class="exp-c">
             <div class="fld">
               <label class="lbl" for="b2-dark">Broadcast address</label>
-              <div class="tb"><input id="b2-dark" placeholder="Automatic" aria-describedby="b2h-dark"></div>
-              <span class="help" id="b2h-dark">Leave empty to use the broadcast address of the local subnet</span>
+              <div class="tb"><input id="b2-dark" placeholder="255.255.255.255" aria-describedby="b2h-dark"></div>
+              <span class="help" id="b2h-dark">Leave empty to send the packet to the whole local network</span>
             </div>
-            <div class="fld" role="group" aria-labelledby="c2-dark">
-              <span class="lbl" id="c2-dark">Status check</span>
-              <span class="help">Wol pings the host (ICMP). Some firewalls block ping — TCP ports can be tried as a fallback.</span>
-              <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" checked><span class="cb on"><svg viewbox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span><span>If ping gets no reply, try TCP ports</span></label>
-              <div class="tb" style="margin-left: 28px"><input value="22, 445, 3389" aria-label="TCP ports" aria-describedby="p2h-dark"></div>
-              <span class="help" id="p2h-dark" style="margin-left: 28px">Separate ports with commas (1–65535)</span>
+            <div class="fld">
+              <label class="lbl" for="p2-dark">UDP port</label>
+              <div class="tb" style="width: 132px"><input id="p2-dark" placeholder="9" inputmode="numeric" aria-describedby="p2h-dark"><button class="tbb" aria-label="Increase"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button><button class="tbb" aria-label="Decrease"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+              <span class="help" id="p2h-dark">Port of the magic packet (1–65535). Leave empty for 9.</span>
             </div>
           </div>
         </div>
@@ -218,34 +260,58 @@ a{color:#005fb8}a:hover{color:#003e92}
         <button class="btn">Cancel</button>
       </div>
     </div>
+    <div class="menu" role="dialog" aria-label="Devices on your network" style="left: 186px; top: 406px; width: 320px; padding: 4px">
+      <div style="display: flex; flex-direction: column; padding: 8px 11px 6px"><span style="font-weight: 600">Devices on your network</span><span class="help">Not used by any machine yet · pick one to add it</span></div>
+      
+      <button class="dev hov"><span style="display: flex; flex-direction: column"><span style="font-variant-numeric: tabular-nums">04:42:1A:C6:58:9E</span><span class="r-sub">192.168.1.53</span></span><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></button>
+      
+      <button class="dev "><span style="display: flex; flex-direction: column"><span style="font-variant-numeric: tabular-nums">F0:2F:74:1B:88:01</span><span class="r-sub">192.168.1.60</span></span><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></button>
+      
+      <button class="dev "><span style="display: flex; flex-direction: column"><span style="font-variant-numeric: tabular-nums">DC:A6:32:5E:0B:7C</span><span class="r-sub">192.168.1.71</span></span><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg></button>
+      
+      <div class="msep" role="separator"></div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 8px 11px" role="status"><svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="26 40"></circle></svg><span class="help" style="font-size: 14px; line-height: 20px">Still scanning…</span></div>
+    </div>
   </div>
 
   <div class="vstack" style="gap: 8px">
-    <div class="cap-t">3 · Edit — inline validation</div>
+    <div class="cap-t">3 · Edit — errors block saving, a shared MAC only warns</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ed3-dark">
       <div class="dlg-top">
         <h2 class="dlg-t" id="ed3-dark">Edit machine</h2>
         <div class="fld">
           <label class="lbl" for="n3-dark">Name</label>
-          <div class="tb bad"><input id="n3-dark" value="NAS" aria-invalid="true" aria-describedby="n3e-dark"></div>
-          <div class="err" id="n3e-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A machine named “NAS” already exists. Choose another name.</span></div>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="m3-dark">MAC address</label>
-          <div class="tb bad focus"><input id="m3-dark" value="D0:50:99:A4:3E" aria-invalid="true" aria-describedby="m3e-dark"></div>
-          <div class="err" id="m3e-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</span></div>
-        </div>
-        <div class="fld">
-          <label class="lbl" for="h3-dark">Host</label>
-          <div class="tb"><input id="h3-dark" value="backup.lan" aria-describedby="h3w-dark"></div>
-          <div class="err" id="h3w-dark" style="color: var(--text)"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span>Can’t resolve “backup.lan” right now. You can still save; the machine will show Error until it resolves.</span></div>
+          <div class="tb bad"><input id="n3-dark" value="test vm" aria-invalid="true" aria-describedby="n3e-dark"></div>
+          <div class="err" id="n3e-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A machine named “Test VM” already exists. Names don’t depend on capital letters.</span></div>
         </div>
         <div class="fld">
           <label class="lbl" for="g3-dark">Group (optional)</label>
-          <div class="tb"><input id="g3-dark" value="Servers" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+          <div class="tb"><input id="g3-dark" value="" placeholder="No group" role="combobox" aria-expanded="false"><button class="tbb" aria-label="Show groups"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+        </div>
+        <div class="fld" role="group" aria-labelledby="if3-dark">
+          <div style="display: flex; flex-direction: column"><span class="lbl" id="if3-dark" style="font-weight: 600">Network interfaces</span><span class="help">Wol wakes every interface and shows the machine online as soon as one of them answers.</span></div>
+          <div class="if-grid">
+            <span class="lbl">MAC address</span><span class="lbl">Label (optional)</span><span></span>
+            <div class="tb"><input value="52:54:00:12:34:56" aria-label="MAC address, interface 1" aria-describedby="m3a-dark"></div>
+            <div class="tb"><input value="Ethernet" role="combobox" aria-label="Label, interface 1" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 1"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <div class="err if-msg" id="m3a-dark" style="color: var(--text)"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M8 6.1v3.4" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="11.8" r=".9" fill="var(--on-status)"></circle></svg><span>Test VM uses this MAC address too. Wol can’t tell the two machines apart when it answers. You can still save.</span></div>
+            <div class="tb bad"><input value="52:54:00:12:34:56" aria-label="MAC address, interface 2" aria-invalid="true" aria-describedby="m3b-dark"></div>
+            <div class="tb"><input value="" placeholder="Label" role="combobox" aria-label="Label, interface 2" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 2"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <div class="err if-msg" id="m3b-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>This MAC address is already in the list.</span></div>
+            <div class="tb bad focus"><input value="52:54:00:9A:7" aria-label="MAC address, interface 3" aria-invalid="true" aria-describedby="m3c-dark"></div>
+            <div class="tb"><input value="Wi-Fi" role="combobox" aria-label="Label, interface 3" aria-expanded="false"><button class="tbb" aria-label="Show labels"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button></div>
+            <button class="btn sub ico" aria-label="Remove interface 3"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.75 6.5v4.5M9.25 6.5v4.5"></path></svg></button>
+            <div class="err if-msg" id="m3c-dark"><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true" style="margin-top: 1px"><circle cx="8" cy="8" r="7" fill="var(--critical)"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>A MAC address has 12 hexadecimal digits, for example 3C:52:82:1A:4F:07.</span></div>
+          </div>
+          <div class="if-actions">
+            <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
+            <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
+          </div>
         </div>
         <div class="exp">
-          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, status check</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
+          <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
         </div>
       </div>
       <div class="dlg-b">

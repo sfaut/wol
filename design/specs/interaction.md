@@ -20,6 +20,8 @@ Keyboard first, screen-reader friendly, system motion only. Shortcuts appear in 
 
 Opening a dialog focuses its first field; closing returns focus to the control that opened it. After Remove, focus moves to the next row (or the previous one at the end).
 
+In the machine dialog, Tab goes Name → Group → each interface (MAC, Label, Remove) → Add interface → Add from network… → Advanced → Add / Cancel; removing an interface moves focus to the next row’s MAC.
+
 ## Keyboard shortcuts
 
 | Keys | Action | Where it is shown |
@@ -68,6 +70,7 @@ No custom storyboards. When Windows “Animation effects” is off, these transi
 | Wake, Wake group, Retry | No confirmation: harmless and cancellable. |
 | Cancel waking | No confirmation. The packet is already sent; Wol only stops waiting. |
 | Cancel Add / Edit | Closes without saving, no “discard?” prompt — the form is short. |
+| Remove an interface | Removed at once inside the dialog, no prompt: Cancel still discards every change. |
 | Close window (close to notification area on) | First time only: balloon “Wol is still running — find it in the notification area.” |
 | Quit from the tray | Quits at once. Machines still waking keep their packet; their result is not reported. |
 
