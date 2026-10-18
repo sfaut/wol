@@ -23,8 +23,9 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
+| Density | `Compact.xaml` | Compact sizing for the whole app: merge ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml in App.xaml. Buttons, TextBox, ComboBox, AutoSuggestBox and NumberBox are 24 high; NavigationViewItem and AppBarButton 32; MenuFlyoutItem 28; list rows 40. |
 | Window | `Window + MicaBackdrop` | Mica (Base) on Windows 11; on Windows 10 fall back to SolidBackgroundFillColorBaseBrush. Default 1000 × 700, minimum 500 × 500 (OverlappedPresenter.PreferredMinimumWidth/Height), sizes multiplied by the monitor scale. |
-| Title bar | `TitleBar` | ExtendsContentIntoTitleBar = true, height 48, IsPaneToggleButtonVisible = true, IsBackButtonVisible = false, icon 16, title “Wol” in CaptionTextBlockStyle. |
+| Title bar | `TitleBar` | ExtendsContentIntoTitleBar = true, height 40, IsPaneToggleButtonVisible = true, IsBackButtonVisible = false, icon 16, title “Wol” in CaptionTextBlockStyle. |
 | Navigation | `NavigationView` | PaneDisplayMode Auto, OpenPaneLength 280, CompactModeThresholdWidth 641, ExpandedModeThresholdWidth 960 (so 1000 opens Expanded), IsSettingsVisible = true, IsPaneToggleButtonVisible = false (toggle is in the TitleBar). |
 | All machines | `NavigationViewItem` | Icon FontIcon U+E71D AllApps. |
 | Groups header | `NavigationViewItemHeader` | Text “Groups”; hidden when there are no groups. |
@@ -37,16 +38,17 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
 | Page grid | `Grid` | Rows: InfoBar slot · header · toolbar · list. Side margins 36 / 32 (Expanded), 24 / 24 (Compact pane), 16 / 16 (Minimal). |
-| Title + summary | `TextBlock, ItemsRepeater` | TitleTextBlockStyle. Summary = horizontal StackLayout, Spacing 16, each item FontIcon 14 + Body text in TextFillColorSecondaryBrush. Wraps (ItemsRepeater + WrapLayout from the Toolkit). |
-| Toolbar | `CommandBar` | DefaultLabelPosition Right, Background transparent, IsDynamicOverflowEnabled. AppBarButton Add machine (U+E710), Refresh all (U+E72C), AppBarSeparator, AppBarToggleButton Select (U+E762). |
+| Title + summary | `TextBlock, ItemsRepeater` | SubtitleTextBlockStyle (20/28), top margin 12. Summary directly below = horizontal StackLayout, Spacing 16, each item FontIcon 14 + Body text in TextFillColorSecondaryBrush. Wraps (ItemsRepeater + WrapLayout from the Toolkit). |
+| Toolbar | `CommandBar` | DefaultLabelPosition Right, Background transparent, IsDynamicOverflowEnabled, buttons 32 high, Margin 0, 4, 0, 8. AppBarButton Add machine (U+E710), Refresh all (U+E72C), AppBarSeparator, AppBarToggleButton Select (U+E762). |
 | Search | `AutoSuggestBox` | Width 148–240: takes the space the CommandBar leaves and shrinks before anything wraps; collapses to an AppBarButton below 640. QueryIcon Find, filters live on TextChanged; matches name, MAC addresses, interface labels and current IP. |
 | Filter | `DropDownButton + MenuFlyout` | ToggleMenuFlyoutItem per state with its state glyph as Icon and count as KeyboardAcceleratorTextOverride-style trailing text; “Show all states”. Label shows “All states” or “n states”. |
-| Group section | `Expander` | One per group in an ItemsRepeater (StackLayout, Spacing 8). Header: name (BodyStrong) + summary (Caption, secondary) + Button “Wake group”. Content padding 0; IsExpanded persisted per group. |
-| Machine rows | `ListView` | SelectionMode Extended (Multiple while Select is on). Item MinHeight 48, Padding 16, 6, 8, 6. Template Grid 16 \| \* \| 172 \| Auto, ColumnSpacing 12. CanDragItems = true. |
+| Group section | `Expander` | One per group in an ItemsRepeater (StackLayout, Spacing 4). Header MinHeight 40, Padding 16, 2, 8, 2: name (BodyStrong) + summary (Caption, secondary) + Button “Wake group”. Content padding 0; IsExpanded persisted per group. |
+| Machine rows | `ListView` | SelectionMode Extended (Multiple while Select is on). Item MinHeight 40, Padding 16, 2, 8, 2. Template Grid \* \| 172 \| Auto, ColumnSpacing 12: name over its second line, state badge over the detail line, actions. CanDragItems = true. |
+| State badge | `Border + StackPanel` | Height 20, CornerRadius 10, Padding 4, 0, 8, 0, Background by state: SystemFillColorSuccessBackgroundBrush (Online), SystemFillColorCautionBackgroundBrush (Timed out), SystemFillColorCriticalBackgroundBrush (Error), AccentFillColorDefaultBrush at 12% (Waking), ControlStrongStrokeColorDefaultBrush at 12% (Offline, Unknown). Horizontal StackPanel, Spacing 4: state glyph 12 + TextBlock Caption SemiBold in TextFillColorPrimaryBrush. In high contrast: no fill, 1 epx border in the text color. The same badge is used in rows, cards and the compact layout. |
 | Row second line | `TextBlock + ToolTip` | Online: label and current IP of the interface that answered, “Wi-Fi · 192.168.1.35” (no label: the IP alone). Otherwise the first MAC address, plus “+N” when there are more; the ToolTip lists every interface as “Label · MAC”. |
 | Shared MAC warning | `FontIcon + ToolTip` | U+E7BA Warning, 16, SystemFillColorCautionBrush, 6 after the name, on every machine sharing a MAC. ToolTip names the other machines; the text is also part of the row automation name. |
 | Row actions | `Button` | Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown, disabled in Error (no network to send on), collapsed when Online, replaced by Cancel while Waking. More: icon-only Button U+E712 with the row’s MenuFlyout. |
-| Cards (alternative) | `ItemsView + UniformGridLayout` | MinItemWidth 196, MinItemHeight 148, spacing 8, card padding 16, radius 8. |
+| Cards (alternative) | `ItemsView + UniformGridLayout` | MinItemWidth 196, MinItemHeight 112, spacing 4, card padding 12, radius 8. Name over the state badge. |
 | Empty state | `StackPanel` | Centered, MaxWidth 420, Spacing 12: glyph 64, SubtitleTextBlockStyle, Body secondary, Buttons (Accent + default, Spacing 8), HyperlinkButton. |
 
 ## Add / Edit machine
@@ -54,7 +56,7 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
 | Dialog | `ContentDialog` | Recommended over a page: the form stays short and keeps the list in view. Order: Name, Group, Network interfaces, Advanced. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548. |
-| Body | `ScrollViewer > StackPanel` | Spacing 16. Scrolls when Advanced is open or the window is short; buttons stay pinned. |
+| Body | `ScrollViewer > StackPanel` | Spacing 12, field header 4 above its box. Scrolls when Advanced is open or the window is short; buttons stay pinned. |
 | Name | `TextBox` | First field. 1–64 characters, unique regardless of case. Header above (Body), Description below for help or the error (Caption). Validate on LostFocus and on submit; never in a separate dialog. |
 | Group | `ComboBox` | IsEditable = true, Header “Group (optional)”. TextSubmitted with an unknown name stages a new group; Description says “New group … will be created”. |
 | Network interfaces | `ItemsRepeater of Grid rows` | Section title (BodyStrong) + Caption description, then column headers “MAC address” and “Label (optional)”. One row per interface: Grid \* \| 148 \| 32, ColumnSpacing 8, RowSpacing 4 — TextBox MAC, editable ComboBox label (items Ethernet, Wi-Fi; free text), icon Button remove (U+E74D, disabled on the last row). Row messages span the three columns. |
@@ -77,21 +79,21 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
-| Row while waking | `ProgressRing` | 16 × 16, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine. |
+| Row while waking | `ProgressRing` | 12 × 12 inside the Waking badge, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine. |
 | Single result | `InfoBar` | In the notification host. Success: IsClosable, auto-close after 5 s (paused while hovered or focused). Warning (timed out): stays until closed, ActionButton Retry. |
 | Group or selection | `InfoBar + ProgressBar` | IsClosable false while running, Severity Informational, Content = ProgressBar (Maximum = machines in the run, Value = online). ActionButton Cancel. Replaced by the result InfoBar with “Retry n machines”. |
-| Notification host | `StackPanel` | Bottom-aligned in the content grid, margins 36 / 32 / 16, Spacing 8, at most 3 bars, ChildrenTransitions: EntranceThemeTransition + RepositionThemeTransition. |
+| Notification host | `StackPanel` | Bottom-aligned in the content grid, margins 36 / 32 / 16, Spacing 4, at most 3 bars (InfoBar MinHeight 40), ChildrenTransitions: EntranceThemeTransition + RepositionThemeTransition. |
 
 ## Settings
 
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
-| Page | `ScrollViewer > StackPanel` | MaxWidth 1000, margins as the list page, Spacing 4 between cards; section headers BodyStrongTextBlockStyle, Margin 1, 24, 0, 6. |
+| Page | `ScrollViewer > StackPanel` | MaxWidth 1000, margins as the list page, Spacing 2 between cards; section headers BodyStrongTextBlockStyle, Margin 1, 16, 0, 2. SettingsCard MinHeight 48, Padding 16, 6; expander items MinHeight 40. |
 | Theme, Language | `SettingsCard + ComboBox` | Theme: Use system setting / Light / Dark (applies at once, sets RequestedTheme on the root). Language: Use system setting / English / Français (applies on restart; Description says so). ComboBox MinWidth 200. |
 | Behavior | `SettingsCard + ToggleSwitch` | Start with Windows (opt-in shortcut in shell:startup, off by default — no registry writes), Start minimized (off), Close to the notification area (on). |
 | Monitoring | `SettingsCard + NumberBox` | Check interval 1–3600 s (default 10, passed to wol watch --interval), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after. |
 | Notifications | `SettingsExpander` | Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off. |
-| About | `SettingsExpander` | Header: app icon, “Wol”, version, Copy button. Items: Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons. |
+| About | `SettingsExpander` | Header: app icon, “Wol”, version, Copy button. Items: Author (header “Sébastien Faut”, Description “Author”, HyperlinkButton mailto:sebastien.faut@gmail.com — name and address are not localized), Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons. |
 
 ## Notification area
 

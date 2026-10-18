@@ -15,7 +15,9 @@ Everything here is exported from the Claude Design canvas “Wol — WinUI 3 des
 
 ## Decisions
 
-- **Machine list:** ListView rows on two lines (recommended) rather than cards; cards (`ItemsView` + `UniformGridLayout`) are kept as the alternative. One `Expander` per group, with the group name, its status summary and **Wake group**.
+- **Density:** WinUI compact sizing for the whole app (`Compact.xaml` merged in `App.xaml`): controls 24 epx high, navigation items and command bar buttons 32, list rows and group headers 40, page title in the Subtitle style.
+- **State badges:** in rows and cards the state is a pill badge — state glyph and label on the state’s background tint (success, caution, critical, accent or neutral). The badge replaces the separate glyph column.
+- **Machine list:** ListView rows on two lines, 40 epx (recommended) rather than cards; cards (`ItemsView` + `UniformGridLayout`) are kept as the alternative. One `Expander` per group, with the group name, its status summary and **Wake group**.
 - **Rows:** the second line shows the label and current IP of the interface that answered when the machine is online (“Wi-Fi · 192.168.1.35”), otherwise its first MAC address with “+N” for the others (all of them in the tooltip). An outline caution icon after the name flags machines that share a MAC address; its tooltip names the others.
 - **Add / Edit machine:** `ContentDialog`, because the form stays short and the list stays in view. Name and group come first, then the network interfaces — one row per interface with its MAC address, an optional label (Ethernet, Wi-Fi or free text) and a remove button — with **Add interface** and **Add from network…** (devices found on the network that no machine uses yet). Broadcast address and UDP port sit in a collapsed `Expander`.
 - **Validation:** an invalid MAC, a MAC repeated within the machine and a duplicate name (regardless of case) block saving; a MAC already used by another machine is only a warning that names it.
@@ -23,6 +25,7 @@ Everything here is exported from the Claude Design canvas “Wol — WinUI 3 des
 - **Group InfoBadge:** counts Offline + Timed out machines, in the default (accent) style for contrast.
 - **Feedback in the window:** a stack of InfoBars at the bottom of the content area; success closes after 5 s, warnings stay. Waking a group or a selection shows an InfoBar with a ProgressBar (“3 of 5 online”) and ends with Retry for the machines that timed out.
 - **Degraded states:** one InfoBar at the top of the page, with precedence CLI missing → CLI incompatible → configuration invalid → no local network to scan. Without a network to scan, every machine shows Error and Wake is disabled.
+- **About:** the Settings page names the author, Sébastien Faut, with a mail link to sebastien.faut@gmail.com.
 - **Settings:** the check interval defaults to 10 s (1–3600), the `wol watch` interval. Start with Windows is an opt-in shortcut in `shell:startup`, with no registry writes.
 - **Icons:** the app is unpackaged, so the icon is an `.ico` embedded in `wol-gui.exe` — no MSIX logo assets.
 - **NavigationView:** `OpenPaneLength` 280, `CompactModeThresholdWidth` 641, `ExpandedModeThresholdWidth` 960, so the default 1000 epx window opens with the pane expanded.

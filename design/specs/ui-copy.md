@@ -373,6 +373,7 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 | `Settings.About` | About |  |
 | `Settings.About.Version` | Version {0} |  |
 | `Settings.About.Copy` | Copy |  |
+| `Settings.About.Author.Description` | Author |  |
 | `Settings.About.Cli.Header` | Companion CLI |  |
 | `Settings.About.Cli.Description` | wol.exe {0}, next to wol-gui.exe | CLI version |
 | `Settings.About.Cli.Connected` | Connected |  |
