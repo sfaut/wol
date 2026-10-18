@@ -61,6 +61,10 @@ Everything here is exported from the Claude Design canvas “Wol — WinUI 3 des
 ![Error and degraded states](mockups/14-errors.png)
 ![Responsive — wide, medium, compact](mockups/15-responsive.png)
 
+## Maintenance
+
+Claude maintains this folder from the Claude Design canvas and commits every update here. [`brief.md`](brief.md) is the maintainer’s input to the design: Claude reads it but never edits it.
+
 ## About the exports
 
 - The PNGs were rendered in Chromium with Selawik, Microsoft’s open-source stand-in for Segoe UI. Open the HTML on Windows to see Segoe UI Variable.
