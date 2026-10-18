@@ -9,5 +9,6 @@ pub mod icmp;
 pub mod mac;
 pub mod magic;
 pub mod probe;
+pub mod scan;
 pub mod time;
 pub mod watch;

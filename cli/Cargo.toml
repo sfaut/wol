@@ -29,7 +29,8 @@ predicates = "3.1.4"
 tempfile = "3.27.0"
 
 [target."cfg(windows)".dependencies]
-windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper"] }
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper", "Win32_NetworkManagement_Ndis", "Win32_Networking_WinSock"] }
 
 [target."cfg(unix)".dependencies]
+libc = "0.2.191"
 socket2 = "0.6.5"

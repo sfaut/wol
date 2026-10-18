@@ -9,7 +9,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 ///
 /// Parsed from `AA:BB:CC:DD:EE:FF`, `AA-BB-CC-DD-EE-FF`, `AABB.CCDD.EEFF` or `AABBCCDDEEFF`
 /// (case-insensitive), always displayed as `AA:BB:CC:DD:EE:FF`.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct MacAddress(pub [u8; 6]);
 
 /// Error returned when a string is not a valid MAC address.
