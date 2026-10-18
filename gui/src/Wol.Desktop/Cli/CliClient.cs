@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using Wol.Desktop.Services;
 
 namespace Wol.Desktop.Cli;
 
@@ -30,8 +31,8 @@ public sealed class CliMissingException(string path, Exception inner)
     : Exception($"Cannot start {path}", inner);
 
 /// <summary>
-/// Runs the companion <c>wol.exe</c>, which sits next to <c>wol-gui.exe</c>, always with
-/// <c>--json</c>.
+/// Runs the companion <c>wol.exe</c>, which sits at the root of the app (next to the
+/// <c>wol-gui.exe</c> launcher), always with <c>--json</c>.
 /// </summary>
 public sealed class CliClient
 {
@@ -43,12 +44,12 @@ public sealed class CliClient
     /// <summary>
     /// Full path of the CLI executable.
     /// </summary>
-    public string Path { get; } = System.IO.Path.Combine(AppContext.BaseDirectory, FileName);
+    public string Path { get; } = System.IO.Path.Combine(AppFolder.Root, FileName);
 
     /// <summary>
     /// Folder expected to hold the CLI executable.
     /// </summary>
-    public string Folder => AppContext.BaseDirectory;
+    public string Folder => AppFolder.Root;
 
     /// <summary>
     /// Tells whether the CLI executable exists.

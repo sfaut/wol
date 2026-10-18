@@ -140,7 +140,7 @@ public sealed class AppSettings
     /// <returns>The path of the settings file.</returns>
     private static string FindPath()
     {
-        var portable = AppContext.BaseDirectory;
+        var portable = AppFolder.Root;
         if (File.Exists(System.IO.Path.Combine(portable, FileName)) || File.Exists(System.IO.Path.Combine(portable, "wol.toml")))
         {
             return System.IO.Path.Combine(portable, FileName);
