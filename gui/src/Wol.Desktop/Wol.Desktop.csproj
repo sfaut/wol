@@ -17,6 +17,8 @@
     <!-- WinUI 3, unpackaged (no MSIX), Windows App SDK bundled next to the executable. -->
     <UseWinUI>true</UseWinUI>
     <WindowsPackageType>None</WindowsPackageType>
+    <!-- MSIX tooling also publishes the app resources index (wol-gui.pri), needed by XAML. -->
+    <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
     <!-- Portable folder: .NET runtime compiled into the executable. -->
