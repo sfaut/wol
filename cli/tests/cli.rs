@@ -366,3 +366,28 @@ fn watch_emits_snapshots_and_reloads_config() {
     assert_eq!(second["event"], "snapshot");
     assert_eq!(second["machines"].as_array().unwrap().len(), 2);
 }
+
+#[test]
+fn shared_mac_addresses_are_allowed_with_a_warning() {
+    let wol = Wol::new();
+    wol.ok(&["add", "VM 1", "--mac", "001122334455"]);
+
+    let (code, stdout, _) = wol.json(&["add", "VM 2", "--mac", "001122334455"]);
+    assert_eq!(code, 0);
+    let warning = &stdout.unwrap()["warnings"][0];
+    assert_eq!(warning["code"], "shared_mac");
+    assert_eq!(warning["mac"], "00:11:22:33:44:55");
+    assert_eq!(warning["machines"], serde_json::json!(["VM 1", "VM 2"]));
+
+    let (_, stdout, _) = wol.json(&["list"]);
+    let stdout = stdout.unwrap();
+    assert_eq!(stdout["machines"].as_array().unwrap().len(), 2);
+    assert_eq!(stdout["warnings"].as_array().unwrap().len(), 1);
+
+    wol.command(&["list"])
+        .assert()
+        .success()
+        .stdout(predicates::str::contains(
+            "Warning: MAC address 00:11:22:33:44:55 is used by several machines (\"VM 1\", \"VM 2\")",
+        ));
+}

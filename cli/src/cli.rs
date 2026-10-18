@@ -9,7 +9,7 @@ use std::process::ExitCode;
 use clap::{Args, Parser, Subcommand};
 use serde_json::{Value, json};
 
-use crate::config::{self, Config, ConfigFile, ConfigStatus, Interface, Machine};
+use crate::config::{self, Config, ConfigFile, ConfigStatus, Interface, Machine, SharedMac};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
 use crate::probe::{self, Probe, Reason, State};
@@ -376,8 +376,9 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
             };
             let machine = file.add_machine(&machine)?;
             file.save()?;
-            Ok(Outcome::ok(
-                json!({ "machine": machine }),
+            Ok(machine_outcome(
+                file,
+                &machine,
                 format!("Added machine \"{}\".\n", machine.name),
             ))
         }
@@ -411,8 +412,9 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
             };
             let machine = file.edit_machine(&args.name, &machine)?;
             file.save()?;
-            Ok(Outcome::ok(
-                json!({ "machine": machine }),
+            Ok(machine_outcome(
+                file,
+                &machine,
                 format!("Updated machine \"{}\".\n", machine.name),
             ))
         }
@@ -511,6 +513,7 @@ fn list(file: &ConfigFile) -> Outcome {
     let json = json!({
         "groups": config.groups,
         "machines": config.machines,
+        "warnings": warnings_json(&config.shared_macs()),
     });
 
     if config.groups.is_empty() && config.machines.is_empty() {
@@ -571,8 +574,61 @@ fn list(file: &ConfigFile) -> Outcome {
         .map(str::trim_end)
         .collect::<Vec<_>>()
         .join("\n")
-        + "\n";
+        + "\n"
+        + &warnings_text(&config.shared_macs());
     Outcome::ok(json, text)
+}
+
+/// JSON warnings about MAC addresses shared by several machines.
+fn warnings_json(shared: &[SharedMac]) -> Vec<Value> {
+    shared
+        .iter()
+        .map(|entry| {
+            json!({
+                "code": "shared_mac",
+                "message": shared_mac_message(entry),
+                "mac": entry.mac,
+                "machines": entry.machines,
+            })
+        })
+        .collect()
+}
+
+/// Human-readable warnings about MAC addresses shared by several machines.
+fn warnings_text(shared: &[SharedMac]) -> String {
+    shared
+        .iter()
+        .map(|entry| format!("Warning: {}.\n", shared_mac_message(entry)))
+        .collect()
+}
+
+/// Describes a shared MAC address.
+fn shared_mac_message(entry: &SharedMac) -> String {
+    let machines: Vec<String> = entry
+        .machines
+        .iter()
+        .map(|name| format!("\"{name}\""))
+        .collect();
+    format!(
+        "MAC address {} is used by several machines ({}), which cannot be told apart when it answers",
+        entry.mac,
+        machines.join(", ")
+    )
+}
+
+/// Builds the outcome of `add` / `edit`, warning about the MAC addresses `machine` shares
+/// with other machines.
+fn machine_outcome(file: &ConfigFile, machine: &Machine, text: String) -> Outcome {
+    let shared: Vec<SharedMac> = file
+        .config()
+        .shared_macs()
+        .into_iter()
+        .filter(|entry| entry.machines.contains(&machine.name))
+        .collect();
+    Outcome::ok(
+        json!({ "machine": machine, "warnings": warnings_json(&shared) }),
+        text + &warnings_text(&shared),
+    )
 }
 
 /// Checks the selected machines once, with one scan of the local network.

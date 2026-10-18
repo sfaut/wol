@@ -98,6 +98,17 @@ pub struct Interface {
     pub label: Option<String>,
 }
 
+/// A MAC address used by several machines: allowed (e.g. cloned virtual machines), but these
+/// machines cannot be told apart when that address answers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct SharedMac {
+    /// The shared MAC address.
+    pub mac: MacAddress,
+
+    /// Names of the machines using it, in file order.
+    pub machines: Vec<String>,
+}
+
 /// Tells whether two machine or group names designate the same entity (case-insensitive).
 pub fn same_name(a: &str, b: &str) -> bool {
     a.to_lowercase() == b.to_lowercase()
@@ -268,6 +279,24 @@ impl Config {
             }
         }
         Ok(unique)
+    }
+
+    /// Lists the MAC addresses used by several machines, in order of first use.
+    pub fn shared_macs(&self) -> Vec<SharedMac> {
+        let mut uses: Vec<SharedMac> = Vec::new();
+        for machine in &self.machines {
+            for interface in &machine.interfaces {
+                match uses.iter_mut().find(|entry| entry.mac == interface.mac) {
+                    Some(entry) => entry.machines.push(machine.name.clone()),
+                    None => uses.push(SharedMac {
+                        mac: interface.mac,
+                        machines: vec![machine.name.clone()],
+                    }),
+                }
+            }
+        }
+        uses.retain(|entry| entry.machines.len() > 1);
+        uses
     }
 
     /// Lists the machines of a group, in file order.
@@ -961,6 +990,18 @@ interfaces = [
         assert_eq!(ungrouped, ["Office PC"]);
         assert_eq!(file.config().machines[0].group, None);
         assert_eq!(file.config().groups.len(), 1);
+    }
+
+    #[test]
+    fn reports_shared_macs() {
+        let mut file = load(SAMPLE).unwrap();
+        file.add_machine(&machine("VM 1")).unwrap();
+        file.add_machine(&machine("VM 2")).unwrap();
+
+        let shared = file.config().shared_macs();
+        assert_eq!(shared.len(), 1);
+        assert_eq!(shared[0].mac.to_string(), "00:11:22:33:44:55");
+        assert_eq!(shared[0].machines, ["VM 1", "VM 2"]);
     }
 
     #[test]
