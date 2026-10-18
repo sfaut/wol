@@ -43,12 +43,21 @@ Groups have a user-defined order.
 A **machine** has:
 - **Name** (required, unique, e.g. "Office PC")
 - **Group** (optional; at most one; machines without a group appear under "Ungrouped")
-- **MAC address** (required; accept `AA:BB:CC:DD:EE:FF`, `AA-BB-…` or `AABBCC…`, display normalised)
-- **Host**: IP address or hostname used for status checks (required)
-- **Broadcast address** for the magic packet (optional, advanced; default: local subnet broadcast)
-- **Check method** (advanced): ICMP ping, with optional TCP ports as fallback (e.g. 22, 445, 3389)
+- **Network interfaces** (1 to N), each with:
+  - a **MAC address** (required; accept `AA:BB:CC:DD:EE:FF`, `AA-BB-…` or `AABBCC…`, display
+    normalised). The same MAC address may be used by several machines (e.g. cloned virtual
+    machines): allowed, but always flagged with a warning, since Wol cannot tell these machines
+    apart when that address answers;
+  - a **label** (optional, e.g. "Ethernet", "Wi-Fi").
+- **Broadcast address** and **UDP port** for the magic packet (optional, advanced)
 
-Live information shown per machine: **state**, **last seen**, **latency** when online.
+Wol works on the **local network only**. It finds machines by scanning the network for their MAC
+addresses, which also gives their current IP address even when DHCP changes it. **Wake** sends the
+magic packet to every interface of the machine. A machine is **online when at least one interface
+answers**.
+
+Live information shown per machine: **state**, **last seen**, and when online the interface that
+answered and its current IP ("Online via Wi-Fi · 192.168.1.35"; no label: "Online · 192.168.1.35").
 
 States, each needing a distinct, colour-blind-safe indicator (icon + label, colour is secondary):
 - **Online**
@@ -56,7 +65,7 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
 - **Waking**: packet sent, waiting for the machine to come up (show elapsed time; ends in Online or Timed out)
 - **Timed out**: wake command sent but the machine never came up
 - **Unknown**: not checked yet, or check in progress
-- **Error**: host cannot be resolved, network unreachable…
+- **Error**: the local network cannot be scanned
 
 ## Screens to design
 
@@ -67,22 +76,32 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
      (deleting a group asks whether to move its machines to "Ungrouped" or delete them).
 
 2. **Main window: machine list**
-   - List or cards (propose both, recommend one) showing state, name, host, MAC, last seen, latency.
+   - List or cards (propose both, recommend one) showing state, name and last seen; the second line
+     shows the current IP and the interface that answered when online, otherwise the first MAC
+     address followed by "+N" when there are several (all interfaces in the tooltip).
+   - Machines sharing a MAC address show a warning indicator, with the other machines named in its tooltip.
    - In "All machines", machines are shown in **collapsible sections per group**, each header
      showing the group name, its status summary ("2 online · 1 offline") and a **Wake group** action.
    - Primary action per row: **Wake**, prominent only when the machine is offline / timed out.
    - Secondary actions (context menu and overflow): Check now, Edit, Duplicate, Move to group,
      Copy MAC, Remove.
-   - Toolbar: Add machine, Refresh all, search box, filter by state; multi-select to wake
-     or move several machines.
+   - Toolbar: Add machine, Refresh all, search box (matches name, MAC addresses, labels and
+     current IP), filter by state; multi-select to wake or move several machines.
    - Overall status summary (e.g. "3 online · 2 offline").
    - Drag and drop of machines between groups (with a keyboard-accessible equivalent: "Move to group").
    - **Empty states**: first launch (invite to add a first machine) and empty group.
 
 3. **Add / Edit machine** (`ContentDialog` or dedicated page; recommend one)
-   - Required fields first; group picked from an editable `ComboBox` that can also create a new group.
-   - Advanced settings collapsed in an `Expander`.
-   - Inline validation (invalid MAC, duplicate name, unresolvable host) with clear messages.
+   - Name and group first; group picked from an editable `ComboBox` that can also create a new group.
+   - Then a **Network interfaces** list: one row per interface with the MAC address (`TextBox`),
+     the label (editable `ComboBox` suggesting "Ethernet" and "Wi-Fi", free text allowed) and a
+     remove button; an **Add interface** button below. At least one interface.
+   - **Add from network**: a button listing the devices currently found on the network that no
+     machine uses yet (MAC, current IP), to fill an interface without typing its MAC.
+   - Advanced settings (broadcast address, UDP port) collapsed in an `Expander`.
+   - Inline validation with clear messages: invalid MAC, MAC repeated within the machine and
+     duplicate name block saving; a MAC already used by another machine is a warning that names
+     that machine and does not block saving.
 
 4. **Wake flow feedback**
    - Single machine: Sending → Waiting (progress + elapsed time, cancel) → Online (success)
@@ -108,7 +127,7 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
 7. **Error and degraded states** (`InfoBar` at the top of the window)
    - Companion CLI missing or incompatible version.
    - Configuration file invalid (with the line in error if available).
-   - Network unavailable.
+   - No local network to scan.
 
 ## Window
 
