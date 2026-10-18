@@ -9,6 +9,7 @@ using Wol.Desktop.Models;
 using Wol.Desktop.Services;
 using Wol.Desktop.ViewModels;
 using Wol.Desktop.Views;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
 using Windows.System;
 
@@ -53,6 +54,21 @@ public sealed partial class MainWindow : Window
     /// Group to select at the next navigation rebuild (after a rename or a creation).
     /// </summary>
     private string? _selectGroup;
+
+    /// <summary>
+    /// Group being dragged in the navigation pane to reorder it, if any.
+    /// </summary>
+    private GroupSection? _draggedGroup;
+
+    /// <summary>
+    /// Where the left button went down on a group item, until a drag starts or the button is released.
+    /// </summary>
+    private Windows.Foundation.Point? _dragOrigin;
+
+    /// <summary>
+    /// Distance the pointer moves, in pixels, before pressing a group item becomes a drag.
+    /// </summary>
+    private const double DragThreshold = 4;
 
     /// <summary>
     /// Builds the window, its navigation, and starts loading the machines.
@@ -194,6 +210,18 @@ public sealed partial class MainWindow : Window
             {
                 item.ContextFlyout = GroupMenu(section, groups.IndexOf(section), groups.Count);
                 item.KeyDown += (_, args) => GroupItem_KeyDown(section, args);
+                item.AddHandler(UIElement.PointerPressedEvent, new PointerEventHandler(GroupItem_PointerPressed), handledEventsToo: true);
+                item.AddHandler(UIElement.PointerMovedEvent, new PointerEventHandler(GroupItem_PointerMoved), handledEventsToo: true);
+                item.AllowDrop = true;
+                item.DragStarting += (_, args) => GroupItem_DragStarting(section, args);
+                item.DropCompleted += (_, _) =>
+                {
+                    _draggedGroup = null;
+                    ShowDropMarker(item, before: null);
+                };
+                item.DragOver += (_, args) => GroupItem_DragOver(item, section, args);
+                item.DragLeave += (_, _) => ShowDropMarker(item, before: null);
+                item.Drop += (_, args) => GroupItem_Drop(item, section, args);
             }
             Navigation.MenuItems.Add(item);
             if ((section.Group is not null && string.Equals(section.Group, selectedKey, StringComparison.OrdinalIgnoreCase))
@@ -296,6 +324,148 @@ public sealed partial class MainWindow : Window
                 args.Handled = true;
                 break;
         }
+    }
+
+    /// <summary>
+    /// Remembers where the left button went down on a group item, to start a drag when it moves.
+    /// </summary>
+    /// <param name="sender">The navigation item.</param>
+    /// <param name="args">Pointer.</param>
+    private void GroupItem_PointerPressed(object sender, PointerRoutedEventArgs args)
+    {
+        var point = args.GetCurrentPoint((UIElement)sender);
+        _dragOrigin = point.Properties.IsLeftButtonPressed ? point.Position : null;
+    }
+
+    /// <summary>
+    /// Starts dragging a group item once the pointer moved far enough with the button down. The
+    /// item captures the pointer to select itself, which keeps <c>CanDrag</c> from ever starting.
+    /// </summary>
+    /// <param name="sender">The navigation item.</param>
+    /// <param name="args">Pointer.</param>
+    private void GroupItem_PointerMoved(object sender, PointerRoutedEventArgs args)
+    {
+        var item = (UIElement)sender;
+        var point = args.GetCurrentPoint(item);
+        if (_dragOrigin is not { } origin || !point.Properties.IsLeftButtonPressed)
+        {
+            _dragOrigin = null;
+            return;
+        }
+
+        if (Math.Abs(point.Position.X - origin.X) > DragThreshold || Math.Abs(point.Position.Y - origin.Y) > DragThreshold)
+        {
+            _dragOrigin = null;
+            _ = item.StartDragAsync(point);
+        }
+    }
+
+    /// <summary>
+    /// Starts dragging a group to reorder it.
+    /// </summary>
+    /// <param name="section">The group.</param>
+    /// <param name="args">Drag data; cancelled when the CLI cannot be used.</param>
+    private void GroupItem_DragStarting(GroupSection section, DragStartingEventArgs args)
+    {
+        if (!_viewModel.CanUseCli)
+        {
+            args.Cancel = true;
+            return;
+        }
+
+        _draggedGroup = section;
+        args.Data.SetText(section.Title);
+        args.Data.RequestedOperation = DataPackageOperation.Move;
+    }
+
+    /// <summary>
+    /// Accepts a dragged group over another one and shows where it would land.
+    /// </summary>
+    /// <param name="item">Navigation item under the pointer.</param>
+    /// <param name="section">Its group.</param>
+    /// <param name="args">Pointer position; operation accepted.</param>
+    private void GroupItem_DragOver(NavigationViewItem item, GroupSection section, DragEventArgs args)
+    {
+        var before = args.GetPosition(item).Y < item.ActualHeight / 2;
+        if (DropPosition(section, before) is null)
+        {
+            args.AcceptedOperation = DataPackageOperation.None;
+            ShowDropMarker(item, before: null);
+            return;
+        }
+
+        args.AcceptedOperation = DataPackageOperation.Move;
+        args.DragUIOverride.IsCaptionVisible = false;
+        args.DragUIOverride.IsGlyphVisible = false;
+        ShowDropMarker(item, before);
+    }
+
+    /// <summary>
+    /// Moves the dragged group above or below the group it is dropped on.
+    /// </summary>
+    /// <param name="item">Navigation item dropped on.</param>
+    /// <param name="section">Its group.</param>
+    /// <param name="args">Pointer position.</param>
+    private void GroupItem_Drop(NavigationViewItem item, GroupSection section, DragEventArgs args)
+    {
+        ShowDropMarker(item, before: null);
+        var position = DropPosition(section, args.GetPosition(item).Y < item.ActualHeight / 2);
+        if (_draggedGroup is { } dragged && position is not null)
+        {
+            _ = _viewModel.MoveGroupToAsync(dragged, position.Value);
+        }
+        _draggedGroup = null;
+    }
+
+    /// <summary>
+    /// Computes where the dragged group lands when dropped next to a group.
+    /// </summary>
+    /// <param name="target">Group under the pointer.</param>
+    /// <param name="before">Whether the drop is on the upper half of the target (above it).</param>
+    /// <returns>The new 1-based position, or null when no group is dragged or it would not move.</returns>
+    private int? DropPosition(GroupSection target, bool before)
+    {
+        if (_draggedGroup is not { } dragged || dragged == target)
+        {
+            return null;
+        }
+
+        var groups = _viewModel.Sections.Where(section => section.Group is not null).ToList();
+        var from = groups.IndexOf(dragged);
+        var to = groups.IndexOf(target);
+        if (from < 0 || to < 0)
+        {
+            return null;
+        }
+
+        // Index of the target once the dragged group is taken out of the list.
+        var index = to > from ? to - 1 : to;
+        var position = (before ? index : index + 1) + 1;
+        return position == from + 1 ? null : position;
+    }
+
+    /// <summary>
+    /// Draws an accent line above or below a group item, where a dragged group would land. The
+    /// line is an overlay: the item's own border is reset by its pointer-over visual state.
+    /// </summary>
+    /// <param name="item">The navigation item.</param>
+    /// <param name="before">True above, false below, null to remove the line.</param>
+    private void ShowDropMarker(NavigationViewItem item, bool? before)
+    {
+        if (before is not { } above)
+        {
+            DropMarker.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        // Centered in the gap between two items, and as wide as their highlight.
+        const double gap = 3;
+        const double inset = 4;
+        var origin = item.TransformToVisual(DropLayer).TransformPoint(default);
+        DropMarker.Width = Math.Max(0, item.ActualWidth - 2 * inset);
+        Canvas.SetLeft(DropMarker, origin.X + inset);
+        Canvas.SetTop(DropMarker, (above ? origin.Y - gap : origin.Y + item.ActualHeight + gap) - DropMarker.Height / 2);
+        DropMarker.Visibility = Visibility.Visible;
     }
 
     /// <summary>

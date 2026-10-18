@@ -43,5 +43,16 @@
                 <views:SettingsPage x:Name="SettingsView" Visibility="Collapsed" />
             </Grid>
         </NavigationView>
+
+        <!-- Where a group dragged in the navigation pane would land. -->
+        <Canvas x:Name="DropLayer" Grid.Row="1" IsHitTestVisible="False">
+            <Rectangle
+                x:Name="DropMarker"
+                Height="2"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                RadiusX="1"
+                RadiusY="1"
+                Visibility="Collapsed" />
+        </Canvas>
     </Grid>
 </Window>
