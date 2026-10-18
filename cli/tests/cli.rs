@@ -482,3 +482,16 @@ fn wake_wait_times_out() {
             "\"Desk\" did not come online within 1 s.",
         ));
 }
+
+#[test]
+fn version_works_without_a_valid_configuration() {
+    let wol = Wol::new();
+    std::fs::write(wol.config(), "not toml [").unwrap();
+
+    let (code, stdout, _) = wol.json(&["version"]);
+    assert_eq!(code, 0);
+    let stdout = stdout.unwrap();
+    assert_eq!(stdout["schema"], 1);
+    assert_eq!(stdout["version"], env!("CARGO_PKG_VERSION"));
+    assert!(stdout.get("config").is_none());
+}

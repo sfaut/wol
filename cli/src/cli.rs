@@ -128,6 +128,13 @@ enum Command {
         name: String,
     },
 
+    /// Print the version of wol and of its JSON output
+    ///
+    /// Front-ends use `wol version --json` to check that they understand this CLI: the
+    /// `schema` field gives the version of the JSON output. The configuration file is not
+    /// read.
+    Version,
+
     /// Manage groups
     Group {
         /// Group command to run.
@@ -342,6 +349,17 @@ where
         }
     };
 
+    // Needs no configuration: it must work even when the file is invalid.
+    if let Command::Version = cli.command {
+        let version = env!("CARGO_PKG_VERSION");
+        if cli.json {
+            println!("{}", document(None, json!({ "version": version })));
+        } else {
+            println!("wol {version} (JSON schema {SCHEMA})");
+        }
+        return ExitCode::SUCCESS;
+    }
+
     let mut file = match ConfigFile::load(config::locate(cli.config.as_deref())) {
         Ok(file) => file,
         Err(error) => {
@@ -529,6 +547,7 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
             ))
         }
         Command::Group { command } => group(file, command),
+        Command::Version => unreachable!("handled before loading the configuration"),
     }
 }
 
