@@ -72,7 +72,7 @@ dotnet publish src/Wol.Desktop -c Release -r win-x64   # -> wol-gui.exe
 ## Documentation
 
 - [`docs/cli-contract.md`](docs/cli-contract.md): configuration file, commands, JSON output.
-- [`docs/design/gui-brief.md`](docs/design/gui-brief.md): desktop app design brief.
+- [`design/`](design): desktop app design (mockups, specs) and its [brief](design/brief.md).
 
 ## License
 
