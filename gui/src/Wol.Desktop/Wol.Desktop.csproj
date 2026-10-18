@@ -22,6 +22,9 @@
     <!-- Portable folder: .NET runtime compiled into the executable. -->
     <SelfContained>true</SelfContained>
     <PublishAot>true</PublishAot>
+
+    <!-- LibraryImport (Win32 calls) generates unsafe marshalling code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

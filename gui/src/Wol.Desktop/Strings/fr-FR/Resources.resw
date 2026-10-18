@@ -15,7 +15,259 @@
   <data name="AppDisplayName" xml:space="preserve">
     <value>Wol</value>
   </data>
-  <data name="MainWindow_Placeholder.Text" xml:space="preserve">
-    <value>Aucune machine pour l'instant</value>
+  <data name="AppTitleBar.Title" xml:space="preserve">
+    <value>Wol</value>
+  </data>
+  <data name="Nav_AllMachines" xml:space="preserve">
+    <value>Toutes les machines</value>
+  </data>
+  <data name="Nav_GroupsHeader" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="Nav_Ungrouped" xml:space="preserve">
+    <value>Sans groupe</value>
+  </data>
+  <data name="Nav_Group_BadgeName_One" xml:space="preserve">
+    <value>{0}, 1 machine hors ligne</value>
+  </data>
+  <data name="Nav_Group_BadgeName_Other" xml:space="preserve">
+    <value>{0}, {1} machines hors ligne</value>
+  </data>
+  <data name="Page_AllMachines_Title" xml:space="preserve">
+    <value>Toutes les machines</value>
+  </data>
+  <data name="State_Online" xml:space="preserve">
+    <value>En ligne</value>
+  </data>
+  <data name="State_Offline" xml:space="preserve">
+    <value>Hors ligne</value>
+  </data>
+  <data name="State_Waking" xml:space="preserve">
+    <value>Réveil en cours</value>
+  </data>
+  <data name="State_TimedOut" xml:space="preserve">
+    <value>Délai dépassé</value>
+  </data>
+  <data name="State_Unknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="State_Error" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="State_Offline_Detail" xml:space="preserve">
+    <value>Vue {0}</value>
+  </data>
+  <data name="State_Offline_Never" xml:space="preserve">
+    <value>Jamais vue</value>
+  </data>
+  <data name="State_Waking_Detail" xml:space="preserve">
+    <value>{0} · en attente de réponse</value>
+  </data>
+  <data name="State_TimedOut_Detail" xml:space="preserve">
+    <value>Pas de réponse après {0}</value>
+  </data>
+  <data name="State_Unknown_NotChecked" xml:space="preserve">
+    <value>Pas encore vérifiée</value>
+  </data>
+  <data name="State_Unknown_Checking" xml:space="preserve">
+    <value>Vérification…</value>
+  </data>
+  <data name="State_Unknown_CliUnavailable" xml:space="preserve">
+    <value>Non vérifiée · CLI indisponible</value>
+  </data>
+  <data name="State_Error_NoNetwork" xml:space="preserve">
+    <value>Impossible d’analyser le réseau</value>
+  </data>
+  <data name="Row_AutomationName" xml:space="preserve">
+    <value>{0}, {1}, {2}</value>
+  </data>
+  <data name="Row_Online_Line" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="Row_Mac_More" xml:space="preserve">
+    <value>{0} +{1}</value>
+  </data>
+  <data name="Row_Interfaces_Tooltip_Line" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="Row_SharedMac_Tooltip_One" xml:space="preserve">
+    <value>Même adresse MAC que {0}. Wol ne peut pas distinguer ces machines quand cette adresse répond.</value>
+  </data>
+  <data name="Row_SharedMac_Tooltip_Other" xml:space="preserve">
+    <value>Même adresse MAC que {0} et {1} autres machines. Wol ne peut pas distinguer ces machines quand cette adresse répond.</value>
+  </data>
+  <data name="Row_SharedMac_Name" xml:space="preserve">
+    <value>Partage son adresse MAC avec {0}</value>
+  </data>
+  <data name="Row_Wake" xml:space="preserve">
+    <value>Réveiller</value>
+  </data>
+  <data name="Row_Retry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="Row_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Row_Wake_Name" xml:space="preserve">
+    <value>Réveiller {0}</value>
+  </data>
+  <data name="Row_Retry_Name" xml:space="preserve">
+    <value>Réessayer de réveiller {0}</value>
+  </data>
+  <data name="Row_Cancel_Name" xml:space="preserve">
+    <value>Annuler le réveil de {0}</value>
+  </data>
+  <data name="Summary_Online" xml:space="preserve">
+    <value>{0} en ligne</value>
+  </data>
+  <data name="Summary_Offline" xml:space="preserve">
+    <value>{0} hors ligne</value>
+  </data>
+  <data name="Summary_Waking" xml:space="preserve">
+    <value>{0} en cours de réveil</value>
+  </data>
+  <data name="Summary_TimedOut" xml:space="preserve">
+    <value>{0} délai dépassé</value>
+  </data>
+  <data name="Summary_Unknown" xml:space="preserve">
+    <value>{0} inconnu(s)</value>
+  </data>
+  <data name="Summary_Error_One" xml:space="preserve">
+    <value>{0} erreur</value>
+  </data>
+  <data name="Summary_Error_Other" xml:space="preserve">
+    <value>{0} erreurs</value>
+  </data>
+  <data name="Summary_Separator" xml:space="preserve">
+    <value> · </value>
+  </data>
+  <data name="Summary_Empty" xml:space="preserve">
+    <value>Aucune machine</value>
+  </data>
+  <data name="Section_WakeGroup" xml:space="preserve">
+    <value>Réveiller le groupe</value>
+  </data>
+  <data name="Search_Placeholder" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="Search_PlaceholderInGroup" xml:space="preserve">
+    <value>Rechercher dans {0}</value>
+  </data>
+  <data name="SearchBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Rechercher par nom, adresse MAC, étiquette ou IP</value>
+  </data>
+  <data name="RefreshButton.Label" xml:space="preserve">
+    <value>Tout actualiser</value>
+  </data>
+  <data name="RefreshButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Tout actualiser (F5)</value>
+  </data>
+  <data name="EmptyTitle.Text" xml:space="preserve">
+    <value>Ajoutez votre première machine</value>
+  </data>
+  <data name="EmptyBody.Text" xml:space="preserve">
+    <value>Wol réveille les ordinateurs de votre réseau local en leur envoyant un paquet Wake-on-LAN. Pour l’instant, ajoutez les machines en ligne de commande : wol add &lt;NOM&gt; --mac &lt;MAC&gt;</value>
+  </data>
+  <data name="Wake_Success_Title" xml:space="preserve">
+    <value>{0} est en ligne</value>
+  </data>
+  <data name="Wake_Success_Message" xml:space="preserve">
+    <value>Elle s’est réveillée en {0}.</value>
+  </data>
+  <data name="Wake_TimedOut_Title" xml:space="preserve">
+    <value>{0} ne s’est pas réveillée</value>
+  </data>
+  <data name="Wake_TimedOut_Message" xml:space="preserve">
+    <value>Pas de réponse après {0}. Vérifiez que le Wake-on-LAN est activé sur ce PC.</value>
+  </data>
+  <data name="Wake_Retry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="Wake_SendFailed_Title" xml:space="preserve">
+    <value>Impossible d’envoyer le paquet de réveil</value>
+  </data>
+  <data name="Wake_SendFailed_Message" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Wake_Result_AllOnline_Title" xml:space="preserve">
+    <value>{0} : les {1} machines sont en ligne</value>
+  </data>
+  <data name="Wake_Result_AllOnline_Message" xml:space="preserve">
+    <value>Réveillées en {0}.</value>
+  </data>
+  <data name="Wake_Result_Partial_Title" xml:space="preserve">
+    <value>{0} : {1} machines en ligne sur {2}</value>
+  </data>
+  <data name="Wake_Result_Partial_Message_One" xml:space="preserve">
+    <value>{0} ne s’est pas réveillée.</value>
+  </data>
+  <data name="Wake_Result_Partial_Message_Other" xml:space="preserve">
+    <value>{0} machines ne se sont pas réveillées.</value>
+  </data>
+  <data name="Wake_Result_Retry_One" xml:space="preserve">
+    <value>Réessayer 1 machine</value>
+  </data>
+  <data name="Wake_Result_Retry_Other" xml:space="preserve">
+    <value>Réessayer {0} machines</value>
+  </data>
+  <data name="Error_CliMissing_Title" xml:space="preserve">
+    <value>Outil en ligne de commande introuvable</value>
+  </data>
+  <data name="Error_CliMissing_Message" xml:space="preserve">
+    <value>Wol a besoin de wol.exe, son outil en ligne de commande, dans le même dossier que wol-gui.exe ({0}).</value>
+  </data>
+  <data name="Error_CliMissing_CheckAgain" xml:space="preserve">
+    <value>Vérifier à nouveau</value>
+  </data>
+  <data name="Error_CliIncompatible_Title" xml:space="preserve">
+    <value>Version de l’outil en ligne de commande non prise en charge</value>
+  </data>
+  <data name="Error_CliIncompatible_Message" xml:space="preserve">
+    <value>Cette version de Wol a besoin de wol.exe {0} ou plus récent. Version trouvée : {1}.</value>
+  </data>
+  <data name="Error_CliIncompatible_Older" xml:space="preserve">
+    <value>une version plus ancienne</value>
+  </data>
+  <data name="Error_Config_Title" xml:space="preserve">
+    <value>Impossible de lire le fichier de configuration</value>
+  </data>
+  <data name="Error_Config_MessageWithLine" xml:space="preserve">
+    <value>Ligne {0} : {1} Vos machines restent affichées telles qu’enregistrées jusqu’à la correction du fichier.</value>
+  </data>
+  <data name="Error_Config_Message" xml:space="preserve">
+    <value>{0} Vos machines restent affichées telles qu’enregistrées jusqu’à la correction du fichier.</value>
+  </data>
+  <data name="Error_Config_Open" xml:space="preserve">
+    <value>Ouvrir le fichier</value>
+  </data>
+  <data name="Error_NoNetwork_Title" xml:space="preserve">
+    <value>Aucun réseau local à analyser</value>
+  </data>
+  <data name="Error_NoNetwork_Message" xml:space="preserve">
+    <value>Connectez ce PC à un réseau local (Ethernet ou Wi-Fi) pour trouver et réveiller vos machines. Wol réessaie automatiquement.</value>
+  </data>
+  <data name="Error_NoNetwork_Settings" xml:space="preserve">
+    <value>Paramètres réseau</value>
+  </data>
+  <data name="Time_Seconds" xml:space="preserve">
+    <value>{0} s</value>
+  </data>
+  <data name="Time_Minutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Time_MinutesSeconds" xml:space="preserve">
+    <value>{0} min {1} s</value>
+  </data>
+  <data name="Time_JustNow" xml:space="preserve">
+    <value>à l’instant</value>
+  </data>
+  <data name="Time_MinutesAgo" xml:space="preserve">
+    <value>il y a {0} min</value>
+  </data>
+  <data name="Time_HoursAgo" xml:space="preserve">
+    <value>il y a {0} h</value>
+  </data>
+  <data name="Time_DaysAgo" xml:space="preserve">
+    <value>il y a {0} j</value>
   </data>
 </root>

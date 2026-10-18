@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Machine list (design/specs/layout.md, "Machine list page"): degraded-state bar, title and
+    status summary, toolbar, one Expander per group, notification host at the bottom.
+-->
+<UserControl
+    x:Class="Wol.Desktop.Views.MachineListPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Wol.Desktop.Controls"
+    xmlns:models="using:Wol.Desktop.Models">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="MachineRowTemplate" x:DataType="models:MachineItem">
+            <Grid
+                MinHeight="48"
+                Padding="16,6,8,6"
+                AutomationProperties.Name="{x:Bind AutomationName, Mode=OneWay}"
+                ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="172" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <controls:StateIcon VerticalAlignment="Center" State="{x:Bind State, Mode=OneWay}" />
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <FontIcon
+                            AutomationProperties.AccessibilityView="Raw"
+                            FontSize="16"
+                            Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                            Glyph="&#xE7BA;"
+                            ToolTipService.ToolTip="{x:Bind SharedMacTooltip, Mode=OneWay}"
+                            Visibility="{x:Bind SharedMacVisibility, Mode=OneWay}" />
+                    </StackPanel>
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind SecondLine, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{x:Bind InterfacesTooltip, Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind StateLabel, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind Detail, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <Grid Grid.Column="3" MinWidth="88" VerticalAlignment="Center">
+                    <Button
+                        HorizontalAlignment="Right"
+                        AutomationProperties.Name="{x:Bind AccentWakeName, Mode=OneWay}"
+                        Click="AccentWake_Click"
+                        Content="{x:Bind AccentWakeText, Mode=OneWay}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Visibility="{x:Bind AccentWakeVisibility, Mode=OneWay}" />
+                    <Button
+                        HorizontalAlignment="Right"
+                        AutomationProperties.Name="{x:Bind StandardWakeName, Mode=OneWay}"
+                        Click="StandardWake_Click"
+                        Content="{x:Bind StandardWakeText, Mode=OneWay}"
+                        IsEnabled="{x:Bind IsStandardWakeEnabled, Mode=OneWay}"
+                        Visibility="{x:Bind StandardWakeVisibility, Mode=OneWay}" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Degraded states, one at a time. -->
+        <InfoBar
+            x:Name="BannerBar"
+            Margin="36,12,32,0"
+            IsClosable="False"
+            Severity="Error" />
+
+        <!-- Title and status summary. -->
+        <StackPanel Grid.Row="1" Margin="36,20,32,0" Spacing="4">
+            <TextBlock
+                x:Name="TitleText"
+                AutomationProperties.HeadingLevel="Level1"
+                Style="{StaticResource TitleTextBlockStyle}" />
+            <TextBlock
+                x:Name="SummaryText"
+                AutomationProperties.LiveSetting="Polite"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+
+        <!-- Toolbar. -->
+        <Grid
+            Grid.Row="2"
+            Margin="32,8,32,12"
+            ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <CommandBar
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                IsDynamicOverflowEnabled="True">
+                <AppBarButton
+                    x:Name="RefreshButton"
+                    x:Uid="RefreshButton"
+                    Click="Refresh_Click">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE72C;" />
+                    </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F5" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+            </CommandBar>
+            <AutoSuggestBox
+                x:Name="SearchBox"
+                x:Uid="SearchBox"
+                Grid.Column="1"
+                Width="240"
+                VerticalAlignment="Center"
+                QueryIcon="Find"
+                TextChanged="Search_TextChanged">
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="F"
+                        Invoked="Search_Invoked"
+                        Modifiers="Control" />
+                </AutoSuggestBox.KeyboardAccelerators>
+            </AutoSuggestBox>
+        </Grid>
+
+        <!-- Sections. -->
+        <ScrollViewer Grid.Row="3" Padding="36,0,32,24">
+            <ItemsRepeater x:Name="SectionsRepeater">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="8" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="models:GroupSection">
+                        <Expander
+                            Padding="0"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">
+                            <Expander.Header>
+                                <Grid MinHeight="56" Padding="0,8" ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock
+                                            AutomationProperties.HeadingLevel="Level2"
+                                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                                            Text="{x:Bind Title}" />
+                                        <TextBlock
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind Summary, Mode=OneWay}" />
+                                    </StackPanel>
+                                    <Button
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Click="WakeGroup_Click"
+                                        Content="{x:Bind WakeText}"
+                                        IsEnabled="{x:Bind CanWake, Mode=OneWay}" />
+                                </Grid>
+                            </Expander.Header>
+                            <ListView
+                                IsItemClickEnabled="False"
+                                ItemTemplate="{StaticResource MachineRowTemplate}"
+                                ItemsSource="{x:Bind Shown}"
+                                SelectionMode="None" />
+                        </Expander>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+
+        <!-- First launch. -->
+        <StackPanel
+            x:Name="EmptyState"
+            Grid.Row="3"
+            MaxWidth="420"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="12"
+            Visibility="Collapsed">
+            <FontIcon
+                HorizontalAlignment="Center"
+                AutomationProperties.AccessibilityView="Raw"
+                FontSize="64"
+                Glyph="&#xE7F4;" />
+            <TextBlock
+                x:Uid="EmptyTitle"
+                HorizontalAlignment="Center"
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                TextAlignment="Center" />
+            <TextBlock
+                x:Uid="EmptyBody"
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- Wake results. -->
+        <StackPanel
+            x:Name="NotificationHost"
+            Grid.Row="3"
+            Margin="36,0,32,16"
+            VerticalAlignment="Bottom"
+            Spacing="8">
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition />
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
+        </StackPanel>
+    </Grid>
+</UserControl>
