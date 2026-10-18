@@ -93,12 +93,12 @@ public sealed partial class MachineListPage : UserControl
         // The repeater leaves the data context of the card empty; its buttons read it.
         card.DataContext = sender.ItemsSourceView.GetAt(args.Index);
 
-        // Cards are 8 px apart; machine rows and buttons keep their own pointer handling.
+        // Cards are 4 px apart; machine rows and buttons keep their own pointer handling.
         Reorder?.Attach(
             card,
             () => card.DataContext is GroupSection { Group: not null } section ? section : null,
             args => !IsInside<Button>(args.OriginalSource, card) && !IsInside<ListViewBase>(args.OriginalSource, card),
-            gap: 4,
+            gap: 2,
             inset: 0);
     }
 

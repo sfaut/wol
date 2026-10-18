@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    State badge (design/specs/states.md, design/specs/layout.md "State badge"): the state glyph and
+    label on the state's background tint, in a pill. High contrast: no fill, a border in the text
+    colour. Decorative: the row's automation name carries the state.
+-->
+<UserControl
+    x:Class="Wol.Desktop.Controls.StateBadge"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    HorizontalAlignment="Left"
+    AutomationProperties.AccessibilityView="Raw"
+    IsTabStop="False">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <StaticResource x:Key="StateBadgeOnlineBrush" ResourceKey="SystemFillColorSuccessBackgroundBrush" />
+                    <StaticResource x:Key="StateBadgeTimedOutBrush" ResourceKey="SystemFillColorCautionBackgroundBrush" />
+                    <StaticResource x:Key="StateBadgeErrorBrush" ResourceKey="SystemFillColorCriticalBackgroundBrush" />
+                    <SolidColorBrush x:Key="StateBadgeWakingBrush" Opacity="0.12" Color="{StaticResource SystemAccentColorLight2}" />
+                    <SolidColorBrush x:Key="StateBadgeNeutralBrush" Opacity="0.12" Color="{StaticResource ControlStrongStrokeColorDefault}" />
+                    <SolidColorBrush x:Key="StateBadgeBorderBrush" Color="Transparent" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <StaticResource x:Key="StateBadgeOnlineBrush" ResourceKey="SystemFillColorSuccessBackgroundBrush" />
+                    <StaticResource x:Key="StateBadgeTimedOutBrush" ResourceKey="SystemFillColorCautionBackgroundBrush" />
+                    <StaticResource x:Key="StateBadgeErrorBrush" ResourceKey="SystemFillColorCriticalBackgroundBrush" />
+                    <SolidColorBrush x:Key="StateBadgeWakingBrush" Opacity="0.12" Color="{StaticResource SystemAccentColorDark1}" />
+                    <SolidColorBrush x:Key="StateBadgeNeutralBrush" Opacity="0.12" Color="{StaticResource ControlStrongStrokeColorDefault}" />
+                    <SolidColorBrush x:Key="StateBadgeBorderBrush" Color="Transparent" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="StateBadgeOnlineBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="StateBadgeTimedOutBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="StateBadgeErrorBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="StateBadgeWakingBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="StateBadgeNeutralBrush" Color="Transparent" />
+                    <StaticResource x:Key="StateBadgeBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border
+        x:Name="Pill"
+        Height="20"
+        Padding="4,0,8,0"
+        Background="{ThemeResource StateBadgeNeutralBrush}"
+        BorderBrush="{ThemeResource StateBadgeBorderBrush}"
+        BorderThickness="1"
+        CornerRadius="10">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="States">
+                <VisualState x:Name="Unknown" />
+                <VisualState x:Name="Online">
+                    <VisualState.Setters>
+                        <Setter Target="Pill.Background" Value="{ThemeResource StateBadgeOnlineBrush}" />
+                        <Setter Target="UnknownIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="OnlineIcon.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Offline">
+                    <VisualState.Setters>
+                        <Setter Target="UnknownIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="OfflineIcon.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Waking">
+                    <VisualState.Setters>
+                        <Setter Target="Pill.Background" Value="{ThemeResource StateBadgeWakingBrush}" />
+                        <Setter Target="UnknownIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="WakingIcon.Visibility" Value="Visible" />
+                        <Setter Target="WakingIcon.IsActive" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TimedOut">
+                    <VisualState.Setters>
+                        <Setter Target="Pill.Background" Value="{ThemeResource StateBadgeTimedOutBrush}" />
+                        <Setter Target="UnknownIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="TimedOutIcon.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Error">
+                    <VisualState.Setters>
+                        <Setter Target="Pill.Background" Value="{ThemeResource StateBadgeErrorBrush}" />
+                        <Setter Target="UnknownIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="ErrorIcon.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <StackPanel
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="4">
+            <Grid Width="12" Height="12">
+                <Grid x:Name="OnlineIcon" Visibility="Collapsed">
+                    <FontIcon FontSize="12" Foreground="{ThemeResource SystemFillColorSuccessBrush}" Glyph="&#xF136;" />
+                    <FontIcon FontSize="12" Foreground="{ThemeResource TextFillColorInverseBrush}" Glyph="&#xF13E;" />
+                </Grid>
+                <FontIcon
+                    x:Name="OfflineIcon"
+                    FontSize="12"
+                    Foreground="{ThemeResource SystemFillColorSolidNeutralBrush}"
+                    Glyph="&#xF138;"
+                    Visibility="Collapsed" />
+                <ProgressRing
+                    x:Name="WakingIcon"
+                    Width="12"
+                    Height="12"
+                    MinWidth="12"
+                    MinHeight="12"
+                    IsActive="False"
+                    IsIndeterminate="True"
+                    Visibility="Collapsed" />
+                <Grid x:Name="TimedOutIcon" Visibility="Collapsed">
+                    <FontIcon FontSize="12" Foreground="{ThemeResource SystemFillColorCautionBrush}" Glyph="&#xF139;" />
+                    <FontIcon FontSize="12" Foreground="{ThemeResource TextFillColorInverseBrush}" Glyph="&#xF13B;" />
+                </Grid>
+                <Grid x:Name="UnknownIcon">
+                    <FontIcon FontSize="12" Foreground="{ThemeResource SystemFillColorSolidNeutralBrush}" Glyph="&#xF136;" />
+                    <FontIcon FontSize="12" Foreground="{ThemeResource TextFillColorInverseBrush}" Glyph="&#xF142;" />
+                </Grid>
+                <Grid x:Name="ErrorIcon" Visibility="Collapsed">
+                    <FontIcon FontSize="12" Foreground="{ThemeResource SystemFillColorCriticalBrush}" Glyph="&#xF136;" />
+                    <FontIcon FontSize="12" Foreground="{ThemeResource TextFillColorInverseBrush}" Glyph="&#xF13D;" />
+                </Grid>
+            </Grid>
+            <TextBlock
+                x:Name="Label"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}" />
+        </StackPanel>
+    </Border>
+</UserControl>

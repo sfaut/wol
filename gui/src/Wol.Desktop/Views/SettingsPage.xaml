@@ -14,11 +14,11 @@
             <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
-            <Setter Property="Padding" Value="16,12" />
-            <Setter Property="MinHeight" Value="68" />
+            <Setter Property="Padding" Value="16,6" />
+            <Setter Property="MinHeight" Value="48" />
         </Style>
         <Style x:Key="SectionHeaderStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="Margin" Value="1,24,0,6" />
+            <Setter Property="Margin" Value="1,16,0,2" />
         </Style>
         <Style x:Key="CardDescriptionStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -27,12 +27,12 @@
     </UserControl.Resources>
 
     <ScrollViewer Padding="36,0,32,24">
-        <StackPanel MaxWidth="1000" Spacing="4">
+        <StackPanel MaxWidth="1000" Spacing="2">
             <TextBlock
                 x:Uid="SettingsTitle"
-                Margin="0,20,0,8"
+                Margin="0,12,0,0"
                 AutomationProperties.HeadingLevel="Level1"
-                Style="{StaticResource TitleTextBlockStyle}" />
+                Style="{StaticResource SubtitleTextBlockStyle}" />
 
             <!-- Appearance. -->
             <TextBlock x:Uid="SettingsAppearance" AutomationProperties.HeadingLevel="Level2" Style="{StaticResource SectionHeaderStyle}" />
@@ -217,7 +217,7 @@
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
                 <Expander.Header>
-                    <Grid MinHeight="56" ColumnSpacing="16">
+                    <Grid MinHeight="48" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -253,7 +253,7 @@
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
                 <Expander.Header>
-                    <Grid MinHeight="56" ColumnSpacing="16">
+                    <Grid MinHeight="48" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -276,8 +276,24 @@
                             Click="CopyVersion_Click" />
                     </Grid>
                 </Expander.Header>
-                <StackPanel Spacing="16">
-                    <Grid ColumnSpacing="16">
+                <StackPanel Spacing="4">
+                    <!-- Name and address are not localized. -->
+                    <Grid MinHeight="40" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Sébastien Faut" />
+                            <TextBlock x:Uid="SettingsAboutAuthorDescription" Style="{StaticResource CardDescriptionStyle}" />
+                        </StackPanel>
+                        <HyperlinkButton
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Content="sebastien.faut@gmail.com"
+                            NavigateUri="mailto:sebastien.faut@gmail.com" />
+                    </Grid>
+                    <Grid MinHeight="40" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -300,7 +316,7 @@
                             <Button x:Uid="SettingsAboutCliCheckAgain" Click="CheckCli_Click" />
                         </StackPanel>
                     </Grid>
-                    <Grid ColumnSpacing="16">
+                    <Grid MinHeight="40" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />

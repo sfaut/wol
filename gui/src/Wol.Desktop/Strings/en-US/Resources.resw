@@ -846,4 +846,7 @@
   <data name="Balloon_StillRunning_Text" xml:space="preserve">
     <value>Find it in the notification area. You can change this in Settings.</value>
   </data>
+  <data name="SettingsAboutAuthorDescription.Text" xml:space="preserve">
+    <value>Author</value>
+  </data>
 </root>

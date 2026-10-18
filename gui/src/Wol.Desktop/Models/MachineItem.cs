@@ -109,6 +109,11 @@ public sealed partial class MachineItem : ObservableObject
     };
 
     /// <summary>
+    /// Shows the detail line under the state badge only when there is a detail (not when online).
+    /// </summary>
+    public Visibility DetailVisibility => Detail.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+    /// <summary>
     /// Second line of the row: interface and IP when online, otherwise the first MAC address.
     /// </summary>
     public string SecondLine
