@@ -5,7 +5,6 @@
 pub mod cli;
 pub mod config;
 pub mod error;
-pub mod icmp;
 pub mod mac;
 pub mod magic;
 pub mod probe;

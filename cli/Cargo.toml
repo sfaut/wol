@@ -33,4 +33,3 @@ windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Netwo
 
 [target."cfg(unix)".dependencies]
 libc = "0.2.191"
-socket2 = "0.6.5"

@@ -40,6 +40,10 @@ const MIN_PREFIX: u32 = 22;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 const DISCARD_PORT: u16 = 9;
 
+/// Test hook: when this variable is set, the network is not scanned and its value describes
+/// the devices found, as `IP=MAC` pairs separated by commas (`none`: no local network).
+pub const FAKE_SCAN_ENV: &str = "WOL_FAKE_SCAN";
+
 /// A local IPv4 subnet, as configured on a network interface.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct Subnet {
@@ -85,6 +89,10 @@ impl Subnet {
 /// Returns [`ScanError::NoLocalNetwork`] when no network interface is connected, and
 /// [`ScanError::Failed`] when the system refuses the scan.
 pub fn scan() -> Result<Vec<Device>, ScanError> {
+    if let Some(fake) = std::env::var_os(FAKE_SCAN_ENV) {
+        return fake_scan(&fake.to_string_lossy());
+    }
+
     let mut subnets: Vec<Subnet> = platform::subnets()?
         .into_iter()
         .filter(|subnet| subnet.is_usable())
@@ -104,6 +112,25 @@ pub fn scan() -> Result<Vec<Device>, ScanError> {
         .collect();
     devices.sort_unstable();
     devices.dedup();
+    Ok(devices)
+}
+
+/// Builds a scan result from the value of [`FAKE_SCAN_ENV`]; invalid pairs are skipped.
+fn fake_scan(value: &str) -> Result<Vec<Device>, ScanError> {
+    if value == "none" {
+        return Err(ScanError::NoLocalNetwork);
+    }
+    let mut devices: Vec<Device> = value
+        .split(',')
+        .filter_map(|pair| {
+            let (address, mac) = pair.trim().split_once('=')?;
+            Some(Device {
+                address: address.parse().ok()?,
+                mac: mac.parse().ok()?,
+            })
+        })
+        .collect();
+    devices.sort_unstable();
     Ok(devices)
 }
 

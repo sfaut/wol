@@ -11,6 +11,9 @@ use tempfile::TempDir;
 struct Wol {
     /// Temporary directory holding the configuration file.
     dir: TempDir,
+
+    /// Devices the fake network scan finds (`WOL_FAKE_SCAN` syntax).
+    network: String,
 }
 
 impl Wol {
@@ -18,7 +21,14 @@ impl Wol {
     fn new() -> Self {
         Self {
             dir: TempDir::new().unwrap(),
+            network: String::new(),
         }
+    }
+
+    /// Sets the devices the fake network scan finds (`IP=MAC` pairs, or `none`).
+    fn network(mut self, devices: &str) -> Self {
+        devices.clone_into(&mut self.network);
+        self
     }
 
     /// Path of the configuration file.
@@ -30,6 +40,7 @@ impl Wol {
     fn command(&self, args: &[&str]) -> Command {
         let mut command = Command::cargo_bin("wol").unwrap();
         command.arg("--config").arg(self.config()).args(args);
+        command.env("WOL_FAKE_SCAN", &self.network);
         command
     }
 
@@ -247,28 +258,9 @@ fn group_lifecycle() {
 
 #[test]
 fn status_reports_states() {
-    let listener = std::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
-    let port = listener.local_addr().unwrap().port().to_string();
-
-    let wol = Wol::new();
-    wol.ok(&[
-        "add",
-        "Local",
-        "--mac",
-        "001122334455",
-        "--host",
-        "127.0.0.1",
-        "--check-port",
-        &port,
-    ]);
-    wol.ok(&[
-        "add",
-        "Nowhere",
-        "--mac",
-        "001122334456",
-        "--host",
-        "nowhere.invalid",
-    ]);
+    let wol = Wol::new().network("192.168.1.20=00:11:22:33:44:55, 192.168.1.30=66:77:88:99:AA:BB");
+    wol.ok(&["add", "Desk", "--mac", "001122334455", "--host", "desk"]);
+    wol.ok(&["add", "NAS", "--mac", "001122334456", "--host", "nas"]);
 
     let (code, stdout, _) = wol.json(&["status"]);
     assert_eq!(code, 0);
@@ -276,14 +268,27 @@ fn status_reports_states() {
     assert!(stdout["checked_at"].as_str().unwrap().ends_with('Z'));
 
     let machines = stdout["machines"].as_array().unwrap();
-    assert_eq!(machines[0]["machine"], "Local");
+    assert_eq!(machines[0]["machine"], "Desk");
     assert_eq!(machines[0]["state"], "online");
-    assert!(machines[0]["latency_ms"].is_u64());
-    assert_eq!(machines[1]["state"], "error");
-    assert_eq!(machines[1]["reason"], "host_not_found");
+    assert_eq!(machines[0]["mac"], "00:11:22:33:44:55");
+    assert_eq!(machines[0]["address"], "192.168.1.20");
+    assert_eq!(machines[1]["state"], "offline");
+    assert_eq!(machines[1]["address"], Value::Null);
 
-    let (_, stdout, _) = wol.json(&["status", "nowhere"]);
+    let (_, stdout, _) = wol.json(&["status", "nas"]);
     assert_eq!(stdout.unwrap()["machines"].as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn status_without_local_network_is_an_error() {
+    let wol = Wol::new().network("none");
+    wol.ok(&["add", "Desk", "--mac", "001122334455", "--host", "desk"]);
+
+    let (code, stdout, _) = wol.json(&["status"]);
+    assert_eq!(code, 5);
+    let machine = &stdout.unwrap()["machines"][0];
+    assert_eq!(machine["state"], "error");
+    assert_eq!(machine["reason"], "no_local_network");
 }
 
 #[test]
@@ -304,7 +309,8 @@ fn watch_emits_snapshots_and_reloads_config() {
     let mut child = std::process::Command::new(assert_cmd::cargo::cargo_bin("wol"))
         .arg("--config")
         .arg(wol.config())
-        .args(["watch", "--json", "--interval", "1", "--timeout", "300"])
+        .args(["watch", "--json", "--interval", "1"])
+        .env("WOL_FAKE_SCAN", "")
         .stdout(Stdio::piped())
         .spawn()
         .unwrap();

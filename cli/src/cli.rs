@@ -5,7 +5,6 @@ use std::fmt::Write as _;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::PathBuf;
 use std::process::ExitCode;
-use std::time::Duration;
 
 use clap::{Args, Parser, Subcommand};
 use serde_json::{Value, json};
@@ -13,8 +12,8 @@ use serde_json::{Value, json};
 use crate::config::{self, Config, ConfigFile, ConfigStatus, Machine};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
-use crate::probe::{self, Method, Probe, Reason, State};
-use crate::{magic, time, watch};
+use crate::probe::{self, Probe, Reason, State};
+use crate::{magic, scan, time, watch};
 
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
@@ -58,10 +57,6 @@ enum Command {
         /// Machines to check.
         #[command(flatten)]
         selection: Selection,
-
-        /// Check options.
-        #[command(flatten)]
-        check: CheckArgs,
     },
 
     /// Monitor machines and report every state change (all machines by default)
@@ -69,10 +64,6 @@ enum Command {
         /// Machines to monitor.
         #[command(flatten)]
         selection: Selection,
-
-        /// Check options.
-        #[command(flatten)]
-        check: CheckArgs,
 
         /// Time between two checks, in seconds
         #[arg(long, value_name = "SECONDS", default_value_t = 10, value_parser = clap::value_parser!(u64).range(1..=3_600))]
@@ -108,14 +99,6 @@ struct Selection {
     /// Also include every machine of this group (repeatable)
     #[arg(long = "group", value_name = "GROUP")]
     groups: Vec<String>,
-}
-
-/// Options of state checks.
-#[derive(Debug, Args)]
-struct CheckArgs {
-    /// Time to wait for each answer (ping, then each TCP port), in milliseconds
-    #[arg(long, value_name = "MS", default_value_t = 1_000, value_parser = clap::value_parser!(u64).range(100..=60_000))]
-    timeout: u64,
 }
 
 /// Arguments of `wol add`.
@@ -374,20 +357,16 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
     match &cli.command {
         Command::List => Ok(list(file)),
         Command::Wake { machines, groups } => wake(file, machines, groups),
-        Command::Status { selection, check } => {
-            status(file, selection, Duration::from_millis(check.timeout))
-        }
+        Command::Status { selection } => status(file, selection),
         Command::Watch {
             selection,
-            check,
             interval,
         } => watch::watch(
             file,
             &watch::Options {
                 names: &selection.machines,
                 groups: &selection.groups,
-                interval: Duration::from_secs(*interval),
-                timeout: Duration::from_millis(check.timeout),
+                interval: std::time::Duration::from_secs(*interval),
                 json: cli.json,
             },
         ),
@@ -572,23 +551,28 @@ fn list(file: &ConfigFile) -> Outcome {
     Outcome::ok(json, text)
 }
 
-/// Checks the selected machines once.
+/// Checks the selected machines once, with one scan of the local network.
 ///
 /// # Errors
 ///
-/// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`]; check failures are
-/// reported as machine states.
-fn status(file: &ConfigFile, selection: &Selection, timeout: Duration) -> Result<Outcome> {
+/// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`]; a failed scan is reported
+/// as machine states, with exit code [`EXIT_NETWORK`].
+fn status(file: &ConfigFile, selection: &Selection) -> Result<Outcome> {
     let config = file.config();
     let machines = config.select(&selection.machines, &selection.groups)?;
 
-    let probes = probe::probe_all(&machines, timeout);
+    let scan = scan::scan();
+    let probes = probe::probe_all(&machines, &scan);
     let json = json!({
         "checked_at": time::now(),
         "machines": machines.iter().zip(&probes).map(|(machine, probe)| probe_json(machine, probe)).collect::<Vec<_>>(),
     });
 
-    Ok(Outcome::ok(json, status_text(config, &machines, &probes)))
+    Ok(Outcome {
+        json,
+        text: status_text(config, &machines, &probes),
+        exit: if scan.is_err() { EXIT_NETWORK } else { 0 },
+    })
 }
 
 /// Describes the state of machines for humans, by group (groups without selected machines are skipped).
@@ -636,31 +620,21 @@ pub(crate) fn probe_json(machine: &Machine, probe: &Probe) -> Value {
     json!({
         "machine": machine.name,
         "state": probe.state,
+        "mac": probe.mac,
         "address": probe.address.map(|address| address.to_string()),
-        "method": probe.method,
-        "port": probe.port,
-        "latency_ms": probe.latency.map(|latency| latency.as_millis() as u64),
         "reason": probe.reason,
     })
 }
 
-/// Short human-readable description of a state, e.g. `online  3 ms` or `offline`.
+/// Short human-readable description of a state, e.g. `online   192.168.1.20` or `offline`.
 pub(crate) fn probe_text(probe: &Probe) -> String {
-    let latency = probe
-        .latency
-        .map(|latency| latency.as_millis())
-        .unwrap_or_default();
-    match (probe.state, probe.method, probe.port) {
-        (State::Online, Some(Method::Tcp), Some(port)) => {
-            format!("online   {latency} ms (TCP {port})")
-        }
-        (State::Online, ..) => format!("online   {latency} ms"),
-        (State::Offline, ..) => "offline".to_owned(),
-        (state, ..) => format!(
-            "{:<8} {}",
-            state.code(),
+    match (probe.state, probe.address) {
+        (State::Online, Some(address)) => format!("online   {address}"),
+        (State::Error, _) => format!(
+            "error    {}",
             probe.reason.map(Reason::message).unwrap_or_default()
         ),
+        (state, _) => state.code().to_owned(),
     }
 }
 
