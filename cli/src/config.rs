@@ -217,6 +217,40 @@ impl Config {
             .position(|group| same_name(&group.name, name))
     }
 
+    /// Selects machines by name, then by group, without duplicates; selects every machine
+    /// when both lists are empty.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`].
+    pub fn select(&self, names: &[String], groups: &[String]) -> Result<Vec<&Machine>> {
+        if names.is_empty() && groups.is_empty() {
+            return Ok(self.machines.iter().collect());
+        }
+
+        let mut selected: Vec<&Machine> = Vec::new();
+        for name in names {
+            let index = self
+                .machine_index(name)
+                .ok_or_else(|| Error::MachineNotFound(name.clone()))?;
+            selected.push(&self.machines[index]);
+        }
+        for group in groups {
+            let group = self
+                .group(group)
+                .ok_or_else(|| Error::GroupNotFound(group.clone()))?;
+            selected.extend(self.group_machines(&group.name));
+        }
+
+        let mut unique: Vec<&Machine> = Vec::with_capacity(selected.len());
+        for machine in selected {
+            if !unique.iter().any(|other| std::ptr::eq(*other, machine)) {
+                unique.push(machine);
+            }
+        }
+        Ok(unique)
+    }
+
     /// Lists the machines of a group, in file order.
     pub fn group_machines<'a>(&'a self, group: &'a str) -> impl Iterator<Item = &'a Machine> + 'a {
         self.machines.iter().filter(move |machine| {

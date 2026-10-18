@@ -515,27 +515,7 @@ fn list(file: &ConfigFile) -> Outcome {
 /// Returns [`Error::MachineNotFound`] or [`Error::GroupNotFound`] before sending anything;
 /// send failures are reported per machine, with exit code [`EXIT_NETWORK`].
 fn wake(file: &ConfigFile, names: &[String], groups: &[String]) -> Result<Outcome> {
-    let config = file.config();
-
-    let mut targets: Vec<&Machine> = Vec::new();
-    for name in names {
-        let index = config
-            .machine_index(name)
-            .ok_or_else(|| Error::MachineNotFound(name.clone()))?;
-        targets.push(&config.machines[index]);
-    }
-    for group in groups {
-        let group = config
-            .group(group)
-            .ok_or_else(|| Error::GroupNotFound(group.clone()))?;
-        targets.extend(config.group_machines(&group.name));
-    }
-    let mut seen = Vec::new();
-    targets.retain(|machine| {
-        let new = !seen.contains(&machine.name);
-        seen.push(machine.name.clone());
-        new
-    });
+    let targets = file.config().select(names, groups)?;
 
     let mut results = Vec::new();
     let mut text = String::new();
