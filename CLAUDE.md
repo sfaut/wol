@@ -68,6 +68,8 @@ tests and future front-ends (`wol serve`) reuse the same code.
   the platform-specific code (`SendARP` / `GetAdaptersAddresses` via `windows-sys`, netlink on
   Linux and `sysctl` on macOS via `libc`). `WOL_FAKE_SCAN` replaces the scan in tests.
   `probe.rs` turns a scan into machine states (online when any interface answers).
+- `wake.rs`: magic packets to every interface, then for `--wait` scans until the machines are
+  online, streaming text lines or NDJSON events.
 - `watch.rs`: the `watch` loop (config reload on file change, debounced state tracking, NDJSON
   events). `time.rs`: RFC 3339 timestamps without a date library.
 

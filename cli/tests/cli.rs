@@ -49,6 +49,17 @@ impl Wol {
         self.command(args).assert().success();
     }
 
+    /// Runs a command with `--json` that prints NDJSON; returns its exit code and events.
+    fn ndjson(&self, args: &[&str]) -> (i32, Vec<Value>) {
+        let output = self.command(args).arg("--json").output().unwrap();
+        let events = String::from_utf8(output.stdout)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        (output.status.code().unwrap(), events)
+    }
+
     /// Runs a command with `--json` and returns its exit code, `stdout` and `stderr` documents.
     fn json(&self, args: &[&str]) -> (i32, Option<Value>, Option<Value>) {
         let output = self.command(args).arg("--json").output().unwrap();
@@ -412,4 +423,75 @@ fn scan_lists_devices_and_known_machines() {
     let (code, _, stderr) = Wol::new().network("none").json(&["scan"]);
     assert_eq!(code, 5);
     assert_eq!(stderr.unwrap()["error"]["code"], "no_local_network");
+}
+
+#[test]
+fn wake_wait_reports_machines_coming_online() {
+    let wol = Wol::new().network("192.168.1.20=00:11:22:33:44:55");
+    wol.ok(&[
+        "add",
+        "Desk",
+        "--mac",
+        "001122334455=Wi-Fi",
+        "--broadcast",
+        "127.0.0.1",
+    ]);
+
+    let (code, events) = wol.ndjson(&["wake", "desk", "--wait"]);
+    assert_eq!(code, 0);
+    let kinds: Vec<&str> = events
+        .iter()
+        .map(|event| event["event"].as_str().unwrap())
+        .collect();
+    assert_eq!(kinds, ["sent", "online", "finished"]);
+    assert_eq!(events[0]["schema"], 1);
+    assert_eq!(events[0]["timeout_s"], 120);
+    assert_eq!(events[0]["config"]["status"], "loaded");
+    assert_eq!(events[0]["results"][0]["status"], "sent");
+    assert_eq!(events[1]["machine"]["address"], "192.168.1.20");
+    assert_eq!(events[1]["machine"]["label"], "Wi-Fi");
+    assert_eq!(events[2]["online"], serde_json::json!(["Desk"]));
+}
+
+#[test]
+fn wake_wait_times_out() {
+    let wol = Wol::new();
+    wol.ok(&[
+        "add",
+        "Desk",
+        "--mac",
+        "001122334455",
+        "--broadcast",
+        "127.0.0.1",
+    ]);
+
+    let (code, events) = wol.ndjson(&["wake", "Desk", "--wait=1"]);
+    assert_eq!(code, 6);
+    let kinds: Vec<&str> = events
+        .iter()
+        .map(|event| event["event"].as_str().unwrap())
+        .collect();
+    assert_eq!(kinds, ["sent", "timed_out", "finished"]);
+    assert_eq!(events[1]["machine"], "Desk");
+    assert_eq!(events[2]["timed_out"], serde_json::json!(["Desk"]));
+
+    wol.command(&["wake", "Desk", "--wait=1"])
+        .assert()
+        .code(6)
+        .stdout(predicates::str::contains(
+            "\"Desk\" did not come online within 1 s.",
+        ));
+}
+
+#[test]
+fn version_works_without_a_valid_configuration() {
+    let wol = Wol::new();
+    std::fs::write(wol.config(), "not toml [").unwrap();
+
+    let (code, stdout, _) = wol.json(&["version"]);
+    assert_eq!(code, 0);
+    let stdout = stdout.unwrap();
+    assert_eq!(stdout["schema"], 1);
+    assert_eq!(stdout["version"], env!("CARGO_PKG_VERSION"));
+    assert!(stdout.get("config").is_none());
 }
