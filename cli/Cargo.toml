@@ -27,3 +27,9 @@ panic = "abort"
 assert_cmd = "2.2.2"
 predicates = "3.1.4"
 tempfile = "3.27.0"
+
+[target."cfg(windows)".dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper"] }
+
+[target."cfg(unix)".dependencies]
+socket2 = "0.6.5"
