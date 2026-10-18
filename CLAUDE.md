@@ -15,7 +15,8 @@ independent applications sharing one contract:
   It is a front-end that **drives the CLI** and never re-implements its logic.
 - `docs/cli-contract.md`: the contract between them (config file, commands, JSON output,
   exit codes). Update it **before** changing any JSON output.
-- `docs/design/gui-brief.md`: the GUI design brief (screens, states, controls).
+- `design/`: the GUI design from Claude Design (mockups, HTML boards, specs in `design/specs/`,
+  icons) and the brief it was made from (`design/brief.md`).
 
 Everything in the codebase is in English: identifiers, comments, docs, commit messages.
 
