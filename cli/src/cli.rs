@@ -14,7 +14,7 @@ use crate::config::{self, Config, ConfigFile, ConfigStatus, Machine};
 use crate::error::{EXIT_NETWORK, EXIT_USAGE, Error, Result};
 use crate::mac::MacAddress;
 use crate::probe::{self, Method, Probe, Reason, State};
-use crate::{magic, time};
+use crate::{magic, time, watch};
 
 /// Version of the JSON output schema (see `docs/cli-contract.md`); bump on breaking changes.
 pub const SCHEMA: u32 = 1;
@@ -62,6 +62,21 @@ enum Command {
         /// Check options.
         #[command(flatten)]
         check: CheckArgs,
+    },
+
+    /// Monitor machines and report every state change (all machines by default)
+    Watch {
+        /// Machines to monitor.
+        #[command(flatten)]
+        selection: Selection,
+
+        /// Check options.
+        #[command(flatten)]
+        check: CheckArgs,
+
+        /// Time between two checks, in seconds
+        #[arg(long, value_name = "SECONDS", default_value_t = 10, value_parser = clap::value_parser!(u64).range(1..=3_600))]
+        interval: u64,
     },
 
     /// Add a machine
@@ -228,7 +243,7 @@ enum GroupCommand {
 }
 
 /// Result of a successful command: what to print in each output mode, and the exit code.
-struct Outcome {
+pub struct Outcome {
     /// JSON document (without the `schema` field, added when printing).
     json: Value,
 
@@ -307,7 +322,7 @@ where
 }
 
 /// Builds a JSON document: `schema` first, then `config` when known, then the `body` fields.
-fn document(config: Option<Value>, body: Value) -> Value {
+pub(crate) fn document(config: Option<Value>, body: Value) -> Value {
     let mut object = serde_json::Map::new();
     object.insert("schema".to_owned(), json!(SCHEMA));
     if let Some(config) = config {
@@ -362,6 +377,20 @@ fn execute(cli: &Cli, file: &mut ConfigFile) -> Result<Outcome> {
         Command::Status { selection, check } => {
             status(file, selection, Duration::from_millis(check.timeout))
         }
+        Command::Watch {
+            selection,
+            check,
+            interval,
+        } => watch::watch(
+            file,
+            &watch::Options {
+                names: &selection.machines,
+                groups: &selection.groups,
+                interval: Duration::from_secs(*interval),
+                timeout: Duration::from_millis(check.timeout),
+                json: cli.json,
+            },
+        ),
         Command::Add(args) => {
             let machine = Machine {
                 name: args.name.clone(),

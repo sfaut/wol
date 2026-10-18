@@ -286,3 +286,49 @@ fn status_reports_states() {
     assert_eq!(stdout.unwrap()["machines"].as_array().unwrap().len(), 1);
 }
 
+#[test]
+fn watch_emits_snapshots_and_reloads_config() {
+    use std::io::{BufRead, BufReader};
+    use std::process::Stdio;
+
+    let wol = Wol::new();
+    wol.ok(&[
+        "add",
+        "Local",
+        "--mac",
+        "001122334455",
+        "--host",
+        "127.0.0.1",
+    ]);
+
+    let mut child = std::process::Command::new(assert_cmd::cargo::cargo_bin("wol"))
+        .arg("--config")
+        .arg(wol.config())
+        .args(["watch", "--json", "--interval", "1", "--timeout", "300"])
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut lines = BufReader::new(child.stdout.take().unwrap()).lines();
+    let mut next_event = || serde_json::from_str::<Value>(&lines.next().unwrap().unwrap()).unwrap();
+
+    let first = next_event();
+    assert_eq!(first["schema"], 1);
+    assert_eq!(first["event"], "snapshot");
+    assert_eq!(first["machines"].as_array().unwrap().len(), 1);
+
+    // Editing the file while watching produces a new snapshot including the new machine.
+    wol.ok(&[
+        "add",
+        "Other",
+        "--mac",
+        "001122334456",
+        "--host",
+        "127.0.0.1",
+    ]);
+    let second = next_event();
+    child.kill().unwrap();
+    child.wait().unwrap();
+
+    assert_eq!(second["event"], "snapshot");
+    assert_eq!(second["machines"].as_array().unwrap().len(), 2);
+}

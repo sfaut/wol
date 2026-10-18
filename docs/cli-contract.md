@@ -4,8 +4,8 @@
 > the interface between the `wol` CLI and any front-end (the Windows GUI today, a macOS GUI or
 > a `wol serve` service later). Any change to the JSON output must be reflected here first.
 >
-> Implemented: `list`, `status`, `wake`, `add`, `edit`, `remove`, `group …`.
-> Not implemented yet: `watch`, `wake --wait`, `--lang`, localized output.
+> Implemented: `list`, `status`, `watch`, `wake`, `add`, `edit`, `remove`, `group …`.
+> Not implemented yet: `wake --wait`, `--lang`, localized output.
 
 ## Configuration file: `wol.toml`
 
@@ -63,7 +63,7 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 |---|---|
 | `wol list` | List groups and machines |
 | `wol status [<machine>…] [--group <name>]… [--timeout <ms>]` | Check the state of machines once (all machines by default) |
-| `wol watch [<machine>…] [--group <name>]… [--interval <s>] [--timeout <ms>]` | *(planned)* Monitor machines continuously, one event per state change (all machines by default) |
+| `wol watch [<machine>…] [--group <name>]… [--interval <s>] [--timeout <ms>]` | Monitor machines continuously, one event per state change (all machines by default) |
 | `wol wake [<machine>…] [--group <name>]…` | Send magic packets (a machine named twice is woken once) |
 | `wol add <name> --mac <mac> --host <host> [--group <g>] [--broadcast <ipv4>] [--port <p>] [--check-port <p>]…` | Add a machine |
 | `wol edit <name> [--name <new>] [--mac …] [--host …] [--group <g> \| --no-group] [--broadcast <ipv4> \| --no-broadcast] [--port <p> \| --no-port] [--check-port <p>… \| --no-check-ports]` | Change a machine; only given options change, `--check-port` replaces the list |
@@ -75,7 +75,7 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 
 ## State checks
 
-`status` checks machines concurrently. For each machine:
+`status` and `watch` check machines concurrently. For each machine:
 
 1. Resolve `host` (an IPv4 address is preferred). Failure: state `error`, reason `host_not_found`.
 2. Send one ICMP echo request, without administrator rights (Windows `IcmpSendEcho`; unprivileged
@@ -99,8 +99,9 @@ Global options: `--json` (machine-readable output), `--config <path>`.
   `loaded` (read, unchanged), `updated` (rewritten), `created` (written for the first time) or
   `missing` (does not exist, empty configuration). It is present in every success document and
   in error documents raised once the file is loaded; errors loading the file name it in `details`.
+  `watch` events carry it in `snapshot` events only.
 - Successful commands print one JSON document on `stdout`.
-- `watch` will print **NDJSON** (one JSON document per line) on `stdout`, flushed per event.
+- `watch` prints **NDJSON** (one JSON document per line) on `stdout`, flushed per event.
 - Errors print one JSON document on `stderr` and nothing on `stdout`.
 
 ### Objects
@@ -133,6 +134,7 @@ Machine state (fields that do not apply are `null`):
 |---|---|
 | `list` | `{ "schema", "config", "groups": [Group…], "machines": [Machine…] }` |
 | `status` | `{ "schema", "config", "checked_at": "<RFC 3339 UTC>", "machines": [Machine state…] }` |
+| `watch` | NDJSON events, see below |
 | `wake` | `{ "schema", "config", "results": [{ "machine", "target": "<ip>:<port>", "status": "sent" \| "failed", "error"?: { "code", "message" } }…] }` |
 | `add`, `edit`, `remove` | `{ "schema", "config", "machine": Machine }` (the removed machine for `remove`) |
 | `group add`, `group move` | `{ "schema", "config", "group": Group, "position": <1-based> }` |
@@ -140,6 +142,25 @@ Machine state (fields that do not apply are `null`):
 | `group remove` | `{ "schema", "config", "group": Group, "ungrouped": ["<machine>"…] }` |
 
 `wake` reports send failures per machine and still prints its document; the exit code is then 5.
+
+### `watch` events
+
+`watch` runs until it is stopped (and exits quietly when its `stdout` is closed). It checks
+the machines every `--interval` seconds (default 10, 1 to 3600, measured start to start) and
+re-reads the configuration file whenever it changes on disk.
+
+| `event` | Fields | When |
+|---|---|---|
+| `snapshot` | `config`, `checked_at`, `interval_s`, `machines`: [Machine state…] | At start, and after each configuration reload (front-ends replace their whole state) |
+| `state_changed` | `checked_at`, `previous`: state, `machine`: Machine state | A machine changed state |
+| `error` | `error`: { `code`, `message`, `details` } | The edited file is invalid, or no longer contains a watched machine or group; the previous configuration stays in use |
+
+```json
+{"schema":1,"event":"state_changed","checked_at":"2026-10-18T12:37:23.037Z","previous":"offline","machine":{"machine":"NAS","state":"online","address":"192.168.1.30","method":"icmp","port":null,"latency_ms":2,"reason":null}}
+```
+
+Leaving `online` is reported only after 2 consecutive checks agree, so that a single lost ping
+does not trigger a notification; every other change is reported at once.
 
 ### Errors
 
