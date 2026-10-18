@@ -234,7 +234,8 @@ impl Config {
 /// then the user configuration directory.
 pub fn locate(explicit: Option<&Path>) -> PathBuf {
     if let Some(path) = explicit {
-        return path.to_owned();
+        // Absolute, so that reported paths are unambiguous whatever the working directory.
+        return std::path::absolute(path).unwrap_or_else(|_| path.to_owned());
     }
 
     let portable = std::env::current_exe()
@@ -301,6 +302,23 @@ fn write_machine(table: &mut Table, machine: &Machine) {
     );
 }
 
+/// What happened to the configuration file during a command.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ConfigStatus {
+    /// The file was read and left unchanged.
+    Loaded,
+
+    /// The file was read and rewritten.
+    Updated,
+
+    /// The file did not exist and was written.
+    Created,
+
+    /// The file does not exist and was not written (empty configuration).
+    Missing,
+}
+
 /// The configuration file loaded in memory, with its typed model and its editable document.
 #[derive(Debug)]
 pub struct ConfigFile {
@@ -312,6 +330,12 @@ pub struct ConfigFile {
 
     /// Typed and validated content, kept in sync with `document`.
     config: Config,
+
+    /// Whether the file existed when it was loaded.
+    existed: bool,
+
+    /// Whether the file has been written since it was loaded.
+    saved: bool,
 }
 
 impl ConfigFile {
@@ -322,9 +346,9 @@ impl ConfigFile {
     /// Returns [`Error::Io`] when the file cannot be read and [`Error::ConfigInvalid`]
     /// when its content is invalid.
     pub fn load(path: PathBuf) -> Result<Self> {
-        let text = match fs::read_to_string(&path) {
-            Ok(text) => text,
-            Err(error) if error.kind() == io::ErrorKind::NotFound => String::new(),
+        let (text, existed) = match fs::read_to_string(&path) {
+            Ok(text) => (text, true),
+            Err(error) if error.kind() == io::ErrorKind::NotFound => (String::new(), false),
             Err(source) => return Err(Error::Io { path, source }),
         };
 
@@ -341,6 +365,8 @@ impl ConfigFile {
             path,
             document,
             config,
+            existed,
+            saved: false,
         })
     }
 
@@ -375,12 +401,22 @@ impl ConfigFile {
         &self.config
     }
 
+    /// Tells what happened to the file since it was loaded.
+    pub fn status(&self) -> ConfigStatus {
+        match (self.existed, self.saved) {
+            (true, false) => ConfigStatus::Loaded,
+            (true, true) => ConfigStatus::Updated,
+            (false, true) => ConfigStatus::Created,
+            (false, false) => ConfigStatus::Missing,
+        }
+    }
+
     /// Writes the document to disk atomically (temporary file, then rename).
     ///
     /// # Errors
     ///
     /// Returns [`Error::Io`] when the directory or the file cannot be written.
-    pub fn save(&self) -> Result<()> {
+    pub fn save(&mut self) -> Result<()> {
         let io_error = |path: &Path| {
             let path = path.to_owned();
             move |source| Error::Io { path, source }
@@ -392,7 +428,10 @@ impl ConfigFile {
 
         let temporary = self.path.with_extension("toml.tmp");
         fs::write(&temporary, self.document.to_string()).map_err(io_error(&temporary))?;
-        fs::rename(&temporary, &self.path).map_err(io_error(&self.path))
+        fs::rename(&temporary, &self.path).map_err(io_error(&self.path))?;
+
+        self.saved = true;
+        Ok(())
     }
 
     /// Re-reads the typed model from the edited document, guaranteeing it is still valid.
@@ -718,6 +757,8 @@ host = "192.168.1.20"
             path,
             document: text.parse().unwrap(),
             config,
+            existed: true,
+            saved: false,
         })
     }
 
