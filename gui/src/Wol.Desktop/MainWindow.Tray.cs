@@ -26,7 +26,16 @@ public sealed partial class MainWindow
     /// </summary>
     public void ShowFromTray()
     {
-        AppWindow.Show();
+        if (_maximizeOnShow && AppWindow.Presenter is OverlappedPresenter maximizable)
+        {
+            // Maximizing also shows the window, without first showing it restored.
+            _maximizeOnShow = false;
+            maximizable.Maximize();
+        }
+        else
+        {
+            AppWindow.Show();
+        }
         if (AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
         {
             presenter.Restore();
@@ -136,6 +145,7 @@ public sealed partial class MainWindow
         if (!_quitting && AppSettings.Current.CloseToTray)
         {
             args.Cancel = true;
+            SavePlacement();
             AppWindow.Hide();
             if (!AppSettings.Current.StillRunningShown)
             {
@@ -160,6 +170,7 @@ public sealed partial class MainWindow
         }
 
         _quitting = true;
+        SavePlacement();
         _viewModel.Shutdown();
         _tray?.Dispose();
         _tray = null;

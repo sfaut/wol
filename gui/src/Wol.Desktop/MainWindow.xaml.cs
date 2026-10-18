@@ -60,6 +60,17 @@ public sealed partial class MainWindow : Window
     private readonly GroupReorder _reorder;
 
     /// <summary>
+    /// Position and size of the window when restored (not maximized nor minimized).
+    /// </summary>
+    private WindowBounds _restoredBounds = new(0, 0, 0, 0);
+
+    /// <summary>
+    /// Whether the window opens maximized the next time it is shown (first use, or maximized
+    /// when last closed).
+    /// </summary>
+    private bool _maximizeOnShow;
+
+    /// <summary>
     /// Builds the window, its navigation, and starts loading the machines.
     /// </summary>
     public MainWindow()
@@ -70,7 +81,7 @@ public sealed partial class MainWindow : Window
         Title = Strings.Get("AppDisplayName");
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
-        ApplySize();
+        ApplyPlacement();
         if (!MicaController.IsSupported())
         {
             // Windows 10: no Mica, the solid base background instead.
@@ -154,17 +165,78 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Sizes the window for the monitor scale and sets its minimum size.
+    /// Places the window where it was last closed, maximized if it was; the first time (or when
+    /// that place is on no display any more), centers it at its default size and opens it
+    /// maximized. Also sets the minimum size for the monitor scale.
     /// </summary>
-    private void ApplySize()
+    private void ApplyPlacement()
     {
         var scale = GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
-        AppWindow.Resize(new SizeInt32((int)(DefaultSize.Width * scale), (int)(DefaultSize.Height * scale)));
         if (AppWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.PreferredMinimumWidth = (int)(MinimumSize.Width * scale);
             presenter.PreferredMinimumHeight = (int)(MinimumSize.Height * scale);
         }
+
+        var saved = AppSettings.Current.Window;
+        var area = saved is null
+            ? null
+            : DisplayArea.GetFromRect(new RectInt32(saved.X, saved.Y, saved.Width, saved.Height), DisplayAreaFallback.None);
+        if (saved is not null && area is not null)
+        {
+            var work = area.WorkArea;
+            _restoredBounds = saved with
+            {
+                Width = Math.Min(saved.Width, work.Width),
+                Height = Math.Min(saved.Height, work.Height),
+            };
+            _maximizeOnShow = AppSettings.Current.WindowMaximized;
+        }
+        else
+        {
+            var work = DisplayArea.Primary.WorkArea;
+            var width = Math.Min((int)(DefaultSize.Width * scale), work.Width);
+            var height = Math.Min((int)(DefaultSize.Height * scale), work.Height);
+            _restoredBounds = new WindowBounds(
+                work.X + ((work.Width - width) / 2),
+                work.Y + ((work.Height - height) / 2),
+                width,
+                height);
+            _maximizeOnShow = true;
+        }
+
+        AppWindow.MoveAndResize(new RectInt32(_restoredBounds.X, _restoredBounds.Y, _restoredBounds.Width, _restoredBounds.Height));
+        AppWindow.Changed += AppWindow_Changed;
+    }
+
+    /// <summary>
+    /// Follows the position and size of the window while it is shown and restored, to save them.
+    /// </summary>
+    /// <param name="sender">The app window.</param>
+    /// <param name="args">What changed.</param>
+    private void AppWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
+    {
+        if ((args.DidPositionChange || args.DidSizeChange)
+            && sender.IsVisible
+            && sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
+        {
+            _restoredBounds = new WindowBounds(sender.Position.X, sender.Position.Y, sender.Size.Width, sender.Size.Height);
+        }
+    }
+
+    /// <summary>
+    /// Saves the position, size and maximized state of the window for the next start.
+    /// </summary>
+    private void SavePlacement()
+    {
+        var state = (AppWindow.Presenter as OverlappedPresenter)?.State;
+        AppSettings.Current.Window = _restoredBounds;
+        if (state != OverlappedPresenterState.Minimized)
+        {
+            // Never shown yet (started in the notification area): keep what it would have opened as.
+            AppSettings.Current.WindowMaximized = _maximizeOnShow || state == OverlappedPresenterState.Maximized;
+        }
+        AppSettings.Save();
     }
 
     /// <summary>

@@ -41,6 +41,17 @@ public sealed class AppSettings
     public bool StartMinimized { get; set; }
 
     /// <summary>
+    /// Last position and size of the window, restored (not maximized), in physical pixels;
+    /// null before the window was first closed, so it opens maximized.
+    /// </summary>
+    public WindowBounds? Window { get; set; }
+
+    /// <summary>
+    /// Whether the window was maximized when last closed.
+    /// </summary>
+    public bool WindowMaximized { get; set; }
+
+    /// <summary>
     /// Whether closing the window keeps the app running in the notification area.
     /// </summary>
     public bool CloseToTray { get; set; } = true;
@@ -152,6 +163,15 @@ public sealed class AppSettings
             FileName);
     }
 }
+
+/// <summary>
+/// Position and size of a window on the virtual screen, in physical pixels.
+/// </summary>
+/// <param name="X">Left edge.</param>
+/// <param name="Y">Top edge.</param>
+/// <param name="Width">Width.</param>
+/// <param name="Height">Height.</param>
+public sealed record WindowBounds(int X, int Y, int Width, int Height);
 
 /// <summary>
 /// Source-generated serialization of the settings (Native AOT, no reflection).
