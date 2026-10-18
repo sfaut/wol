@@ -47,6 +47,9 @@ The GUI build copies `cli/target/release/wol.exe` (or the debug build when there
 one) next to `wol-gui.exe`: build the CLI first, and rebuild it after changing it. A `wol.toml`
 dropped in the GUI output folder is picked up in portable mode (ignored by Git).
 
+The `.ico` files in `gui/src/Wol.Desktop/Assets/` are generated from `design/assets/*.svg` by
+`gui/tools/Build-Icons.ps1` (renders with Edge headless); run it again after changing the SVGs.
+
 There is no GUI test project yet.
 
 ## Architecture

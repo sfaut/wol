@@ -25,7 +25,14 @@
 
     <!-- LibraryImport (Win32 calls) generates unsafe marshalling code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <ApplicationIcon>Assets/wol-gui.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Icons built by tools/Build-Icons.ps1 from design/assets. -->
+    <Content Include="Assets/*.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
