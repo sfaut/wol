@@ -63,6 +63,10 @@ keeps its own settings in `wol-gui.json` next to it, otherwise in `%APPDATA%\wol
 The `.ico` files in `gui/src/Wol.Desktop/Assets/` are generated from `design/assets/*.svg` by
 `gui/tools/Build-Icons.ps1` (renders with Edge headless); run it again after changing the SVGs.
 
+CI (`.github/workflows/ci.yaml`, on pushes to `master` and pull requests): CLI lint, tests and
+release builds on Windows, Linux (musl) and macOS, x86_64 and ARM64; launcher and GUI publish
+on Windows x64. Builds are kept as workflow artifacts.
+
 There is no GUI test project yet. Run the GUI from a non-elevated console: WinUI 3 drag and drop
 (reordering groups) fails in an elevated process.
 
