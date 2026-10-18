@@ -43,6 +43,10 @@ dotnet run --project src/Wol.Desktop
 dotnet publish src/Wol.Desktop -c Release -r win-x64   # or win-arm64
 ```
 
+The GUI build copies `cli/target/release/wol.exe` (or the debug build when there is no release
+one) next to `wol-gui.exe`: build the CLI first, and rebuild it after changing it. A `wol.toml`
+dropped in the GUI output folder is picked up in portable mode (ignored by Git).
+
 There is no GUI test project yet.
 
 ## Architecture
