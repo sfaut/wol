@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 1020px; display: flex; flex-direction: column; gap: 24px">
+<div class="doc light" style="width: 1440px; min-height: 1260px; display: flex; flex-direction: column; gap: 24px">
   <div class="vstack" style="gap: 8px">
     <h1>State indicators</h1>
     <p class="lead">Six states. Each has its own silhouette and always sits next to its label, so colour is never the only cue.</p>
@@ -34,10 +34,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             
           </div>
         </td>
-        <td><strong>Online</strong><div class="help">Replied to the last check</div></td>
+        <td><strong>Online</strong><div class="help">At least one interface answered</div></td>
         <td><span class="code">U+F136 StatusCircleOuter + U+F13E StatusCircleCheckmark</span></td>
         <td><span class="code">SystemFillColorSuccessBrush</span></td>
-        <td>Latency: “4 ms”</td>
+        <td>Second line: interface and current IP, “Wi-Fi · 192.168.1.35”</td>
         <td>None (Wake hidden)</td>
         <td><span class="help" style="font-size: 14px">En ligne</span></td>
       </tr>
@@ -54,10 +54,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             
           </div>
         </td>
-        <td><strong>Offline</strong><div class="help">No reply to the last check</div></td>
+        <td><strong>Offline</strong><div class="help">No interface answered</div></td>
         <td><span class="code">U+F138 StatusCircleRing</span></td>
         <td><span class="code">SystemFillColorSolidNeutralBrush</span></td>
-        <td>“Last seen 3 h ago” or “Never seen”</td>
+        <td>“Last seen 3 h ago” or “Never seen”; second line: first MAC, “+N” for more</td>
         <td>Wake — accent button</td>
         <td><span class="help" style="font-size: 14px">Hors ligne</span></td>
       </tr>
@@ -134,18 +134,40 @@ a{color:#005fb8}a:hover{color:#003e92}
             
           </div>
         </td>
-        <td><strong>Error</strong><div class="help">Check impossible</div></td>
+        <td><strong>Error</strong><div class="help">The local network can’t be scanned</div></td>
         <td><span class="code">U+F136 StatusCircleOuter + U+F13D StatusCircleErrorX</span></td>
         <td><span class="code">SystemFillColorCriticalBrush</span></td>
-        <td>“Host not found” / “Network unreachable”</td>
-        <td>Wake — standard button (WoL does not need the host)</td>
+        <td>“Can’t scan the network” (with the “No local network to scan” InfoBar)</td>
+        <td>Wake disabled</td>
         <td><span class="help" style="font-size: 14px">Erreur</span></td>
       </tr>
       
     </tbody>
   </table>
 
-  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+    <div class="panel">
+      <h3>Shared MAC address — an indicator, not a state</h3>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap">
+        
+        <div class="light" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #f9f9f9; color: var(--text)">
+          <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>
+          <div class="r-n"><span class="r-t r-tw"><span class="r-tn">Test VM</span><svg class="ic warn-ic" viewbox="0 0 16 16" role="img" aria-label="Shares its MAC address with Test VM 2"><path d="M8 2.2l6.2 11.1H1.8z"></path><path d="M8 6.5v3.1"></path><circle class="f" cx="8" cy="11.4" r=".8"></circle></svg></span><span class="r-sub">52:54:00:12:34:56</span></div>
+        </div>
+        
+        <div class="dark" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #272727; color: var(--text)">
+          <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>
+          <div class="r-n"><span class="r-t r-tw"><span class="r-tn">Test VM</span><svg class="ic warn-ic" viewbox="0 0 16 16" role="img" aria-label="Shares its MAC address with Test VM 2"><path d="M8 2.2l6.2 11.1H1.8z"></path><path d="M8 6.5v3.1"></path><circle class="f" cx="8" cy="11.4" r=".8"></circle></svg></span><span class="r-sub">52:54:00:12:34:56</span></div>
+        </div>
+        
+        <div class="hc" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,.08); background: #000000; color: var(--text)">
+          <svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="var(--neutral)" stroke-width="1.5"></circle></svg>
+          <div class="r-n"><span class="r-t r-tw"><span class="r-tn">Test VM</span><svg class="ic warn-ic" viewbox="0 0 16 16" role="img" aria-label="Shares its MAC address with Test VM 2"><path d="M8 2.2l6.2 11.1H1.8z"></path><path d="M8 6.5v3.1"></path><circle class="f" cx="8" cy="11.4" r=".8"></circle></svg></span><span class="r-sub">52:54:00:12:34:56</span></div>
+        </div>
+        
+      </div>
+      <p>Outline warning glyph U+E7BA Warning, 16 epx, <span class="code">SystemFillColorCautionBrush</span>, 6 epx after the name, on every machine that shares a MAC address. Its tooltip names the other machines: “Same MAC address as Test VM 2 (Ungrouped). Wol can’t tell these machines apart when this address answers.” The outline shape keeps it distinct from the filled Timed out triangle.</p>
+    </div>
     <div class="panel">
       <h3>How to build it</h3>
       <p>Two stacked FontIcons in a 16 × 16 Grid, the same technique InfoBar uses: outer glyph with the state brush, inner mark with <span class="code">TextFillColorInverseBrush</span> (white in Light, near-black in Dark). Waking is a real <span class="code">ProgressRing</span> (IsIndeterminate, 16 × 16), not a glyph.</p>
@@ -157,7 +179,7 @@ a{color:#005fb8}a:hover{color:#003e92}
     </div>
     <div class="panel">
       <h3>Accessibility</h3>
-      <p>The glyph is decorative (<span class="code">AccessibilityView="Raw"</span>); the row’s automation name carries the state: “Meeting room PC, Offline, last seen 3 hours ago”. State changes on a focused row are announced politely (<span class="code">LiveSetting="Polite"</span>). In high contrast every fill maps to <span class="code">SystemColorWindowTextColor</span> and the shapes alone separate the states.</p>
+      <p>The glyph is decorative (<span class="code">AccessibilityView="Raw"</span>); the row’s automation name carries the state: “Meeting room PC, Offline, last seen 3 hours ago”, plus “shares its MAC address with Test VM 2” when it applies. State changes on a focused row are announced politely (<span class="code">LiveSetting="Polite"</span>). In high contrast every fill maps to <span class="code">SystemColorWindowTextColor</span> and the shapes alone separate the states.</p>
     </div>
   </div>
 </div>

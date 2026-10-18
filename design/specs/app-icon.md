@@ -30,7 +30,6 @@ Swap the icon when the overall status changes, and again when the taskbar theme 
 
 | Asset | Sizes | Notes |
 | --- | --- | --- |
-| App list / taskbar icon (`Square44x44Logo`) | targetsize 16, 20, 24, 32, 48, 256 + scale 100–400 | Plated and `altform-unplated` variants; unplated for the taskbar so the plate isn’t doubled |
-| Start tile (`Square150x150Logo`, `Wide310x150Logo`) | scale 100, 125, 150, 200, 400 | Same mark, centred, plate colour as background |
-| Window and title-bar icon (`.ico`) | 16, 20, 24, 32, 40, 48, 64, 256 | Shown in the `TitleBar` at 16 epx and in Alt+Tab |
+| Executable icon (`wol-gui.ico`) | 16, 20, 24, 32, 40, 48, 64, 256 | Embedded in `wol-gui.exe` (`ApplicationIcon`): File Explorer, taskbar, Alt+Tab and the optional Startup shortcut. The app is unpackaged, so there are no MSIX logo assets |
+| Window and title-bar icon | 16 at 100%, up to 32 at 200% | The same `.ico`, set with `AppWindow.SetIcon`; shown in the `TitleBar` |
 | Notification-area icons (`.ico`) | 16, 20, 24, 32 (100–200%) | 3 states × light/dark taskbar = 6 files, no plate |

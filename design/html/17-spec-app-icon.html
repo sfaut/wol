@@ -160,9 +160,8 @@ a{color:#005fb8}a:hover{color:#003e92}
     <table class="tbl">
       <thead><tr><th>Asset</th><th>Sizes</th><th>Notes</th></tr></thead>
       <tbody>
-        <tr><td>App list / taskbar icon (Square44x44Logo)</td><td>targetsize 16, 20, 24, 32, 48, 256 + scale 100–400</td><td>Plated and <span class="code">altform-unplated</span> variants; unplated for the taskbar so the plate isn’t doubled.</td></tr>
-        <tr><td>Start tile (Square150x150Logo, Wide310x150Logo)</td><td>scale 100, 125, 150, 200, 400</td><td>Same mark, centred, plate colour as background.</td></tr>
-        <tr><td>Window and title-bar icon (.ico)</td><td>16, 20, 24, 32, 40, 48, 64, 256</td><td>Shown in the TitleBar at 16 epx and in Alt+Tab.</td></tr>
+        <tr><td>Executable icon (wol-gui.ico)</td><td>16, 20, 24, 32, 40, 48, 64, 256</td><td>Embedded in wol-gui.exe (<span class="code">ApplicationIcon</span>): File Explorer, taskbar, Alt+Tab and the optional Startup shortcut. The app is unpackaged, so there are no MSIX logo assets.</td></tr>
+        <tr><td>Window and title-bar icon</td><td>16 at 100%, up to 32 at 200%</td><td>The same .ico, set with <span class="code">AppWindow.SetIcon</span>; shown in the TitleBar.</td></tr>
         <tr><td>Notification-area icons (.ico)</td><td>16, 20, 24, 32 (100–200%)</td><td>3 states × light/dark taskbar = 6 files; no plate.</td></tr>
       </tbody>
     </table>

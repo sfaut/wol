@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 2100px; display: flex; flex-direction: column; gap: 28px">
+<div class="doc light" style="width: 1440px; min-height: 2120px; display: flex; flex-direction: column; gap: 28px">
   <div class="vstack" style="gap: 8px">
     <h1>Interaction notes</h1>
     <p class="lead">Keyboard first, screen-reader friendly, system motion only. Shortcuts appear in tooltips and as accelerator text in menus.</p>
@@ -59,7 +59,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         <li>Next section header, and so on</li>
         <li>Notification host (last). F6 cycles pane → content → notifications.</li>
       </ol>
-      <p class="help">Opening a dialog focuses its first field; closing returns focus to the control that opened it. After Remove, focus moves to the next row (or the previous one at the end).</p>
+      <p class="help">Opening a dialog focuses its first field; closing returns focus to the control that opened it. After Remove, focus moves to the next row (or the previous one at the end). In the machine dialog, Tab goes Name → Group → each interface (MAC, Label, Remove) → Add interface → Add from network… → Advanced → Add / Cancel; removing an interface moves focus to the next row’s MAC.</p>
     </div>
 
     <div class="panel" style="gap: 12px">
@@ -151,6 +151,8 @@ a{color:#005fb8}a:hover{color:#003e92}
           <tr><td>Cancel waking</td><td>No confirmation. The packet is already sent; Wol only stops waiting.</td></tr>
           
           <tr><td>Cancel Add / Edit</td><td>Closes without saving, no “discard?” prompt — the form is short.</td></tr>
+          
+          <tr><td>Remove an interface</td><td>Removed at once inside the dialog, no prompt: Cancel still discards every change.</td></tr>
           
           <tr><td>Close window (close to notification area on)</td><td>First time only: balloon “Wol is still running — find it in the notification area.”</td></tr>
           
