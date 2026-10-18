@@ -19,8 +19,9 @@ Lookup order (first match wins):
    - macOS: `~/Library/Application Support/wol/wol.toml`
 
 A missing file is an empty configuration; it is created on the first change.
-Every command reports which file it used and what happened to it: on `stderr` in
-human-readable mode (`Configuration: <path> (created)`), in the `config` object in JSON.
+In JSON, every command reports which file it used and what happened to it, in the `config`
+object. For humans, `wol` without a command prints its help summary with the file in use
+(`Configuration: <path>`, followed by `(not created yet)` when it does not exist).
 Only the CLI reads and writes this file: front-ends go through the CLI commands. The CLI
 preserves comments and layout written by hand.
 
