@@ -65,7 +65,9 @@ The `.ico` files in `gui/src/Wol.Desktop/Assets/` are generated from `design/ass
 
 CI (`.github/workflows/ci.yaml`, on pushes to `master` and pull requests): CLI lint, tests and
 release builds on Windows, Linux (musl) and macOS, x86_64 and ARM64; launcher and GUI publish
-on Windows x64. Builds are kept as workflow artifacts.
+on Windows x64. Builds are kept as workflow artifacts. A published GitHub release (tag `vX.Y.Z`,
+matching the versions of `cli/Cargo.toml`, `gui/launcher/Cargo.toml` and `Wol.Desktop.csproj`)
+also gets them attached: `.zip` for Windows, `.tar.gz` for Linux and macOS.
 
 There is no GUI test project yet. Run the GUI from a non-elevated console: WinUI 3 drag and drop
 (reordering groups) fails in an elevated process.
