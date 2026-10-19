@@ -15,6 +15,8 @@ independent applications sharing one contract:
   It is a front-end that **drives the CLI** and never re-implements its logic.
 - `docs/cli-contract.md`: the contract between them (config file, commands, JSON output,
   exit codes). Update it **before** changing any JSON output.
+- `docs/DEVELOPER.md`: prerequisites, build, tests, CI and releases, for developers; the
+  `README.md` is for end users (installation, desktop app and CLI usage).
 - `design/`: the GUI design from Claude Design (mockups, HTML boards, specs in `design/specs/`,
   icons) and the brief it was made from (`design/brief.md`).
 
