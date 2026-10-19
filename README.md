@@ -3,8 +3,6 @@
 Wake-on-LAN machine manager: keep a list of the machines of your local network, organised in
 groups, see which ones are online, and wake them up with a magic packet.
 
-> **Status: early development.** Version 0.1.0 is not released yet.
-
 Wol comes in two parts, sharing one configuration file:
 
 - **`wol`**, a command-line tool for Windows 10 / 11, Linux and macOS (x86_64 and ARM64).
