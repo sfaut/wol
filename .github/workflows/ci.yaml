@@ -1,11 +1,14 @@
 # Builds and tests the CLI on Windows, Linux and macOS (x86_64 and ARM), and publishes the
-# desktop app on Windows. Release builds are kept as workflow artifacts.
+# desktop app on Windows. Release builds are kept as workflow artifacts; when a GitHub release
+# is published, they are also packaged and attached to it.
 name: CI
 
 on:
   push:
     branches: [master]
   pull_request:
+  release:
+    types: [published]
   workflow_dispatch:
 
 concurrency:
@@ -112,3 +115,55 @@ jobs:
           name: wol-gui-windows-x64
           path: gui/publish
           if-no-files-found: error
+
+  release:
+    name: Release
+    if: github.event_name == 'release'
+    needs: [cli, gui]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@v5
+
+      # The tag must be vX.Y.Z, X.Y.Z being the version of the CLI, the launcher and the GUI.
+      - name: Check the version
+        run: |
+          version="${TAG#v}"
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag $TAG is not vX.Y.Z"; exit 1
+          fi
+          for manifest in cli/Cargo.toml gui/launcher/Cargo.toml; do
+            found=$(sed --quiet 's/^version = "\(.*\)"$/\1/p' "$manifest" | head --lines=1)
+            [ "$found" = "$version" ] || { echo "::error file=$manifest::Version $found, expected $version"; exit 1; }
+          done
+          found=$(sed --quiet 's|.*<Version>\(.*\)</Version>.*|\1|p' gui/src/Wol.Desktop/Wol.Desktop.csproj)
+          [ "$found" = "$version" ] || { echo "::error::GUI version $found, expected $version"; exit 1; }
+
+      - uses: actions/download-artifact@v5
+        with:
+          path: artifacts
+
+      # Windows builds go in .zip files, the others in .tar.gz files (artifacts lose the
+      # executable bit, set it again).
+      - name: Package the builds
+        run: |
+          mkdir dist
+          for dir in artifacts/wol-*; do
+            name=$(basename "$dir")
+            archive="${name/#wol-gui-/wol-gui-$TAG-}"
+            [ "$archive" = "$name" ] && archive="${name/#wol-/wol-$TAG-}"
+            if [[ "$name" == *windows* ]]; then
+              (cd "$dir" && zip --recurse-paths --quiet "$GITHUB_WORKSPACE/dist/$archive.zip" .)
+            else
+              chmod +x "$dir/wol"
+              tar --create --gzip --file "dist/$archive.tar.gz" --directory "$dir" wol
+            fi
+          done
+          ls -l dist
+
+      - name: Attach the builds to the release
+        run: gh release upload "$TAG" dist/* --clobber
