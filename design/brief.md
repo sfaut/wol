@@ -50,6 +50,11 @@ A **machine** has:
     apart when that address answers;
   - a **label** (optional, e.g. "Ethernet", "Wi-Fi").
 - **Broadcast address** and **UDP port** for the magic packet (optional, advanced)
+- **Wake automatically** (optional, off by default): to keep a machine on (a server, a NAS).
+  While Wol runs, including from the notification area, the machine is woken whenever it is
+  found offline: at once, then again every 2 minutes until it answers. A machine shut down on
+  purpose is started again, so the UI must make this clear. Nothing is sent while the local
+  network cannot be scanned.
 
 Wol works on the **local network only**. It finds machines by scanning the network for their MAC
 addresses, which also gives their current IP address even when DHCP changes it. **Wake** sends the
@@ -62,7 +67,8 @@ answered and its current IP ("Online via Wi-Fi · 192.168.1.35"; no label: "Onli
 States, each needing a distinct, colour-blind-safe indicator (icon + label, colour is secondary):
 - **Online**
 - **Offline**
-- **Waking**: packet sent, waiting for the machine to come up (show elapsed time; ends in Online or Timed out)
+- **Waking**: packet sent, waiting for the machine to come up (show elapsed time; ends in Online or Timed out).
+  A machine woken automatically is Waking too, until it answers, with nothing to cancel.
 - **Timed out**: wake command sent but the machine never came up
 - **Unknown**: not checked yet, or check in progress
 - **Error**: the local network cannot be scanned
@@ -80,6 +86,8 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
      shows the current IP and the interface that answered when online, otherwise the first MAC
      address followed by "+N" when there are several (all interfaces in the tooltip).
    - Machines sharing a MAC address show a warning indicator, with the other machines named in its tooltip.
+   - Machines set to wake automatically show an indicator too, explained by its tooltip; while
+     Wol wakes one automatically, its row says so.
    - In "All machines", machines are shown in **collapsible sections per group**, each header
      showing the group name, its status summary ("2 online · 1 offline") and a **Wake group** action.
    - Primary action per row: **Wake**, prominent only when the machine is offline / timed out.
@@ -98,6 +106,7 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
      remove button; an **Add interface** button below. At least one interface.
    - **Add from network**: a button listing the devices currently found on the network that no
      machine uses yet (MAC, current IP), to fill an interface without typing its MAC.
+   - A **Wake automatically** option, with a short explanation of what it does and when.
    - Advanced settings (broadcast address, UDP port) collapsed in an `Expander`.
    - Inline validation with clear messages: invalid MAC, MAC repeated within the machine and
      duplicate name block saving; a MAC already used by another machine is a warning that names
@@ -108,6 +117,9 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
      or Timed out (warning + Retry).
    - Group or multi-selection: aggregated progress ("3 of 5 online"), per-machine outcome,
      Retry for the ones that timed out.
+   - Automatic wake-up of a machine found offline: started, online ("woken automatically after
+     48 s"), still no reply after the wake timeout (Wol keeps trying), packet not sent. The
+     retries every 2 minutes are not notified.
    - Show how this appears both in the rows and as a transient notification inside the window.
 
 5. **Settings** (Windows 11 Settings style, `SettingsCard` / `SettingsExpander`)
@@ -122,7 +134,8 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
    - Right-click menu: Open Wol, a "Wake" submenu organised by group (each group offering
      "Wake all" plus its offline machines), Refresh, Quit.
    - Balloon notification examples ("Office PC is online", "NAS did not wake up",
-     "Office: 4 of 5 machines online"). These are simple title + text balloons with no action buttons.
+     "Office: 4 of 5 machines online", "NAS went offline: waking it automatically"). These are
+     simple title + text balloons with no action buttons.
 
 7. **Error and degraded states** (`InfoBar` at the top of the window)
    - Companion CLI missing or incompatible version.
