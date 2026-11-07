@@ -477,6 +477,7 @@ fn watch_wakes_auto_wake_machines_found_offline() {
     child.wait().unwrap();
 
     assert_eq!(snapshot["event"], "snapshot");
+    assert_eq!(snapshot["auto_wake_retry_s"], 60);
     assert_eq!(woken["schema"], 1);
     assert_eq!(woken["event"], "auto_wake");
     assert_eq!(woken["attempt"], 1);

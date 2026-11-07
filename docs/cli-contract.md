@@ -188,7 +188,7 @@ re-reads the configuration file whenever it changes on disk.
 
 | `event` | Fields | When |
 |---|---|---|
-| `snapshot` | `config`, `checked_at`, `interval_s`, `machines`: [Machine state…] | At start, and after each configuration reload (front-ends replace their whole state) |
+| `snapshot` | `config`, `checked_at`, `interval_s`, `auto_wake_retry_s`, `machines`: [Machine state…] | At start, and after each configuration reload (front-ends replace their whole state) |
 | `state_changed` | `checked_at`, `previous`: state, `machine`: Machine state | A machine changed state |
 | `auto_wake` | `checked_at`, `attempt`: 1-based, `result`: same as a `wake` result | Magic packets were sent to an auto-wake machine found offline (see below) |
 | `error` | `error`: { `code`, `message`, `details` } | The edited file is invalid, or no longer contains a watched machine or group; the previous configuration stays in use |
@@ -202,11 +202,13 @@ answer does not trigger a notification; every other change is reported at once.
 
 **Auto-wake.** A watched machine with `auto_wake = true` is woken whenever it is `offline`: its
 magic packets are sent as soon as it is found offline (in the first scan, or once leaving
-`online` is confirmed, right after its `state_changed` event), then again every 120 seconds
-while it stays offline (checked at each scan, so never more often than `--interval`). Nothing is
-sent while it is in the `error` state. `attempt` counts the sends since the machine was last
-online (or since `watch` started); it survives configuration reloads, and turning `auto_wake`
-off resets it. A failed send is reported in `result` (`status: "failed"`) and retried the same way.
+`online` is confirmed, right after its `state_changed` event), then again every
+`auto_wake_retry_s` seconds while it stays offline. Sends happen at scans, so this delay is the
+smallest multiple of `interval_s` that is at least 60 seconds: 60 with the default interval, 90
+with 45, the interval itself from 60. Nothing is sent while the machine is in the `error` state.
+`attempt` counts the sends since the machine was last online (or since `watch` started); it
+survives configuration reloads, and turning `auto_wake` off resets it. A failed send is reported
+in `result` (`status: "failed"`) and retried the same way.
 
 ```json
 {"schema":1,"event":"auto_wake","checked_at":"2026-10-18T12:40:03.512Z","attempt":1,"result":{"machine":"NAS","target":"255.255.255.255:9","macs":["00:11:32:BC:72:E9"],"status":"sent"}}

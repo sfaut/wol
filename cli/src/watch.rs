@@ -22,8 +22,8 @@ use crate::{scan, time, wake};
 /// so that a single missed answer does not trigger a notification.
 const CONFIRMATIONS: u32 = 2;
 
-/// Time between two automatic wake-ups of a machine that stays offline.
-const AUTO_WAKE_RETRY: Duration = Duration::from_secs(120);
+/// Shortest time between two automatic wake-ups of a machine that stays offline.
+const AUTO_WAKE_RETRY: Duration = Duration::from_secs(60);
 
 /// Options of `wol watch`.
 pub struct Options<'a> {
@@ -80,34 +80,47 @@ struct AutoWake {
     last: Instant,
 }
 
-/// Automatic wake-ups of the auto-wake machines, by lowercase machine name; kept across
-/// configuration reloads, so that a reload neither resends the packets nor resets the count.
-#[derive(Default)]
-struct AutoWakes(HashMap<String, AutoWake>);
+/// Automatic wake-ups of the auto-wake machines; kept across configuration reloads, so that a
+/// reload neither resends the packets nor resets the count.
+struct AutoWakes {
+    /// Time between two wake-ups of a machine that stays offline (see [`retry_delay`]).
+    retry: Duration,
+
+    /// Wake-ups by lowercase machine name.
+    machines: HashMap<String, AutoWake>,
+}
 
 impl AutoWakes {
+    /// Starts with no machine woken, for checks `interval` apart.
+    fn new(interval: Duration) -> Self {
+        Self {
+            retry: retry_delay(interval),
+            machines: HashMap::new(),
+        }
+    }
+
     /// Records the reported state of a machine at the check started at `now`; returns the
     /// attempt number when its magic packets must be sent: at once when it is found offline,
-    /// then every [`AUTO_WAKE_RETRY`] while it stays offline. Being online, or no longer set
-    /// to wake automatically, starts the count again.
+    /// then every `retry` while it stays offline. Being online, or no longer set to wake
+    /// automatically, starts the count again.
     fn due(&mut self, key: &str, auto_wake: bool, state: State, now: Instant) -> Option<u32> {
         if !auto_wake || state == State::Online {
-            self.0.remove(key);
+            self.machines.remove(key);
             return None;
         }
         if state != State::Offline {
             return None;
         }
 
-        match self.0.get_mut(key) {
-            Some(wake) if now.duration_since(wake.last) < AUTO_WAKE_RETRY => None,
+        match self.machines.get_mut(key) {
+            Some(wake) if now.duration_since(wake.last) < self.retry => None,
             Some(wake) => {
                 wake.attempts += 1;
                 wake.last = now;
                 Some(wake.attempts)
             }
             None => {
-                self.0.insert(
+                self.machines.insert(
                     key.to_owned(),
                     AutoWake {
                         attempts: 1,
@@ -121,8 +134,17 @@ impl AutoWakes {
 
     /// Forgets the machines that are no longer watched (removed, renamed or deselected).
     fn retain(&mut self, keys: &[String]) {
-        self.0.retain(|key, _| keys.contains(key));
+        self.machines.retain(|key, _| keys.contains(key));
     }
+}
+
+/// Time between two automatic wake-ups of a machine that stays offline, for checks `interval`
+/// apart: wake-ups happen at checks, so the first check at least [`AUTO_WAKE_RETRY`] after the
+/// previous one sends the packets again (checks start `interval` apart, or later when a scan
+/// takes longer).
+fn retry_delay(interval: Duration) -> Duration {
+    let interval = interval.as_secs().max(1);
+    Duration::from_secs(AUTO_WAKE_RETRY.as_secs().div_ceil(interval) * interval)
 }
 
 /// Monitors the selected machines until the process is stopped.
@@ -136,7 +158,7 @@ pub fn watch(file: &mut ConfigFile, options: &Options<'_>) -> Result<crate::cli:
 
     let mut modified = modified_time(file.path());
     let mut tracked: HashMap<String, Tracked> = HashMap::new();
-    let mut auto_wakes = AutoWakes::default();
+    let mut auto_wakes = AutoWakes::new(options.interval);
     let mut snapshot = true;
 
     loop {
@@ -190,6 +212,7 @@ pub fn watch(file: &mut ConfigFile, options: &Options<'_>) -> Result<crate::cli:
                         "config": { "path": file.path(), "status": file.status() },
                         "checked_at": checked_at,
                         "interval_s": options.interval.as_secs(),
+                        "auto_wake_retry_s": auto_wakes.retry.as_secs(),
                         "machines": entries,
                     }),
                 ));
@@ -360,20 +383,32 @@ mod tests {
 
     #[test]
     fn auto_wake_sends_at_once_then_every_retry_period() {
-        let mut wakes = AutoWakes::default();
+        let mut wakes = AutoWakes::new(Duration::from_secs(10));
         let start = Instant::now();
         let at = |seconds| start + Duration::from_secs(seconds);
 
         assert_eq!(wakes.due("nas", true, State::Offline, at(0)), Some(1));
         assert_eq!(wakes.due("nas", true, State::Offline, at(10)), None);
-        assert_eq!(wakes.due("nas", true, State::Offline, at(119)), None);
-        assert_eq!(wakes.due("nas", true, State::Offline, at(120)), Some(2));
-        assert_eq!(wakes.due("nas", true, State::Offline, at(240)), Some(3));
+        assert_eq!(wakes.due("nas", true, State::Offline, at(59)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(60)), Some(2));
+        assert_eq!(wakes.due("nas", true, State::Offline, at(120)), Some(3));
+    }
+
+    #[test]
+    fn retry_delay_is_a_whole_number_of_checks() {
+        let delay = |seconds| retry_delay(Duration::from_secs(seconds)).as_secs();
+
+        assert_eq!(delay(1), 60);
+        assert_eq!(delay(10), 60);
+        assert_eq!(delay(7), 63);
+        assert_eq!(delay(45), 90);
+        assert_eq!(delay(60), 60);
+        assert_eq!(delay(300), 300);
     }
 
     #[test]
     fn auto_wake_starts_again_after_being_online() {
-        let mut wakes = AutoWakes::default();
+        let mut wakes = AutoWakes::new(Duration::from_secs(10));
         let start = Instant::now();
         let at = |seconds| start + Duration::from_secs(seconds);
 
@@ -384,7 +419,7 @@ mod tests {
 
     #[test]
     fn auto_wake_skips_errors_and_other_machines() {
-        let mut wakes = AutoWakes::default();
+        let mut wakes = AutoWakes::new(Duration::from_secs(10));
         let start = Instant::now();
         let at = |seconds| start + Duration::from_secs(seconds);
 
@@ -394,7 +429,7 @@ mod tests {
         // The count goes on through errors, and the retry period still applies.
         assert_eq!(wakes.due("nas", true, State::Error, at(20)), None);
         assert_eq!(wakes.due("nas", true, State::Offline, at(30)), None);
-        assert_eq!(wakes.due("nas", true, State::Offline, at(130)), Some(2));
+        assert_eq!(wakes.due("nas", true, State::Offline, at(70)), Some(2));
         // Turning the option off starts the count again.
         assert_eq!(wakes.due("nas", false, State::Offline, at(140)), None);
         assert_eq!(wakes.due("nas", true, State::Offline, at(150)), Some(1));
