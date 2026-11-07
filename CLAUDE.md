@@ -141,8 +141,9 @@ tests and future front-ends (`wol serve`) reuse the same code.
   `probe.rs` turns a scan into machine states (online when any interface answers).
 - `wake.rs`: magic packets to every interface, then for `--wait` scans until the machines are
   online, streaming text lines or NDJSON events.
-- `watch.rs`: the `watch` loop (config reload on file change, debounced state tracking, NDJSON
-  events). `time.rs`: RFC 3339 timestamps without a date library.
+- `watch.rs`: the `watch` loop (config reload on file change, debounced state tracking,
+  auto-wake of the `auto_wake` machines found offline, NDJSON events). `time.rs`: RFC 3339
+  timestamps without a date library.
 
 Platform-specific code cannot run here: after touching it, at least lint the other targets with
 `cargo clippy --all-targets --target x86_64-unknown-linux-gnu` and `--target aarch64-apple-darwin`.
