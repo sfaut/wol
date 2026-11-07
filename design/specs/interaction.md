@@ -80,19 +80,19 @@ No custom storyboards. When Windows “Animation effects” is off, these transi
 Turned on per machine with the Wake automatically CheckBox in Add / Edit, saved with Add / Save (`wol add --auto-wake`, `wol edit --auto-wake` / `--no-auto-wake`); Duplicate copies it. The packets are sent by `wol watch`, so Wol wakes machines only while it runs, open or in the notification area; Quit stops it.
 
 - **Start**: an `auto_wake` event with `attempt` 1 — in the first scan, or once leaving Online is confirmed by 2 scans. The row turns Waking, detail “Waking automatically · 0:00”, counting from that event’s `checked_at`.
-- **Retries**: `auto_wake` events with `attempt` 2 and more, every 2 minutes (never more often than the check interval). The row keeps counting; nothing is notified.
+- **Retries**: `auto_wake` events with `attempt` 2 and more, every `auto_wake_retry_s` seconds (given by the `snapshot` event). Retries happen at checks, so this delay is the smallest multiple of the check interval that is at least 1 minute: 1 min with the default 10 s, 1 min 30 s with 45 s, 1 min 3 s with 7 s, the interval itself from 60 s. The messages below show it, formatted like the other durations. The row keeps counting; nothing is notified.
 - **End**: Online (`state_changed` to online) — the row shows Online. Error — the row shows Error and nothing is sent; when scanning works again and the machine is still offline, Waking automatically resumes with the same count. Option turned off (a `snapshot` with `auto_wake` false) — the row goes back to Offline and its bar closes.
 - **While waking automatically**: no Wake or Cancel on the row; the row menu’s Wake is disabled; Ctrl+W, Wake group, Wake on a selection and the tray’s Wake all offline skip the machine. The status summary, the state filter and the tray menu count it as waking; the group InfoBadge does not count it. Edit stays available.
 
 | Moment | In the window (`InfoBar`) | Balloon (window not in front) | Setting |
 | --- | --- | --- | --- |
-| First packet sent (`attempt` 1) | Informational “Waking Backup server automatically” — “It’s offline. Wol tries again every 2 minutes until it answers.” Stays. | NIIF_INFO, same text, instead of “… went offline” | Goes offline |
+| First packet sent (`attempt` 1) | Informational “Waking Backup server automatically” — “It’s offline. Wol tries again every 1 min until it answers.” Stays. | NIIF_INFO, same text, instead of “… went offline” | Always shown (balloon: Notifications on) |
 | Comes online | The bar (or a new one) turns Success: “Backup server is online” — “Woken automatically after 1 min 12 s.” Auto-closes after 5 s. | NIIF_INFO, same text | Comes online |
-| Still offline after the wake timeout, once per offline period | The bar turns Warning: “Backup server is still offline” — “No reply after 2 min. Wol keeps trying every 2 minutes.” Stays until closed or the machine answers. | NIIF_WARNING, same text | Doesn’t wake up |
-| Sending fails (`status: "failed"`), once per offline period | Error “Couldn’t wake Backup server automatically” — CLI message + “Wol tries again in 2 minutes.” | None | Always shown |
+| Still offline after the wake timeout, once per offline period | The bar turns Warning: “Backup server is still offline” — “No reply after 2 min. Wol keeps trying every 1 min.” Stays until closed or the machine answers. | NIIF_WARNING, same text | Doesn’t wake up |
+| Sending fails (`status: "failed"`), once per offline period | Error “Couldn’t wake Backup server automatically” — CLI message + “Wol tries again in 1 min.” | None | Always shown |
 | Later attempts | Nothing | Nothing | — |
 
-One bar per machine, updated in place, no action buttons; beyond 3 bars the host shows “+n more” as usual. With the Notifications master switch off, only the error shows.
+One bar per machine, updated in place, no action buttons; beyond 3 bars the host shows “+n more” as usual. With the Notifications master switch off, the start and the error bars still show in the window, and no balloon is shown.
 
 ## Screen reader
 

@@ -431,7 +431,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AutoWake.Content</td><td>Wake automatically<div class="help">CheckBox</div></td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AutoWake.Description</td><td>Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.<div class="help">Caption under the CheckBox, also its HelpText</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AutoWake.Description</td><td>Wol wakes this machine whenever it’s offline and tries again every {0} until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.<div class="help">Caption under the CheckBox, also its HelpText; set from code. {0} = retry delay, as in AutoWake.Started.Message</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Header</td><td>Advanced</td></tr>
           
@@ -605,19 +605,19 @@ a{color:#005fb8}a:hover{color:#003e92}
         <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
         <tbody>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Started.Title</td><td>Waking {0} automatically<div class="help">InfoBar (Informational) and balloon (NIIF_INFO); replaces “… went offline”</div></td></tr>
-          
-          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Started.Message</td><td>It’s offline. Wol tries again every 2 minutes until it answers.<div class="help">“2 minutes” is the CLI retry interval</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Started.Title</td><td>Waking {0} automatically<div class="help">InfoBar (Informational), always shown, and balloon (NIIF_INFO) when Notifications is on; replaces “… went offline”</div></td></tr>
+
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Started.Message</td><td>It’s offline. Wol tries again every {0} until it answers.<div class="help">{0} = retry delay, auto_wake_retry_s from wol watch, formatted like the other durations: “1 min” with the default check interval, “1 min 30 s” with 45 s. French writes “à {0} d’intervalle” in every retry-delay string, as “toutes les 1 min” is not correct French</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Online.Message</td><td>Woken automatically after {0}.<div class="help">Duration since the first packet; title Wake.Success.Title / Balloon.Online.Title</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.StillOffline.Title</td><td>{0} is still offline<div class="help">InfoBar (Warning) and balloon (NIIF_WARNING), once per offline period</div></td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.StillOffline.Message</td><td>No reply after {0}. Wol keeps trying every 2 minutes.<div class="help">Wake timeout from Settings</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.StillOffline.Message</td><td>No reply after {0}. Wol keeps trying every {1}.<div class="help">{0} = wake timeout from Settings, {1} = retry delay</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.SendFailed.Title</td><td>Couldn’t wake {0} automatically<div class="help">InfoBar (Error) only</div></td></tr>
           
-          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.SendFailed.Message</td><td>{0} Wol tries again in 2 minutes.<div class="help">Message from the CLI</div></td></tr>
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.SendFailed.Message</td><td>{0} Wol tries again in {1}.<div class="help">{0} = message from the CLI, {1} = retry delay</div></td></tr>
           
         </tbody>
       </table>

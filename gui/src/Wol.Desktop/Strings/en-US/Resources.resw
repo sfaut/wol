@@ -217,7 +217,7 @@
     <value>Waking {0} automatically</value>
   </data>
   <data name="AutoWake_Started_Message" xml:space="preserve">
-    <value>It’s offline. Wol tries again every 2 minutes until it answers.</value>
+    <value>It’s offline. Wol tries again every {0} until it answers.</value>
   </data>
   <data name="AutoWake_Online_Message" xml:space="preserve">
     <value>Woken automatically after {0}.</value>
@@ -226,13 +226,13 @@
     <value>{0} is still offline</value>
   </data>
   <data name="AutoWake_StillOffline_Message" xml:space="preserve">
-    <value>No reply after {0}. Wol keeps trying every 2 minutes.</value>
+    <value>No reply after {0}. Wol keeps trying every {1}.</value>
   </data>
   <data name="AutoWake_SendFailed_Title" xml:space="preserve">
     <value>Couldn’t wake {0} automatically</value>
   </data>
   <data name="AutoWake_SendFailed_Message" xml:space="preserve">
-    <value>{0} Wol tries again in 2 minutes.</value>
+    <value>{0} Wol tries again in {1}.</value>
   </data>
   <data name="Error_CliMissing_Title" xml:space="preserve">
     <value>Companion CLI not found</value>
@@ -465,11 +465,8 @@
   <data name="MachineDialog_AutoWake.Content" xml:space="preserve">
     <value>Wake automatically</value>
   </data>
-  <data name="MachineDialog_AutoWake.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.HelpText" xml:space="preserve">
-    <value>Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</value>
-  </data>
-  <data name="MachineDialog_AutoWakeDescription.Text" xml:space="preserve">
-    <value>Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</value>
+  <data name="MachineDialog_AutoWake_Description" xml:space="preserve">
+    <value>Wol wakes this machine whenever it’s offline and tries again every {0} until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</value>
   </data>
   <data name="Discovery_Title.Text" xml:space="preserve">
     <value>Devices on your network</value>

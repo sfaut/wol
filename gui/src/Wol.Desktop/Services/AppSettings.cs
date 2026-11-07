@@ -92,7 +92,8 @@ public sealed class AppSettings
     public bool NotifyError { get; set; } = true;
 
     /// <summary>
-    /// Tells whether notifications of a kind are turned on (master switch included).
+    /// Tells whether notifications of a kind are turned on (master switch included); the start
+    /// of an automatic wake-up has no setting of its own.
     /// </summary>
     /// <param name="kind">What happened.</param>
     /// <returns>True when such notifications are shown.</returns>
@@ -101,6 +102,7 @@ public sealed class AppSettings
         Models.AlertKind.Online => NotifyOnline,
         Models.AlertKind.Offline => NotifyOffline,
         Models.AlertKind.TimedOut => NotifyTimedOut,
+        Models.AlertKind.AutoWake => true,
         _ => NotifyError,
     };
 

@@ -96,7 +96,8 @@ enum Command {
     /// Changes made to the configuration file meanwhile are taken into account.
     ///
     /// Machines set to wake automatically (`wol add --auto-wake`) are woken whenever they
-    /// are found offline: at once, then every 2 minutes while they stay offline.
+    /// are found offline: at once, then again at the first scan a minute or more after the
+    /// previous attempt, while they stay offline.
     Watch {
         /// Machines to monitor.
         #[command(flatten)]
@@ -191,9 +192,10 @@ struct AddArgs {
 
     /// Wake the machine whenever `wol watch` finds it offline
     ///
-    /// Magic packets are sent as soon as the machine is found offline, then every 2 minutes
-    /// while it stays offline, as long as `wol watch` runs (the desktop app runs it). A
-    /// machine shut down on purpose is started again.
+    /// Magic packets are sent as soon as the machine is found offline, then again at the
+    /// first scan a minute or more after the previous attempt, while it stays offline and
+    /// `wol watch` runs (the desktop app runs it). A machine shut down on purpose is started
+    /// again.
     #[arg(long)]
     auto_wake: bool,
 }

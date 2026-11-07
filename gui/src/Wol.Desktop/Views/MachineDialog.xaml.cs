@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Wol.Desktop.Cli;
 using Wol.Desktop.Models;
@@ -68,6 +69,11 @@ public sealed partial class MachineDialog : ContentDialog
         Title = Strings.Get(editing is null ? "MachineDialog_AddTitle" : "MachineDialog_EditTitle");
         PrimaryButtonText = Strings.Get(editing is null ? "MachineDialog_Add" : "MachineDialog_Save");
         CloseButtonText = Strings.Get("MachineDialog_Cancel");
+
+        // The retry delay depends on the check interval.
+        var autoWake = Strings.Format("MachineDialog_AutoWake_Description", TimeText.Words(viewModel.AutoWakeRetry));
+        AutoWakeDescription.Text = autoWake;
+        AutomationProperties.SetHelpText(AutoWakeBox, autoWake);
 
         foreach (var name in viewModel.GroupNames)
         {

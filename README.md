@@ -73,8 +73,9 @@ States are checked continuously, every 10 seconds by default.
 - **Wake a machine:** "Wake" button on its row. Wol then waits until it is online, and tells
   you when it does not answer in time ("Retry").
 - **Keep a machine on:** check "Wake automatically" in its settings (Add / Edit). Whenever Wol
-  finds it offline, it wakes it, then tries again every 2 minutes until it answers: a machine
-  you shut down is started again. This works while Wol runs, also from the notification area.
+  finds it offline, it wakes it, then tries again every minute or so until it answers (at the
+  first check a minute or more after the previous attempt): a machine you shut down is started
+  again. This works while Wol runs, also from the notification area.
 - **Other actions:** the "…" menu of a row: check now, edit, duplicate, move to a group,
   copy its MAC addresses, remove.
 - **Search:** the search box filters the machines by name, MAC address, IP address or label.
@@ -176,8 +177,9 @@ wol wake NAS --wait=300         # wait up to 300 s
 `wol watch` prints the state of every machine, then one line per change until you stop it
 (Ctrl+C); `--interval` sets the time between two checks (10 s by default). It takes changes of
 the configuration file into account while it runs. Machines added with `--auto-wake` are woken
-as soon as it finds them offline, then every 2 minutes until they answer; the desktop app runs
-`wol watch` all the time, so they stay on while it runs.
+as soon as it finds them offline, then at the first check a minute or more after the previous
+attempt, until they answer; the desktop app runs `wol watch` all the time, so they stay on
+while it runs.
 
 ### Scripts
 

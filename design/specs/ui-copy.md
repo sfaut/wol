@@ -233,7 +233,7 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 | `Discovery.Empty` | No new devices found |  |
 | `Discovery.Item.Name` | {0}, {1} | MAC address, current IP |
 | `MachineDialog.AutoWake.Content` | Wake automatically | CheckBox |
-| `MachineDialog.AutoWake.Description` | Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area. | Caption under the CheckBox, also its HelpText |
+| `MachineDialog.AutoWake.Description` | Wol wakes this machine whenever it’s offline and tries again every {0} until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area. | Caption under the CheckBox, also its HelpText; set from code. {0} = retry delay, as in `AutoWake.Started.Message` |
 | `MachineDialog.Advanced.Header` | Advanced |  |
 | `MachineDialog.Advanced.Description` | Broadcast address, UDP port |  |
 | `MachineDialog.Broadcast.Header` | Broadcast address |  |
@@ -320,13 +320,13 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 
 | Key | Value | Note |
 | --- | --- | --- |
-| `AutoWake.Started.Title` | Waking {0} automatically | InfoBar (Informational) and balloon (NIIF_INFO); replaces “… went offline” |
-| `AutoWake.Started.Message` | It’s offline. Wol tries again every 2 minutes until it answers. | “2 minutes” is the CLI retry interval |
+| `AutoWake.Started.Title` | Waking {0} automatically | InfoBar (Informational), always shown, and balloon (NIIF_INFO) when Notifications is on; replaces “… went offline” |
+| `AutoWake.Started.Message` | It’s offline. Wol tries again every {0} until it answers. | {0} = retry delay, `auto_wake_retry_s` from `wol watch`, formatted like the other durations: “1 min” with the default check interval, “1 min 30 s” with 45 s. French writes “à {0} d’intervalle” in every retry-delay string, as “toutes les 1 min” is not correct French |
 | `AutoWake.Online.Message` | Woken automatically after {0}. | Duration since the first packet; title `Wake.Success.Title` / `Balloon.Online.Title` |
 | `AutoWake.StillOffline.Title` | {0} is still offline | InfoBar (Warning) and balloon (NIIF_WARNING), once per offline period |
-| `AutoWake.StillOffline.Message` | No reply after {0}. Wol keeps trying every 2 minutes. | Wake timeout from Settings |
+| `AutoWake.StillOffline.Message` | No reply after {0}. Wol keeps trying every {1}. | {0} = wake timeout from Settings, {1} = retry delay |
 | `AutoWake.SendFailed.Title` | Couldn’t wake {0} automatically | InfoBar (Error) only |
-| `AutoWake.SendFailed.Message` | {0} Wol tries again in 2 minutes. | Message from the CLI |
+| `AutoWake.SendFailed.Message` | {0} Wol tries again in {1}. | {0} = message from the CLI, {1} = retry delay |
 
 ## Errors and degraded states
 
