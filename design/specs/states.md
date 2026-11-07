@@ -8,7 +8,7 @@ Six states. Each has its own silhouette and always sits next to its label, so co
 | --- | --- | --- | --- | --- | --- | --- |
 | **Online** | At least one interface answered | U+F136 StatusCircleOuter + U+F13E StatusCircleCheckmark | `SystemFillColorSuccessBrush` | Second line: interface and current IP, “Wi-Fi · 192.168.1.35” | None (Wake hidden) | En ligne |
 | **Offline** | No interface answered | U+F138 StatusCircleRing | `SystemFillColorSolidNeutralBrush` | “Last seen 3 h ago” or “Never seen”; second line: first MAC, “+N” for more | Wake — accent button | Hors ligne |
-| **Waking** | Packet sent, waiting for a reply | ProgressRing (12 × 12 in the badge, no glyph) | `AccentFillColorDefaultBrush` | “0:24 · waiting for reply” | Cancel — standard button | Réveil en cours |
+| **Waking** | Packet sent, waiting for a reply | ProgressRing (12 × 12 in the badge, no glyph) | `AccentFillColorDefaultBrush` | “0:24 · waiting for reply”, or “Waking automatically · 1:12” | Cancel — standard button (none if automatic) | Réveil en cours |
 | **Timed out** | Woken but never came up | U+F139 StatusTriangleOuter + U+F13B StatusTriangleExclamation | `SystemFillColorCautionBrush` | “No reply after 2:00” | Retry — accent button | Délai dépassé |
 | **Unknown** | Not checked yet, or check running | U+F136 StatusCircleOuter + U+F142 StatusCircleQuestionMark | `SystemFillColorSolidNeutralBrush` | “Not checked yet” / “Checking…” | Wake — standard button | Inconnu |
 | **Error** | The local network can’t be scanned | U+F136 StatusCircleOuter + U+F13D StatusCircleErrorX | `SystemFillColorCriticalBrush` | “Can’t scan the network” (with the “No local network to scan” InfoBar) | Wake disabled | Erreur |
@@ -16,6 +16,14 @@ Six states. Each has its own silhouette and always sits next to its label, so co
 ## Shared MAC address — an indicator, not a state
 
 Several machines may use the same MAC address (cloned virtual machines, for example). Each of them shows an outline warning glyph (U+E7BA Warning, 16 epx, `SystemFillColorCautionBrush`) 6 epx after its name. Its tooltip names the other machines: “Same MAC address as Test VM 2 (Ungrouped). Wol can’t tell these machines apart when this address answers.” The outline shape keeps it distinct from the filled Timed out triangle.
+
+## Wake automatically — an indicator, not a state
+
+A machine with Wake automatically on shows a loop glyph (U+E8EE RepeatAll, 16 epx, `TextFillColorSecondaryBrush`) 6 epx after its name. Its tooltip: “Wake automatically is on: Wol wakes this machine whenever it’s offline, even if you shut it down on purpose.” With a shared MAC address too, the order is name, Wake automatically, warning, 6 epx apart; the name trims first. The loop is neither a circle (states) nor a triangle (warning).
+
+## Waking automatically
+
+Wol wakes the machine by itself as soon as it finds it offline, then every 2 minutes. Same Waking badge; the detail reads “Waking automatically · 1:12”, counting from the first packet of this offline period across retries (h:mm:ss after an hour). No Wake or Cancel: the option is turned off in Edit. Ends in Online, Error (network can’t be scanned, nothing is sent) or Offline (option turned off) — never Timed out.
 
 ## How to build it
 
@@ -29,4 +37,4 @@ Codepoints follow the Segoe Fluent Icons status set (U+F136–F143). Check them 
 
 ## Accessibility
 
-The glyph is decorative (`AccessibilityView="Raw"`); the row’s automation name carries the state: “Meeting room PC, Offline, last seen 3 hours ago”, plus “shares its MAC address with Test VM 2” when it applies. State changes on a focused row are announced politely (`LiveSetting="Polite"`). In high contrast every fill maps to `SystemColorWindowTextColor` and the shapes alone separate the states.
+The glyph is decorative (`AccessibilityView="Raw"`); the row’s automation name carries the state: “Meeting room PC, Offline, last seen 3 hours ago”, plus “wakes automatically” and “shares its MAC address with Test VM 2” when they apply. State changes on a focused row are announced politely (`LiveSetting="Polite"`). In high contrast every fill maps to `SystemColorWindowTextColor` and the shapes alone separate the states.

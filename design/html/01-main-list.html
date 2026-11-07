@@ -57,7 +57,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--neutral)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg>5 offline</span>
           
-          <span><svg class="st spin s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg>1 waking</span>
+          <span><svg class="st spin s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg>2 waking</span>
           
           <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M8 6.1v3.4" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.8" r="0.9" fill="var(--on-status)"></circle></svg>1 timed out</span>
           
@@ -143,14 +143,14 @@ a{color:#005fb8}a:hover{color:#003e92}
         
         <section class="grp" aria-label="Servers">
           <div class="grp-h">
-            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 offline · 1 unknown</span></div>
+            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 offline · 1 waking · 1 unknown</span></div>
             <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
             <button class="btn sub ico" aria-label="Collapse Servers" aria-expanded="true"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
           </div>
           <div class="rows">
             
             <div class="row">
-              <div class="r-n"><span class="r-t r-tw"><span class="r-tn">NAS</span></span><span class="r-sub">Ethernet · 192.168.1.30</span></div>
+              <div class="r-n"><span class="r-t r-tw"><span class="r-tn">NAS</span><svg class="ic auto-ic" viewbox="0 0 16 16" role="img" aria-label="Wakes automatically"><path d="M2.75 8.75V7.5a2.75 2.75 0 0 1 2.75-2.75H13M10.75 2.5L13 4.75 10.75 7M13.25 7.25V8.5a2.75 2.75 0 0 1-2.75 2.75H3M5.25 9L3 11.25 5.25 13.5"></path></svg></span><span class="r-sub">Ethernet · 192.168.1.30</span></div>
               <div class="r-st"><span class="badge b-ok"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--success)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg><span>Online</span></span><span class="r-sub"></span></div>
               <div class="r-act">
                 <span style="display: flex">
@@ -159,6 +159,19 @@ a{color:#005fb8}a:hover{color:#003e92}
                   
                 </span>
                 <button class="btn sub ico" aria-label="More actions for NAS"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="r-n"><span class="r-t r-tw"><span class="r-tn">Backup server</span><svg class="ic auto-ic" viewbox="0 0 16 16" role="img" aria-label="Wakes automatically"><path d="M2.75 8.75V7.5a2.75 2.75 0 0 1 2.75-2.75H13M10.75 2.5L13 4.75 10.75 7M13.25 7.25V8.5a2.75 2.75 0 0 1-2.75 2.75H3M5.25 9L3 11.25 5.25 13.5"></path></svg></span><span class="r-sub">D8:3A:DD:41:7C:02</span></div>
+              <div class="r-st"><span class="badge b-acc"><svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg><span>Waking</span></span><span class="r-sub">Waking automatically · 1:12</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Backup server"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
               </div>
             </div>
             
@@ -200,7 +213,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         </section>
         <div class="sbar" style="height: 280px"></div>
       </div>
-      <div class="tip multi" role="tooltip" style="left: 120px; top: 432px">
+      <div class="tip multi" role="tooltip" style="left: 120px; top: 473px">
         <span>Same MAC address as Test VM 2 (Ungrouped).</span>
         <span>Wol can’t tell these machines apart when this address answers.</span>
       </div>
@@ -254,7 +267,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--neutral)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg>5 offline</span>
           
-          <span><svg class="st spin s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg>1 waking</span>
+          <span><svg class="st spin s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg>2 waking</span>
           
           <span><svg class="st s14" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l6.9 12.4H1.1z" fill="var(--caution)" stroke="var(--caution)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M8 6.1v3.4" fill="none" stroke="var(--on-status)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="11.8" r="0.9" fill="var(--on-status)"></circle></svg>1 timed out</span>
           
@@ -340,14 +353,14 @@ a{color:#005fb8}a:hover{color:#003e92}
         
         <section class="grp" aria-label="Servers">
           <div class="grp-h">
-            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 offline · 1 unknown</span></div>
+            <div class="grp-tt"><span class="grp-n">Servers</span><span class="grp-s">1 online · 1 offline · 1 waking · 1 unknown</span></div>
             <button class="btn" title="Wake group"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75v5.5M4.7 3.7a5.25 5.25 0 1 0 6.6 0"></path></svg>Wake group</button>
             <button class="btn sub ico" aria-label="Collapse Servers" aria-expanded="true"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
           </div>
           <div class="rows">
             
             <div class="row">
-              <div class="r-n"><span class="r-t r-tw"><span class="r-tn">NAS</span></span><span class="r-sub">Ethernet · 192.168.1.30</span></div>
+              <div class="r-n"><span class="r-t r-tw"><span class="r-tn">NAS</span><svg class="ic auto-ic" viewbox="0 0 16 16" role="img" aria-label="Wakes automatically"><path d="M2.75 8.75V7.5a2.75 2.75 0 0 1 2.75-2.75H13M10.75 2.5L13 4.75 10.75 7M13.25 7.25V8.5a2.75 2.75 0 0 1-2.75 2.75H3M5.25 9L3 11.25 5.25 13.5"></path></svg></span><span class="r-sub">Ethernet · 192.168.1.30</span></div>
               <div class="r-st"><span class="badge b-ok"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 1 1 8 1z" fill="var(--success)" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="none"></path><path d="M4.9 8.3l2.1 2.1 4.1-4.5" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg><span>Online</span></span><span class="r-sub"></span></div>
               <div class="r-act">
                 <span style="display: flex">
@@ -356,6 +369,19 @@ a{color:#005fb8}a:hover{color:#003e92}
                   
                 </span>
                 <button class="btn sub ico" aria-label="More actions for NAS"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="r-n"><span class="r-t r-tw"><span class="r-tn">Backup server</span><svg class="ic auto-ic" viewbox="0 0 16 16" role="img" aria-label="Wakes automatically"><path d="M2.75 8.75V7.5a2.75 2.75 0 0 1 2.75-2.75H13M10.75 2.5L13 4.75 10.75 7M13.25 7.25V8.5a2.75 2.75 0 0 1-2.75 2.75H3M5.25 9L3 11.25 5.25 13.5"></path></svg></span><span class="r-sub">D8:3A:DD:41:7C:02</span></div>
+              <div class="r-st"><span class="badge b-acc"><svg class="st spin" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 1.75a6.25 6.25 0 1 1 0 12.5A6.25 6.25 0 1 1 8 1.75z" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 40"></path><path d="" fill="none" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8" cy="0" r="0" fill="var(--on-status)"></circle></svg><span>Waking</span></span><span class="r-sub">Waking automatically · 1:12</span></div>
+              <div class="r-act">
+                <span style="display: flex">
+                  
+                  
+                  
+                </span>
+                <button class="btn sub ico" aria-label="More actions for Backup server"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="3" cy="8" r="1"></circle><circle class="f" cx="8" cy="8" r="1"></circle><circle class="f" cx="13" cy="8" r="1"></circle></svg></button>
               </div>
             </div>
             
@@ -397,7 +423,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         </section>
         <div class="sbar" style="height: 280px"></div>
       </div>
-      <div class="tip multi" role="tooltip" style="left: 120px; top: 432px">
+      <div class="tip multi" role="tooltip" style="left: 120px; top: 473px">
         <span>Same MAC address as Test VM 2 (Ungrouped).</span>
         <span>Wol can’t tell these machines apart when this address answers.</span>
       </div>

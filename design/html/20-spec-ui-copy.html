@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 7980px; display: flex; flex-direction: column; gap: 28px">
+<div class="doc light" style="width: 1440px; min-height: 8380px; display: flex; flex-direction: column; gap: 28px">
   <div class="vstack" style="gap: 8px">
     <h1>UI copy — en-US</h1>
     <p class="lead">Every string shown in the mockups, keyed for Resources.resw. {0}, {1}… are runtime values; strings whose noun changes with the count have .One and .Other. Relative times and durations come from the locale formatter, so “il y a 2 min” needs no extra key.</p>
@@ -96,6 +96,8 @@ a{color:#005fb8}a:hover{color:#003e92}
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Sending.Other</td><td>Sending to {0} interfaces…<div class="help">The packet goes to every interface</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Detail</td><td>{0} · waiting for reply<div class="help">Elapsed time, m:ss</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">State.Waking.Auto</td><td>Waking automatically · {0}<div class="help">Wake automatically: time since the first packet of this offline period, m:ss (h:mm:ss from 1 hour). Keep translations as short: the detail column is 172 epx</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">State.TimedOut.Detail</td><td>No reply after {0}<div class="help">Timeout, m:ss</div></td></tr>
           
@@ -256,6 +258,10 @@ a{color:#005fb8}a:hover{color:#003e92}
           <tr><td class="k" style="white-space: normal; word-break: break-all">Row.SharedMac.Tooltip.Other</td><td>Same MAC address as {0} and {1} other machines. Wol can’t tell these machines apart when this address answers.</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Row.SharedMac.Name</td><td>Shares its MAC address with {0}<div class="help">Appended to the row automation name</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.AutoWake.Tooltip</td><td>Wake automatically is on: Wol wakes this machine whenever it’s offline, even if you shut it down on purpose.</td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">Row.AutoWake.Name</td><td>Wakes automatically<div class="help">Appended to the row automation name, before the shared MAC text</div></td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Row.AlreadyOnline</td><td>Already online<div class="help">Group wake detail</div></td></tr>
           
@@ -423,6 +429,10 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Discovery.Item.Name</td><td>{0}, {1}<div class="help">MAC address, current IP</div></td></tr>
           
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AutoWake.Content</td><td>Wake automatically<div class="help">CheckBox</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.AutoWake.Description</td><td>Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.<div class="help">Caption under the CheckBox, also its HelpText</div></td></tr>
+          
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Header</td><td>Advanced</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">MachineDialog.Advanced.Description</td><td>Broadcast address, UDP port</td></tr>
@@ -584,6 +594,30 @@ a{color:#005fb8}a:hover{color:#003e92}
           <tr><td class="k" style="white-space: normal; word-break: break-all">Notifications.MoreCount</td><td>+{0} more</td></tr>
           
           <tr><td class="k" style="white-space: normal; word-break: break-all">Notifications.Close</td><td>Close</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+    <section style="break-inside: avoid; margin-bottom: 28px">
+      <h2 style="margin-bottom: 8px">Wake automatically</h2>
+      <table class="tbl" style="table-layout: fixed">
+        <thead><tr><th style="width: 46%">Key</th><th>Value</th></tr></thead>
+        <tbody>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Started.Title</td><td>Waking {0} automatically<div class="help">InfoBar (Informational) and balloon (NIIF_INFO); replaces “… went offline”</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Started.Message</td><td>It’s offline. Wol tries again every 2 minutes until it answers.<div class="help">“2 minutes” is the CLI retry interval</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.Online.Message</td><td>Woken automatically after {0}.<div class="help">Duration since the first packet; title Wake.Success.Title / Balloon.Online.Title</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.StillOffline.Title</td><td>{0} is still offline<div class="help">InfoBar (Warning) and balloon (NIIF_WARNING), once per offline period</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.StillOffline.Message</td><td>No reply after {0}. Wol keeps trying every 2 minutes.<div class="help">Wake timeout from Settings</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.SendFailed.Title</td><td>Couldn’t wake {0} automatically<div class="help">InfoBar (Error) only</div></td></tr>
+          
+          <tr><td class="k" style="white-space: normal; word-break: break-all">AutoWake.SendFailed.Message</td><td>{0} Wol tries again in 2 minutes.<div class="help">Message from the CLI</div></td></tr>
           
         </tbody>
       </table>

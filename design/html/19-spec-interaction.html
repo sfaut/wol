@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 2120px; display: flex; flex-direction: column; gap: 28px">
+<div class="doc light" style="width: 1440px; min-height: 2192px; display: flex; flex-direction: column; gap: 28px">
   <div class="vstack" style="gap: 8px">
     <h1>Interaction notes</h1>
     <p class="lead">Keyboard first, screen-reader friendly, system motion only. Shortcuts appear in tooltips and as accelerator text in menus.</p>
@@ -59,7 +59,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         <li>Next section header, and so on</li>
         <li>Notification host (last). F6 cycles pane → content → notifications.</li>
       </ol>
-      <p class="help">Opening a dialog focuses its first field; closing returns focus to the control that opened it. After Remove, focus moves to the next row (or the previous one at the end). In the machine dialog, Tab goes Name → Group → each interface (MAC, Label, Remove) → Add interface → Add from network… → Advanced → Add / Cancel; removing an interface moves focus to the next row’s MAC.</p>
+      <p class="help">Opening a dialog focuses its first field; closing returns focus to the control that opened it. After Remove, focus moves to the next row (or the previous one at the end). In the machine dialog, Tab goes Name → Group → each interface (MAC, Label, Remove) → Add interface → Add from network… → Wake automatically → Advanced → Add / Cancel; removing an interface moves focus to the next row’s MAC.</p>
     </div>
 
     <div class="panel" style="gap: 12px">
@@ -150,6 +150,8 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Cancel waking</td><td>No confirmation. The packet is already sent; Wol only stops waiting.</td></tr>
           
+          <tr><td>Wake automatically</td><td>No confirmation: its description says it also wakes a machine shut down on purpose.</td></tr>
+          
           <tr><td>Cancel Add / Edit</td><td>Closes without saving, no “discard?” prompt — the form is short.</td></tr>
           
           <tr><td>Remove an interface</td><td>Removed at once inside the dialog, no prompt: Cancel still discards every change.</td></tr>
@@ -167,7 +169,7 @@ a{color:#005fb8}a:hover{color:#003e92}
     <h2>Screen reader</h2>
     <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
       <p>Landmarks: the pane is <span class="code">Navigation</span>, the page is <span class="code">Main</span>. The page title is heading level 1, each group name level 2, so “H” jumps between groups in Narrator and NVDA.</p>
-      <p>Row name: “{name}, {state}, {detail}”, e.g. “Lab PC, timed out, no reply after 2 minutes”. Icon-only buttons include the machine: “More actions for NAS”, “Wake Lab PC”. Durations are spoken in words, not “2:00”.</p>
+      <p>Row name: “{name}, {state}, {detail}”, e.g. “Lab PC, timed out, no reply after 2 minutes”. Icon-only buttons include the machine: “More actions for NAS”, “Wake Lab PC”. Durations are spoken in words, not “2:00”. “Wakes automatically” is added when the option is on.</p>
       <p>Live regions: the status summary and progress InfoBar are Polite; error and warning InfoBars are Assertive. A wake result is announced once, by the InfoBar, not again by the row.</p>
     </div>
   </div>
