@@ -37,7 +37,7 @@ jobs:
       run:
         working-directory: cli
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -63,7 +63,7 @@ jobs:
 
       - run: cargo build --release --target ${{ matrix.target }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wol-${{ matrix.name }}
           path: |
@@ -75,7 +75,7 @@ jobs:
     name: GUI (windows-x64)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -87,7 +87,7 @@ jobs:
             cli -> target
             gui/launcher -> target
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
@@ -110,7 +110,7 @@ jobs:
           $env:PATH += ';C:\Program Files (x86)\Microsoft Visual Studio\Installer'
           dotnet publish src/Wol.Desktop --configuration Release --runtime win-x64 --output publish
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wol-gui-windows-x64
           path: gui/publish
@@ -127,7 +127,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       TAG: ${{ github.event.release.tag_name }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # The tag must be vX.Y.Z, X.Y.Z being the version of the CLI, the launcher and the GUI.
       - name: Check the version
@@ -143,7 +143,7 @@ jobs:
           found=$(sed --quiet 's|.*<Version>\(.*\)</Version>.*|\1|p' gui/src/Wol.Desktop/Wol.Desktop.csproj)
           [ "$found" = "$version" ] || { echo "::error::GUI version $found, expected $version"; exit 1; }
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
 
