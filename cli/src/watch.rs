@@ -2,6 +2,8 @@
 //!
 //! The configuration file is re-read whenever it changes on disk, so machines added or edited
 //! (by hand, or by a front-end through other `wol` commands) are picked up without a restart.
+//!
+//! Machines set to wake automatically (`auto_wake`) are woken whenever they are found offline.
 
 use std::collections::HashMap;
 use std::fs;
@@ -11,14 +13,17 @@ use std::time::{Duration, Instant, SystemTime};
 use serde_json::{Value, json};
 
 use crate::cli::{document, emit, emit_text, probe_json, probe_text, status_text};
-use crate::config::ConfigFile;
+use crate::config::{ConfigFile, Machine};
 use crate::error::{Error, Result};
 use crate::probe::{self, State};
-use crate::{scan, time};
+use crate::{scan, time, wake};
 
 /// Number of consecutive failed checks before an online machine is reported as not online,
 /// so that a single missed answer does not trigger a notification.
 const CONFIRMATIONS: u32 = 2;
+
+/// Time between two automatic wake-ups of a machine that stays offline.
+const AUTO_WAKE_RETRY: Duration = Duration::from_secs(120);
 
 /// Options of `wol watch`.
 pub struct Options<'a> {
@@ -66,6 +71,60 @@ impl Tracked {
     }
 }
 
+/// Automatic wake-ups of a machine since it was last online.
+struct AutoWake {
+    /// Number of times its magic packets were sent.
+    attempts: u32,
+
+    /// Start of the check that last sent them.
+    last: Instant,
+}
+
+/// Automatic wake-ups of the auto-wake machines, by lowercase machine name; kept across
+/// configuration reloads, so that a reload neither resends the packets nor resets the count.
+#[derive(Default)]
+struct AutoWakes(HashMap<String, AutoWake>);
+
+impl AutoWakes {
+    /// Records the reported state of a machine at the check started at `now`; returns the
+    /// attempt number when its magic packets must be sent: at once when it is found offline,
+    /// then every [`AUTO_WAKE_RETRY`] while it stays offline. Being online, or no longer set
+    /// to wake automatically, starts the count again.
+    fn due(&mut self, key: &str, auto_wake: bool, state: State, now: Instant) -> Option<u32> {
+        if !auto_wake || state == State::Online {
+            self.0.remove(key);
+            return None;
+        }
+        if state != State::Offline {
+            return None;
+        }
+
+        match self.0.get_mut(key) {
+            Some(wake) if now.duration_since(wake.last) < AUTO_WAKE_RETRY => None,
+            Some(wake) => {
+                wake.attempts += 1;
+                wake.last = now;
+                Some(wake.attempts)
+            }
+            None => {
+                self.0.insert(
+                    key.to_owned(),
+                    AutoWake {
+                        attempts: 1,
+                        last: now,
+                    },
+                );
+                Some(1)
+            }
+        }
+    }
+
+    /// Forgets the machines that are no longer watched (removed, renamed or deselected).
+    fn retain(&mut self, keys: &[String]) {
+        self.0.retain(|key, _| keys.contains(key));
+    }
+}
+
 /// Monitors the selected machines until the process is stopped.
 ///
 /// # Errors
@@ -77,6 +136,7 @@ pub fn watch(file: &mut ConfigFile, options: &Options<'_>) -> Result<crate::cli:
 
     let mut modified = modified_time(file.path());
     let mut tracked: HashMap<String, Tracked> = HashMap::new();
+    let mut auto_wakes = AutoWakes::default();
     let mut snapshot = true;
 
     loop {
@@ -165,13 +225,9 @@ pub fn watch(file: &mut ConfigFile, options: &Options<'_>) -> Result<crate::cli:
                         }),
                     ));
                 } else {
-                    // Human output shows UTC: local time zones need a date library.
-                    let at = checked_at
-                        .get(..19)
-                        .unwrap_or(&checked_at)
-                        .replace('T', " ");
                     emit_text(&format!(
-                        "{at} UTC  {}: {} -> {}",
+                        "{}  {}: {} -> {}",
+                        utc_text(&checked_at),
                         machine.name,
                         previous.code(),
                         probe_text(probe)
@@ -180,8 +236,60 @@ pub fn watch(file: &mut ConfigFile, options: &Options<'_>) -> Result<crate::cli:
             }
         }
 
+        let keys: Vec<String> = machines
+            .iter()
+            .map(|machine| machine.name.to_lowercase())
+            .collect();
+        auto_wakes.retain(&keys);
+        for (machine, key) in machines.iter().zip(&keys) {
+            let Some(state) = tracked.get(key).map(|entry| entry.reported) else {
+                continue;
+            };
+            if let Some(attempt) = auto_wakes.due(key, machine.auto_wake, state, started) {
+                auto_wake(machine, attempt, &checked_at, options.json);
+            }
+        }
+
         std::thread::sleep(options.interval.saturating_sub(started.elapsed()));
     }
+}
+
+/// Sends the magic packets of an auto-wake machine found offline and reports it: `auto_wake`
+/// event in JSON, otherwise one line (on `stderr` when sending failed).
+fn auto_wake(machine: &Machine, attempt: u32, checked_at: &str, json: bool) {
+    let (result, outcome) = wake::send(machine);
+    if json {
+        emit(&document(
+            None,
+            json!({
+                "event": "auto_wake",
+                "checked_at": checked_at,
+                "attempt": attempt,
+                "result": result,
+            }),
+        ));
+        return;
+    }
+
+    match outcome {
+        Ok(_) => emit_text(&format!(
+            "{}  {}: offline, magic packet sent automatically ({}, attempt {attempt})",
+            utc_text(checked_at),
+            machine.name,
+            wake::target(machine),
+        )),
+        Err(line) => eprint!("{line}"),
+    }
+}
+
+/// Formats an RFC 3339 timestamp for humans, e.g. `2026-10-18 12:37:23 UTC`.
+///
+/// Human output shows UTC: local time zones need a date library.
+fn utc_text(timestamp: &str) -> String {
+    format!(
+        "{} UTC",
+        timestamp.get(..19).unwrap_or(timestamp).replace('T', " ")
+    )
 }
 
 /// Last modification time of the configuration file (`None` when it does not exist).
@@ -248,6 +356,48 @@ mod tests {
             ),
             []
         );
+    }
+
+    #[test]
+    fn auto_wake_sends_at_once_then_every_retry_period() {
+        let mut wakes = AutoWakes::default();
+        let start = Instant::now();
+        let at = |seconds| start + Duration::from_secs(seconds);
+
+        assert_eq!(wakes.due("nas", true, State::Offline, at(0)), Some(1));
+        assert_eq!(wakes.due("nas", true, State::Offline, at(10)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(119)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(120)), Some(2));
+        assert_eq!(wakes.due("nas", true, State::Offline, at(240)), Some(3));
+    }
+
+    #[test]
+    fn auto_wake_starts_again_after_being_online() {
+        let mut wakes = AutoWakes::default();
+        let start = Instant::now();
+        let at = |seconds| start + Duration::from_secs(seconds);
+
+        assert_eq!(wakes.due("nas", true, State::Offline, at(0)), Some(1));
+        assert_eq!(wakes.due("nas", true, State::Online, at(30)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(40)), Some(1));
+    }
+
+    #[test]
+    fn auto_wake_skips_errors_and_other_machines() {
+        let mut wakes = AutoWakes::default();
+        let start = Instant::now();
+        let at = |seconds| start + Duration::from_secs(seconds);
+
+        assert_eq!(wakes.due("pc", false, State::Offline, at(0)), None);
+        assert_eq!(wakes.due("nas", true, State::Error, at(0)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(10)), Some(1));
+        // The count goes on through errors, and the retry period still applies.
+        assert_eq!(wakes.due("nas", true, State::Error, at(20)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(30)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(130)), Some(2));
+        // Turning the option off starts the count again.
+        assert_eq!(wakes.due("nas", false, State::Offline, at(140)), None);
+        assert_eq!(wakes.due("nas", true, State::Offline, at(150)), Some(1));
     }
 
     #[test]

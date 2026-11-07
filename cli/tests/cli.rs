@@ -388,6 +388,106 @@ fn watch_emits_snapshots_and_reloads_config() {
 }
 
 #[test]
+fn auto_wake_is_set_and_cleared() {
+    let wol = Wol::new();
+    wol.ok(&["add", "NAS", "--mac", "001122334455", "--auto-wake"]);
+
+    let auto_wake = || {
+        let (_, stdout, _) = wol.json(&["list"]);
+        stdout.unwrap()["machines"][0]["auto_wake"].clone()
+    };
+    assert_eq!(auto_wake(), true);
+    let text = std::fs::read_to_string(wol.config()).unwrap();
+    assert!(text.contains("auto_wake = true"), "{text}");
+    wol.command(&["list"])
+        .assert()
+        .success()
+        .stdout(predicates::str::contains("00:11:22:33:44:55    auto-wake"));
+
+    // Options left out keep the setting.
+    wol.ok(&["edit", "NAS", "--port", "7"]);
+    assert_eq!(auto_wake(), true);
+
+    let (code, _, stderr) = wol.json(&["edit", "NAS", "--auto-wake", "--no-auto-wake"]);
+    assert_eq!(code, 2);
+    assert_eq!(stderr.unwrap()["error"]["code"], "invalid_usage");
+
+    wol.ok(&["edit", "NAS", "--no-auto-wake"]);
+    assert_eq!(auto_wake(), false);
+    let text = std::fs::read_to_string(wol.config()).unwrap();
+    assert!(!text.contains("auto_wake"), "{text}");
+}
+
+#[test]
+fn watch_wakes_auto_wake_machines_found_offline() {
+    use std::io::{BufRead, BufReader};
+    use std::process::Stdio;
+
+    let receiver = UdpSocket::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
+    let SocketAddr::V4(address) = receiver.local_addr().unwrap() else {
+        unreachable!("bound to an IPv4 address");
+    };
+    let port = address.port().to_string();
+
+    // Both machines are offline (the fake scan finds nothing); only NAS wakes automatically.
+    let wol = Wol::new();
+    for (name, mac, auto_wake) in [("PC", "001122334456", false), ("NAS", "001122334455", true)] {
+        let mut args = vec![
+            "add",
+            name,
+            "--mac",
+            mac,
+            "--broadcast",
+            "127.0.0.1",
+            "--port",
+            &port,
+        ];
+        if auto_wake {
+            args.push("--auto-wake");
+        }
+        wol.ok(&args);
+    }
+
+    let mut child = std::process::Command::new(assert_cmd::cargo::cargo_bin("wol"))
+        .arg("--config")
+        .arg(wol.config())
+        .args(["watch", "--json", "--interval", "1"])
+        .env("WOL_FAKE_SCAN", "")
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut lines = BufReader::new(child.stdout.take().unwrap()).lines();
+    let mut next_event = || serde_json::from_str::<Value>(&lines.next().unwrap().unwrap()).unwrap();
+
+    let snapshot = next_event();
+    let woken = next_event();
+
+    // Only the packets of NAS arrive.
+    receiver
+        .set_read_timeout(Some(std::time::Duration::from_millis(1_500)))
+        .unwrap();
+    let mut buffer = [0u8; 256];
+    let mut packets = 0;
+    while let Ok((len, _)) = receiver.recv_from(&mut buffer) {
+        assert_eq!(len, 102);
+        assert_eq!(buffer[6..12], [0x00, 0x11, 0x22, 0x33, 0x44, 0x55]);
+        packets += 1;
+    }
+    child.kill().unwrap();
+    child.wait().unwrap();
+
+    assert_eq!(snapshot["event"], "snapshot");
+    assert_eq!(woken["schema"], 1);
+    assert_eq!(woken["event"], "auto_wake");
+    assert_eq!(woken["attempt"], 1);
+    assert!(woken["checked_at"].as_str().unwrap().ends_with('Z'));
+    assert_eq!(woken["result"]["machine"], "NAS");
+    assert_eq!(woken["result"]["status"], "sent");
+    assert_eq!(woken["result"]["target"], format!("127.0.0.1:{port}"));
+    assert!(packets > 0);
+}
+
+#[test]
 fn shared_mac_addresses_are_allowed_with_a_warning() {
     let wol = Wol::new();
     wol.ok(&["add", "VM 1", "--mac", "001122334455"]);

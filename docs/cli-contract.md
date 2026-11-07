@@ -50,6 +50,7 @@ port = 9                         # optional UDP port of the magic packet, defaul
 [[machine]]
 name = "NAS"
 interfaces = [{ mac = "00:11:32:BC:72:E9" }]
+auto_wake = true                 # optional, default false: woken whenever `wol watch` finds it offline
 ```
 
 Rules:
@@ -64,6 +65,7 @@ Rules:
   address answers.
 - `label`: 1 to 32 characters, no leading or trailing spaces.
 - Ports: 1 to 65535.
+- `auto_wake`: `true` or `false` (default). The CLI writes it only when `true`.
 - `group` must name a defined `[[group]]`.
 - Unknown keys are rejected (they are most likely typos).
 
@@ -76,11 +78,11 @@ Global options: `--json` (machine-readable output), `--config <path>`.
 |---|---|
 | `wol list` | List groups and machines |
 | `wol status [<machine>…] [--group <name>]…` | Check the state of machines once (all machines by default) |
-| `wol watch [<machine>…] [--group <name>]… [--interval <s>]` | Monitor machines continuously, one event per state change (all machines by default) |
+| `wol watch [<machine>…] [--group <name>]… [--interval <s>]` | Monitor machines continuously, one event per state change (all machines by default); wakes the auto-wake machines found offline |
 | `wol scan` | List the devices found on the local network |
 | `wol wake [<machine>…] [--group <name>]… [--wait[=<s>]]` | Send magic packets to every interface (a machine named twice is woken once); with `--wait`, wait until the machines are online (default 120 s, 1 to 3600) |
-| `wol add <name> --mac <mac[=label]>… [--group <g>] [--broadcast <ipv4>] [--port <p>]` | Add a machine; `--mac` is repeatable, at least one |
-| `wol edit <name> [--name <new>] [--mac <mac[=label]>… \| [--add-mac <mac[=label]>]… [--remove-mac <mac>]…] [--group <g> \| --no-group] [--broadcast <ipv4> \| --no-broadcast] [--port <p> \| --no-port]` | Change a machine; only given options change. `--mac` replaces all interfaces; `--add-mac` adds one, or replaces the label of an existing one |
+| `wol add <name> --mac <mac[=label]>… [--group <g>] [--broadcast <ipv4>] [--port <p>] [--auto-wake]` | Add a machine; `--mac` is repeatable, at least one |
+| `wol edit <name> [--name <new>] [--mac <mac[=label]>… \| [--add-mac <mac[=label]>]… [--remove-mac <mac>]…] [--group <g> \| --no-group] [--broadcast <ipv4> \| --no-broadcast] [--port <p> \| --no-port] [--auto-wake \| --no-auto-wake]` | Change a machine; only given options change. `--mac` replaces all interfaces; `--add-mac` adds one, or replaces the label of an existing one |
 | `wol remove <name>` | Remove a machine |
 | `wol version` | Print the CLI version and the JSON schema version; reads no configuration file |
 | `wol group add <name>` | Add a group at the end of the list |
@@ -126,13 +128,14 @@ in the `error` state with reason `no_local_network`.
 
 ### Objects
 
-Machine (optional fields are `null` when not set, meaning "default"):
+Machine (optional fields are `null` when not set, meaning "default"; `auto_wake` is always a
+boolean):
 
 ```json
 { "name": "Office PC", "group": "Office",
   "interfaces": [{ "mac": "A4:BB:6D:12:34:56", "label": "Ethernet" },
                  { "mac": "A4:BB:6D:12:34:57", "label": null }],
-  "broadcast": null, "port": null }
+  "broadcast": null, "port": null, "auto_wake": false }
 ```
 
 Group: `{ "name": "Office" }`
@@ -187,6 +190,7 @@ re-reads the configuration file whenever it changes on disk.
 |---|---|---|
 | `snapshot` | `config`, `checked_at`, `interval_s`, `machines`: [Machine state…] | At start, and after each configuration reload (front-ends replace their whole state) |
 | `state_changed` | `checked_at`, `previous`: state, `machine`: Machine state | A machine changed state |
+| `auto_wake` | `checked_at`, `attempt`: 1-based, `result`: same as a `wake` result | Magic packets were sent to an auto-wake machine found offline (see below) |
 | `error` | `error`: { `code`, `message`, `details` } | The edited file is invalid, or no longer contains a watched machine or group; the previous configuration stays in use |
 
 ```json
@@ -195,6 +199,18 @@ re-reads the configuration file whenever it changes on disk.
 
 Leaving `online` is reported only after 2 consecutive scans agree, so that a single missed
 answer does not trigger a notification; every other change is reported at once.
+
+**Auto-wake.** A watched machine with `auto_wake = true` is woken whenever it is `offline`: its
+magic packets are sent as soon as it is found offline (in the first scan, or once leaving
+`online` is confirmed, right after its `state_changed` event), then again every 120 seconds
+while it stays offline (checked at each scan, so never more often than `--interval`). Nothing is
+sent while it is in the `error` state. `attempt` counts the sends since the machine was last
+online (or since `watch` started); it survives configuration reloads, and turning `auto_wake`
+off resets it. A failed send is reported in `result` (`status: "failed"`) and retried the same way.
+
+```json
+{"schema":1,"event":"auto_wake","checked_at":"2026-10-18T12:40:03.512Z","attempt":1,"result":{"machine":"NAS","target":"255.255.255.255:9","macs":["00:11:32:BC:72:E9"],"status":"sent"}}
+```
 
 ### `wake --wait` events
 

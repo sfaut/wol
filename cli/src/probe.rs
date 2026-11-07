@@ -135,6 +135,7 @@ mod tests {
                 .collect(),
             broadcast: None,
             port: None,
+            auto_wake: false,
         }
     }
 
