@@ -72,6 +72,9 @@ States are checked continuously, every 10 seconds by default.
   label: Wol wakes them all and the machine is online as soon as one of them answers.
 - **Wake a machine:** "Wake" button on its row. Wol then waits until it is online, and tells
   you when it does not answer in time ("Retry").
+- **Keep a machine on:** check "Wake automatically" in its settings (Add / Edit). Whenever Wol
+  finds it offline, it wakes it, then tries again every 2 minutes until it answers: a machine
+  you shut down is started again. This works while Wol runs, also from the notification area.
 - **Other actions:** the "…" menu of a row: check now, edit, duplicate, move to a group,
   copy its MAC addresses, remove.
 - **Search:** the search box filters the machines by name, MAC address, IP address or label.
@@ -137,13 +140,14 @@ wol group add Office
 wol group add Servers
 
 wol add "Office PC" --group Office --mac A4:BB:6D:12:34:56=Ethernet --mac A4:BB:6D:12:34:57=Wi-Fi
-wol add NAS --group Servers --mac 00:11:32:BC:72:E9
+wol add NAS --group Servers --mac 00:11:32:BC:72:E9 --auto-wake
 ```
 
 `--mac` accepts `AA:BB:CC:DD:EE:FF`, `AA-BB-CC-DD-EE-FF`, `AABB.CCDD.EEFF` and `AABBCCDDEEFF`,
 optionally followed by `=Label`. When the computer running Wol has several networks, give the
 broadcast address of the right one with `--broadcast 192.168.1.255`; `--port` changes the UDP
-port of the magic packet (9 by default).
+port of the magic packet (9 by default). `--auto-wake` keeps a machine on: `wol watch` wakes it
+whenever it finds it offline (see below).
 
 Change a machine with `wol edit`; only the given options change:
 
@@ -151,6 +155,7 @@ Change a machine with `wol edit`; only the given options change:
 wol edit NAS --name "NAS Origen"
 wol edit "Office PC" --remove-mac A4:BB:6D:12:34:57
 wol edit NAS --no-group
+wol edit NAS --no-auto-wake
 ```
 
 ### Check and wake
@@ -170,7 +175,9 @@ wol wake NAS --wait=300         # wait up to 300 s
 
 `wol watch` prints the state of every machine, then one line per change until you stop it
 (Ctrl+C); `--interval` sets the time between two checks (10 s by default). It takes changes of
-the configuration file into account while it runs.
+the configuration file into account while it runs. Machines added with `--auto-wake` are woken
+as soon as it finds them offline, then every 2 minutes until they answer; the desktop app runs
+`wol watch` all the time, so they stay on while it runs.
 
 ### Scripts
 
@@ -230,6 +237,7 @@ group = "Servers"
 interfaces = [{ mac = "00:11:32:BC:72:E9" }]
 broadcast = "192.168.1.255"   # optional, default 255.255.255.255
 port = 9                      # optional, default 9
+auto_wake = true              # optional, default false: woken whenever found offline
 ```
 
 ## Troubleshooting

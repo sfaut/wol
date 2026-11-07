@@ -10,12 +10,17 @@ namespace Wol.Desktop.Models;
 /// <param name="Message">Message under the title.</param>
 /// <param name="ActionText">Text of the action button, if any (e.g. "Retry").</param>
 /// <param name="Action">What the action button does.</param>
+/// <param name="Key">
+///     Identifies the bar to update in place instead of adding one (e.g. the automatic wake-up
+///     of a machine); null for a new bar every time.
+/// </param>
 public sealed record Notification(
     InfoBarSeverity Severity,
     string Title,
     string Message,
     string? ActionText = null,
-    Action? Action = null)
+    Action? Action = null,
+    string? Key = null)
 {
     /// <summary>
     /// Whether the bar closes by itself after a few seconds (successes only).

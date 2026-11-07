@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div style="width: 1804px; height: 1560px; display: flex; flex-direction: column">
+<div style="width: 1804px; height: 1700px; display: flex; flex-direction: column">
 
 <div class="pane light">
 <div class="pane-h">Light · ContentDialog at full length — inside a 700 epx window the content area scrolls, buttons stay pinned</div>
@@ -45,6 +45,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
             <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
           </div>
+        </div>
+        <div class="fld" style="gap: 0; margin-top: 4px">
+          <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" aria-describedby="aw1-light"><span class="cb" aria-hidden="true"><svg viewbox="0 0 12 12"><path d=""></path></svg></span><span>Wake automatically</span></label>
+          <span class="help" id="aw1-light" style="padding-left: 28px">Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</span>
         </div>
         <div class="exp">
           <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
@@ -83,6 +87,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             <button class="btn focus" aria-haspopup="dialog" aria-expanded="true"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
           </div>
         </div>
+        <div class="fld" style="gap: 0; margin-top: 4px">
+          <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" aria-describedby="aw2-light"><span class="cb" aria-hidden="true"><svg viewbox="0 0 12 12"><path d=""></path></svg></span><span>Wake automatically</span></label>
+          <span class="help" id="aw2-light" style="padding-left: 28px">Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</span>
+        </div>
         <div class="exp">
           <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
           <div class="exp-c">
@@ -119,7 +127,7 @@ a{color:#005fb8}a:hover{color:#003e92}
   </div>
 
   <div class="vstack" style="gap: 8px">
-    <div class="cap-t">3 · Edit — errors block saving, a shared MAC only warns</div>
+    <div class="cap-t">3 · Edit — errors block saving, a shared MAC only warns; Wake automatically on</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ed3-light">
       <div class="dlg-top">
         <h2 class="dlg-t" id="ed3-light">Edit machine</h2>
@@ -153,6 +161,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
             <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
           </div>
+        </div>
+        <div class="fld" style="gap: 0; margin-top: 4px">
+          <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" checked aria-describedby="aw3-light"><span class="cb on" aria-hidden="true"><svg viewbox="0 0 12 12"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span><span>Wake automatically</span></label>
+          <span class="help" id="aw3-light" style="padding-left: 28px">Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</span>
         </div>
         <div class="exp">
           <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
@@ -202,6 +214,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
           </div>
         </div>
+        <div class="fld" style="gap: 0; margin-top: 4px">
+          <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" aria-describedby="aw1-dark"><span class="cb" aria-hidden="true"><svg viewbox="0 0 12 12"><path d=""></path></svg></span><span>Wake automatically</span></label>
+          <span class="help" id="aw1-dark" style="padding-left: 28px">Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</span>
+        </div>
         <div class="exp">
           <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>
         </div>
@@ -239,6 +255,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             <button class="btn focus" aria-haspopup="dialog" aria-expanded="true"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
           </div>
         </div>
+        <div class="fld" style="gap: 0; margin-top: 4px">
+          <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" aria-describedby="aw2-dark"><span class="cb" aria-hidden="true"><svg viewbox="0 0 12 12"><path d=""></path></svg></span><span>Wake automatically</span></label>
+          <span class="help" id="aw2-dark" style="padding-left: 28px">Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</span>
+        </div>
         <div class="exp">
           <button class="exp-h" aria-expanded="true"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4"></path></svg></button>
           <div class="exp-c">
@@ -275,7 +295,7 @@ a{color:#005fb8}a:hover{color:#003e92}
   </div>
 
   <div class="vstack" style="gap: 8px">
-    <div class="cap-t">3 · Edit — errors block saving, a shared MAC only warns</div>
+    <div class="cap-t">3 · Edit — errors block saving, a shared MAC only warns; Wake automatically on</div>
     <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ed3-dark">
       <div class="dlg-top">
         <h2 class="dlg-t" id="ed3-dark">Edit machine</h2>
@@ -309,6 +329,10 @@ a{color:#005fb8}a:hover{color:#003e92}
             <button class="btn"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"></path></svg>Add interface</button>
             <button class="btn" aria-haspopup="dialog"><svg class="ic" viewbox="0 0 16 16" aria-hidden="true"><circle class="f" cx="8" cy="8" r="1.2"></circle><path d="M5.2 10.8a4 4 0 0 1 0-5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.1 12.9a7 7 0 0 1 0-9.8M12.9 3.1a7 7 0 0 1 0 9.8"></path></svg>Add from network…</button>
           </div>
+        </div>
+        <div class="fld" style="gap: 0; margin-top: 4px">
+          <label class="chk" style="min-height: 32px"><input class="sr" type="checkbox" checked aria-describedby="aw3-dark"><span class="cb on" aria-hidden="true"><svg viewbox="0 0 12 12"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span><span>Wake automatically</span></label>
+          <span class="help" id="aw3-dark" style="padding-left: 28px">Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area.</span>
         </div>
         <div class="exp">
           <button class="exp-h" aria-expanded="false"><span class="sc-tx"><span>Advanced</span><span class="sc-d">Broadcast address, UDP port</span></span><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>

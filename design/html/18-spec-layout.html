@@ -10,7 +10,7 @@ a{color:#005fb8}a:hover{color:#003e92}
 </style>
 </head>
 <body>
-<div class="doc light" style="width: 1440px; min-height: 5292px; display: flex; flex-direction: column; gap: 28px">
+<div class="doc light" style="width: 1440px; min-height: 5664px; display: flex; flex-direction: column; gap: 28px">
   <div class="vstack" style="gap: 8px">
     <h1>Controls and layout</h1>
     <p class="lead">Every element maps to a WinUI 3 or Windows Community Toolkit control. Measurements are in epx on the 4 epx grid, at 100% scale, for the wide layout unless noted.</p>
@@ -106,7 +106,9 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Shared MAC warning</td><td><span class="code">FontIcon + ToolTip</span></td><td>U+E7BA Warning, 16, SystemFillColorCautionBrush, 6 after the name, on every machine sharing a MAC. ToolTip names the other machines; the text is also part of the row automation name.</td></tr>
           
-          <tr><td>Row actions</td><td><span class="code">Button</span></td><td>Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown, disabled in Error (no network to send on), collapsed when Online, replaced by Cancel while Waking. More: icon-only Button U+E712 with the row’s MenuFlyout.</td></tr>
+          <tr><td>Wake automatically indicator</td><td><span class="code">FontIcon + ToolTip</span></td><td>U+E8EE RepeatAll, 16, TextFillColorSecondaryBrush, on every machine with Wake automatically on. After the name: Wake automatically, then the shared MAC warning, 6 apart. Name and glyphs sit in a Grid (HorizontalAlignment Left, columns * | Auto | Auto) so the name trims before the glyphs move. ToolTip explains the option; “Wakes automatically” is appended to the row automation name.</td></tr>
+          
+          <tr><td>Row actions</td><td><span class="code">Button</span></td><td>Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown, disabled in Error (no network to send on), collapsed when Online, replaced by Cancel while Waking, collapsed while waking automatically (no Wake, no Cancel). More: icon-only Button U+E712 with the row’s MenuFlyout.</td></tr>
           
           <tr><td>Cards (alternative)</td><td><span class="code">ItemsView + UniformGridLayout</span></td><td>MinItemWidth 196, MinItemHeight 112, spacing 4, card padding 12, radius 8. Name over the state badge.</td></tr>
           
@@ -122,7 +124,7 @@ a{color:#005fb8}a:hover{color:#003e92}
         <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
         <tbody>
           
-          <tr><td>Dialog</td><td><span class="code">ContentDialog</span></td><td>Recommended over a page: the form stays short and keeps the list in view. Order: Name, Group, Network interfaces, Advanced. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548.</td></tr>
+          <tr><td>Dialog</td><td><span class="code">ContentDialog</span></td><td>Recommended over a page: the form stays short and keeps the list in view. Order: Name, Group, Network interfaces, Wake automatically, Advanced. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548.</td></tr>
           
           <tr><td>Body</td><td><span class="code">ScrollViewer &gt; StackPanel</span></td><td>Spacing 12, field header 4 above its box. Scrolls when Advanced is open or the window is short; buttons stay pinned.</td></tr>
           
@@ -137,6 +139,8 @@ a{color:#005fb8}a:hover{color:#003e92}
           <tr><td>Add interface</td><td><span class="code">Button</span></td><td>U+E710 + label, below the list, 8 before “Add from network…”. Adds an empty row and focuses its MAC.</td></tr>
           
           <tr><td>Add from network…</td><td><span class="code">Button + Flyout</span></td><td>Flyout 320 wide: title, Caption “Not used by any machine yet”, ListView (IsItemClickEnabled) of devices found on the local network — MAC (Body) over current IP (Caption) — then a ProgressRing “Still scanning…” footer, or “No new devices found”. Picking one fills the empty row (or adds a row) and closes the flyout.</td></tr>
+          
+          <tr><td>Wake automatically</td><td><span class="code">CheckBox + TextBlock</span></td><td>After the interface buttons, before Advanced: 16 above (Spacing 12 + Margin 0, 4, 0, 0), 12 below. CheckBox (MinHeight 32), Content “Wake automatically”, off for a new machine; Edit shows the saved value, Duplicate copies it. Below, the description in Caption, TextFillColorSecondaryBrush, wrapping, Margin 28, 0, 0, 0 (under the label), also set as the CheckBox’s AutomationProperties.HelpText. A CheckBox, not a ToggleSwitch: nothing applies before Add / Save (wol add --auto-wake, wol edit --auto-wake / --no-auto-wake).</td></tr>
           
           <tr><td>Advanced</td><td><span class="code">Expander</span></td><td>Collapsed by default. TextBox Broadcast address (PlaceholderText 255.255.255.255) and NumberBox UDP port (1–65535, PlaceholderText 9), each with a Caption explaining the default.</td></tr>
           
@@ -170,11 +174,13 @@ a{color:#005fb8}a:hover{color:#003e92}
         <thead><tr><th style="width: 150px">Element</th><th style="width: 190px">Control</th><th>Properties and spacing</th></tr></thead>
         <tbody>
           
-          <tr><td>Row while waking</td><td><span class="code">ProgressRing</span></td><td>12 × 12 inside the Waking badge, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine.</td></tr>
+          <tr><td>Row while waking</td><td><span class="code">ProgressRing</span></td><td>12 × 12 inside the Waking badge, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine. Automatic wake: “Waking automatically · m:ss”.</td></tr>
           
           <tr><td>Single result</td><td><span class="code">InfoBar</span></td><td>In the notification host. Success: IsClosable, auto-close after 5 s (paused while hovered or focused). Warning (timed out): stays until closed, ActionButton Retry.</td></tr>
           
           <tr><td>Group or selection</td><td><span class="code">InfoBar + ProgressBar</span></td><td>IsClosable false while running, Severity Informational, Content = ProgressBar (Maximum = machines in the run, Value = online). ActionButton Cancel. Replaced by the result InfoBar with “Retry n machines”.</td></tr>
+          
+          <tr><td>Waking automatically</td><td><span class="code">InfoBar</span></td><td>One bar per machine, updated in place: Informational “Waking … automatically” (stays) → Success “… is online”, “Woken automatically after …” (auto-close after 5 s) or, once after the wake timeout, Warning “… is still offline” (stays until closed or the machine answers). Error “Couldn’t wake … automatically” when sending fails, once per offline period. No action buttons. Each follows its Notifications setting (Goes offline, Comes online, Doesn’t wake up); the error always shows. Turning the option off closes the bar.</td></tr>
           
           <tr><td>Notification host</td><td><span class="code">StackPanel</span></td><td>Bottom-aligned in the content grid, margins 36 / 32 / 16, Spacing 4, at most 3 bars (InfoBar MinHeight 40), ChildrenTransitions: EntranceThemeTransition + RepositionThemeTransition.</td></tr>
           
@@ -196,7 +202,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Monitoring</td><td><span class="code">SettingsCard + NumberBox</span></td><td>Check interval 1–3600 s (default 10, passed to wol watch --interval), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after.</td></tr>
           
-          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off.</td></tr>
+          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off. They also gate the Wake automatically notifications.</td></tr>
           
           <tr><td>About</td><td><span class="code">SettingsExpander</span></td><td>Header: app icon, “Wol”, version, Copy button. Items: Author (header “Sébastien Faut”, Description “Author”, HyperlinkButton mailto:sebastien.faut@gmail.com — name and address are not localized), Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons.</td></tr>
           
@@ -212,9 +218,9 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Icon</td><td><span class="code">Shell_NotifyIcon (Win32)</span></td><td>Not a XAML control: hosted through a notify-icon helper. 16 × 16 monochrome .ico per status and taskbar theme; tooltip states the status in words (max 127 chars).</td></tr>
           
-          <tr><td>Menu</td><td><span class="code">MenuFlyout</span></td><td>Open Wol (default item, bold), separator, MenuFlyoutSubItem Wake ▸ group ▸ “Wake all offline (n)” + offline machines, Refresh, separator, Quit.</td></tr>
+          <tr><td>Menu</td><td><span class="code">MenuFlyout</span></td><td>Open Wol (default item, bold), separator, MenuFlyoutSubItem Wake ▸ group ▸ “Wake all offline (n)” + offline machines, Refresh, separator, Quit. Machines waking automatically count as waking: listed disabled as “… — waking…”, left out of Wake all offline.</td></tr>
           
-          <tr><td>Balloons</td><td><span class="code">NOTIFYICONDATA NIF_INFO</span></td><td>Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it.</td></tr>
+          <tr><td>Balloons</td><td><span class="code">NOTIFYICONDATA NIF_INFO</span></td><td>Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it. Wake automatically: “Waking … automatically” (NIIF_INFO, replaces “… went offline”), “… is online” with “Woken automatically after …”, “… is still offline” (NIIF_WARNING). Retries notify nothing.</td></tr>
           
         </tbody>
       </table>

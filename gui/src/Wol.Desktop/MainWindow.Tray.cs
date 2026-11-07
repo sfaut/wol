@@ -120,15 +120,7 @@ public sealed partial class MainWindow
     /// <param name="alert">The alert.</param>
     private void ShowAlert(Alert alert)
     {
-        var settings = AppSettings.Current;
-        var wanted = alert.Kind switch
-        {
-            AlertKind.Online => settings.NotifyOnline,
-            AlertKind.Offline => settings.NotifyOffline,
-            AlertKind.TimedOut => settings.NotifyTimedOut,
-            _ => settings.NotifyError,
-        };
-        if (_isActive || !settings.Notify || !wanted)
+        if (_isActive || !AppSettings.Current.Wants(alert.Kind))
         {
             return;
         }

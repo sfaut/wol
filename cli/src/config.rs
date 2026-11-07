@@ -84,6 +84,10 @@ pub struct Machine {
     /// UDP port of the magic packet; port 9 when absent.
     #[serde(default)]
     pub port: Option<u16>,
+
+    /// Whether `wol watch` wakes the machine whenever it finds it offline.
+    #[serde(default)]
+    pub auto_wake: bool,
 }
 
 /// A network interface of a machine.
@@ -368,6 +372,8 @@ fn write_machine(table: &mut Table, machine: &Machine) {
         "port",
         machine.port.map(|port| value(i64::from(port))),
     );
+    // Written only when set, so that files stay short.
+    set_optional(table, "auto_wake", machine.auto_wake.then(|| value(true)));
 }
 
 /// Builds the inline array of interfaces: on one line for a single interface, otherwise one
@@ -869,6 +875,7 @@ interfaces = [
             }],
             broadcast: None,
             port: None,
+            auto_wake: false,
         }
     }
 
@@ -1037,6 +1044,28 @@ interfaces = [
 ]
 "
         );
+    }
+
+    #[test]
+    fn writes_auto_wake_only_when_set() {
+        let mut file = load("").unwrap();
+        file.add_machine(&Machine {
+            auto_wake: true,
+            ..machine("NAS")
+        })
+        .unwrap();
+        assert!(file.config().machines[0].auto_wake);
+        assert!(file.document.to_string().contains("auto_wake = true"));
+
+        file.edit_machine("NAS", &machine("NAS")).unwrap();
+        assert!(!file.config().machines[0].auto_wake);
+        assert!(!file.document.to_string().contains("auto_wake"));
+
+        let file = load(
+            "[[machine]]\nname = \"PC\"\ninterfaces = [{ mac = \"00:11:22:33:44:55\" }]\nauto_wake = false\n",
+        )
+        .unwrap();
+        assert!(!file.config().machines[0].auto_wake);
     }
 
     #[test]

@@ -47,7 +47,8 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 | State badge | `Border + StackPanel` | Height 20, CornerRadius 10, Padding 4, 0, 8, 0, Background by state: SystemFillColorSuccessBackgroundBrush (Online), SystemFillColorCautionBackgroundBrush (Timed out), SystemFillColorCriticalBackgroundBrush (Error), AccentFillColorDefaultBrush at 12% (Waking), ControlStrongStrokeColorDefaultBrush at 12% (Offline, Unknown). Horizontal StackPanel, Spacing 4: state glyph 12 + TextBlock Caption SemiBold in TextFillColorPrimaryBrush. In high contrast: no fill, 1 epx border in the text color. The same badge is used in rows, cards and the compact layout. |
 | Row second line | `TextBlock + ToolTip` | Online: label and current IP of the interface that answered, “Wi-Fi · 192.168.1.35” (no label: the IP alone). Otherwise the first MAC address, plus “+N” when there are more; the ToolTip lists every interface as “Label · MAC”. |
 | Shared MAC warning | `FontIcon + ToolTip` | U+E7BA Warning, 16, SystemFillColorCautionBrush, 6 after the name, on every machine sharing a MAC. ToolTip names the other machines; the text is also part of the row automation name. |
-| Row actions | `Button` | Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown, disabled in Error (no network to send on), collapsed when Online, replaced by Cancel while Waking. More: icon-only Button U+E712 with the row’s MenuFlyout. |
+| Wake automatically indicator | `FontIcon + ToolTip` | U+E8EE RepeatAll, 16, TextFillColorSecondaryBrush, on every machine with Wake automatically on. After the name: Wake automatically, then the shared MAC warning, 6 apart. Name and glyphs sit in a Grid (HorizontalAlignment Left, columns \* \| Auto \| Auto) so the name trims before the glyphs move. ToolTip explains the option; “Wakes automatically” is appended to the row automation name. |
+| Row actions | `Button` | Wake: AccentButtonStyle when Offline or Timed out (label becomes Retry after a timeout), default style when Unknown, disabled in Error (no network to send on), collapsed when Online, replaced by Cancel while Waking, collapsed while waking automatically (no Wake, no Cancel). More: icon-only Button U+E712 with the row’s MenuFlyout. |
 | Cards (alternative) | `ItemsView + UniformGridLayout` | MinItemWidth 196, MinItemHeight 112, spacing 4, card padding 12, radius 8. Name over the state badge. |
 | Empty state | `StackPanel` | Centered, MaxWidth 420, Spacing 12: glyph 64, SubtitleTextBlockStyle, Body secondary, Buttons (Accent + default, Spacing 8), HyperlinkButton. |
 
@@ -55,7 +56,7 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
-| Dialog | `ContentDialog` | Recommended over a page: the form stays short and keeps the list in view. Order: Name, Group, Network interfaces, Advanced. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548. |
+| Dialog | `ContentDialog` | Recommended over a page: the form stays short and keeps the list in view. Order: Name, Group, Network interfaces, Wake automatically, Advanced. Title “Add machine” / “Edit machine”; PrimaryButtonText Add / Save; CloseButtonText Cancel; DefaultButton Primary; IsPrimaryButtonEnabled bound to form validity. Width 548. |
 | Body | `ScrollViewer > StackPanel` | Spacing 12, field header 4 above its box. Scrolls when Advanced is open or the window is short; buttons stay pinned. |
 | Name | `TextBox` | First field. 1–64 characters, unique regardless of case. Header above (Body), Description below for help or the error (Caption). Validate on LostFocus and on submit; never in a separate dialog. |
 | Group | `ComboBox` | IsEditable = true, Header “Group (optional)”. TextSubmitted with an unknown name stages a new group; Description says “New group … will be created”. |
@@ -63,6 +64,7 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 | MAC address | `TextBox` | Accepts AA:BB:CC:DD:EE:FF, AA-BB-…, AABBCC…, any case; a message under the row previews the normalised value (“Will be saved as …”). |
 | Add interface | `Button` | U+E710 + label, below the list, 8 before “Add from network…”. Adds an empty row and focuses its MAC. |
 | Add from network… | `Button + Flyout` | Flyout 320 wide: title, Caption “Not used by any machine yet”, ListView (IsItemClickEnabled) of devices found on the local network — MAC (Body) over current IP (Caption) — then a ProgressRing “Still scanning…” footer, or “No new devices found”. Picking one fills the empty row (or adds a row) and closes the flyout. |
+| Wake automatically | `CheckBox + TextBlock` | After the interface buttons, before Advanced: 16 above (Spacing 12 + Margin 0, 4, 0, 0), 12 below. CheckBox (MinHeight 32), Content “Wake automatically”, off for a new machine; Edit shows the saved value, Duplicate copies it. Below, the description in Caption, TextFillColorSecondaryBrush, wrapping, Margin 28, 0, 0, 0 (under the label), also set as the CheckBox’s AutomationProperties.HelpText. A CheckBox, not a ToggleSwitch: nothing applies before Add / Save (`wol add --auto-wake`, `wol edit --auto-wake / --no-auto-wake`). |
 | Advanced | `Expander` | Collapsed by default. TextBox Broadcast address (PlaceholderText 255.255.255.255) and NumberBox UDP port (1–65535, PlaceholderText 9), each with a Caption explaining the default. |
 | Validation | `TextBlock under the field or row` | Errors (block Save): invalid MAC, MAC repeated within the machine, duplicate name. Warning (does not block): MAC already used by another machine, naming it. Error = FontIcon 14 in SystemFillColorCriticalBrush + text; warning = caution glyph + primary text. LiveSetting Assertive. |
 
@@ -79,9 +81,10 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
-| Row while waking | `ProgressRing` | 12 × 12 inside the Waking badge, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine. |
+| Row while waking | `ProgressRing` | 12 × 12 inside the Waking badge, IsIndeterminate; detail “Sending to 2 interfaces…”, then “m:ss · waiting for reply” updated every second. The packet goes to every interface of the machine. Automatic wake: “Waking automatically · m:ss”. |
 | Single result | `InfoBar` | In the notification host. Success: IsClosable, auto-close after 5 s (paused while hovered or focused). Warning (timed out): stays until closed, ActionButton Retry. |
 | Group or selection | `InfoBar + ProgressBar` | IsClosable false while running, Severity Informational, Content = ProgressBar (Maximum = machines in the run, Value = online). ActionButton Cancel. Replaced by the result InfoBar with “Retry n machines”. |
+| Waking automatically | `InfoBar` | One bar per machine, updated in place: Informational “Waking … automatically” (stays) → Success “… is online”, “Woken automatically after …” (auto-close after 5 s) or, once after the wake timeout, Warning “… is still offline” (stays until closed or the machine answers). Error “Couldn’t wake … automatically” when sending fails, once per offline period. No action buttons. Each follows its Notifications setting (Goes offline, Comes online, Doesn’t wake up); the error always shows. Turning the option off closes the bar. |
 | Notification host | `StackPanel` | Bottom-aligned in the content grid, margins 36 / 32 / 16, Spacing 4, at most 3 bars (InfoBar MinHeight 40), ChildrenTransitions: EntranceThemeTransition + RepositionThemeTransition. |
 
 ## Settings
@@ -92,7 +95,7 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 | Theme, Language | `SettingsCard + ComboBox` | Theme: Use system setting / Light / Dark (applies at once, sets RequestedTheme on the root). Language: Use system setting / English / Français (applies on restart; Description says so). ComboBox MinWidth 200. |
 | Behavior | `SettingsCard + ToggleSwitch` | Start with Windows (opt-in shortcut in shell:startup, off by default — no registry writes), Start minimized (off), Close to the notification area (on). |
 | Monitoring | `SettingsCard + NumberBox` | Check interval 1–3600 s (default 10, passed to wol watch --interval), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after. |
-| Notifications | `SettingsExpander` | Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off. |
+| Notifications | `SettingsExpander` | Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off. They also gate the Wake automatically notifications. |
 | About | `SettingsExpander` | Header: app icon, “Wol”, version, Copy button. Items: Author (header “Sébastien Faut”, Description “Author”, HyperlinkButton mailto:sebastien.faut@gmail.com — name and address are not localized), Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons. |
 
 ## Notification area
@@ -100,8 +103,8 @@ Every element maps to a WinUI 3 or Windows Community Toolkit control. Measuremen
 | Element | Control | Properties and spacing |
 | --- | --- | --- |
 | Icon | `Shell_NotifyIcon (Win32)` | Not a XAML control: hosted through a notify-icon helper. 16 × 16 monochrome .ico per status and taskbar theme; tooltip states the status in words (max 127 chars). |
-| Menu | `MenuFlyout` | Open Wol (default item, bold), separator, MenuFlyoutSubItem Wake ▸ group ▸ “Wake all offline (n)” + offline machines, Refresh, separator, Quit. |
-| Balloons | `NOTIFYICONDATA NIF_INFO` | Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it. |
+| Menu | `MenuFlyout` | Open Wol (default item, bold), separator, MenuFlyoutSubItem Wake ▸ group ▸ “Wake all offline (n)” + offline machines, Refresh, separator, Quit. Machines waking automatically count as waking: listed disabled as “… — waking…”, left out of Wake all offline. |
+| Balloons | `NOTIFYICONDATA NIF_INFO` | Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it. Wake automatically: “Waking … automatically” (NIIF_INFO, replaces “… went offline”), “… is online” with “Woken automatically after …”, “… is still offline” (NIIF_WARNING). Retries notify nothing. |
 
 ## Errors and degraded states
 

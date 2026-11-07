@@ -19,6 +19,7 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 - [Group dialogs](#group-dialogs)
 - [Remove machines](#remove-machines)
 - [Wake feedback (in window)](#wake-feedback-in-window)
+- [Wake automatically](#wake-automatically)
 - [Errors and degraded states](#errors-and-degraded-states)
 - [Settings](#settings)
 - [Notification area](#notification-area)
@@ -65,6 +66,7 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 | `State.Waking.Sending.One` | Sending wake packet… |  |
 | `State.Waking.Sending.Other` | Sending to {0} interfaces… | The packet goes to every interface |
 | `State.Waking.Detail` | {0} · waiting for reply | Elapsed time, m:ss |
+| `State.Waking.Auto` | Waking automatically · {0} | Wake automatically: time since the first packet of this offline period, m:ss (h:mm:ss from 1 hour). Keep translations as short: the detail column is 172 epx |
 | `State.TimedOut.Detail` | No reply after {0} | Timeout, m:ss |
 | `State.Unknown.NotChecked` | Not checked yet |  |
 | `State.Unknown.Checking` | Checking… |  |
@@ -145,6 +147,8 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 | `Row.SharedMac.Tooltip.One` | Same MAC address as {0}. Wol can’t tell these machines apart when this address answers. |  |
 | `Row.SharedMac.Tooltip.Other` | Same MAC address as {0} and {1} other machines. Wol can’t tell these machines apart when this address answers. |  |
 | `Row.SharedMac.Name` | Shares its MAC address with {0} | Appended to the row automation name |
+| `Row.AutoWake.Tooltip` | Wake automatically is on: Wol wakes this machine whenever it’s offline, even if you shut it down on purpose. |  |
+| `Row.AutoWake.Name` | Wakes automatically | Appended to the row automation name, before the shared MAC text |
 | `Row.AlreadyOnline` | Already online | Group wake detail |
 | `Row.WokeIn` | Woke in {0} | Group wake detail |
 
@@ -228,6 +232,8 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 | `Discovery.Scanning` | Still scanning… |  |
 | `Discovery.Empty` | No new devices found |  |
 | `Discovery.Item.Name` | {0}, {1} | MAC address, current IP |
+| `MachineDialog.AutoWake.Content` | Wake automatically | CheckBox |
+| `MachineDialog.AutoWake.Description` | Wol wakes this machine whenever it’s offline and tries again every 2 minutes until it answers, even if you shut it down on purpose. Wol must be running, open or in the notification area. | Caption under the CheckBox, also its HelpText |
 | `MachineDialog.Advanced.Header` | Advanced |  |
 | `MachineDialog.Advanced.Description` | Broadcast address, UDP port |  |
 | `MachineDialog.Broadcast.Header` | Broadcast address |  |
@@ -309,6 +315,18 @@ Every string shown in the mockups, keyed for `Strings/en-US/Resources.resw`. `{0
 | `Wake.Result.Retry.Other` | Retry {0} machines |  |
 | `Notifications.MoreCount` | +{0} more |  |
 | `Notifications.Close` | Close |  |
+
+## Wake automatically
+
+| Key | Value | Note |
+| --- | --- | --- |
+| `AutoWake.Started.Title` | Waking {0} automatically | InfoBar (Informational) and balloon (NIIF_INFO); replaces “… went offline” |
+| `AutoWake.Started.Message` | It’s offline. Wol tries again every 2 minutes until it answers. | “2 minutes” is the CLI retry interval |
+| `AutoWake.Online.Message` | Woken automatically after {0}. | Duration since the first packet; title `Wake.Success.Title` / `Balloon.Online.Title` |
+| `AutoWake.StillOffline.Title` | {0} is still offline | InfoBar (Warning) and balloon (NIIF_WARNING), once per offline period |
+| `AutoWake.StillOffline.Message` | No reply after {0}. Wol keeps trying every 2 minutes. | Wake timeout from Settings |
+| `AutoWake.SendFailed.Title` | Couldn’t wake {0} automatically | InfoBar (Error) only |
+| `AutoWake.SendFailed.Message` | {0} Wol tries again in 2 minutes. | Message from the CLI |
 
 ## Errors and degraded states
 

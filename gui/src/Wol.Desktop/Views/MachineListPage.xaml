@@ -26,16 +26,32 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <FontIcon
+                            Grid.Column="1"
+                            Margin="6,0,0,0"
+                            AutomationProperties.AccessibilityView="Raw"
+                            FontSize="16"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Glyph="&#xE8EE;"
+                            ToolTipService.ToolTip="{x:Bind AutoWakeTooltip}"
+                            Visibility="{x:Bind AutoWakeVisibility, Mode=OneWay}" />
+                        <FontIcon
+                            Grid.Column="2"
+                            Margin="6,0,0,0"
                             AutomationProperties.AccessibilityView="Raw"
                             FontSize="16"
                             Foreground="{ThemeResource SystemFillColorCautionBrush}"
                             Glyph="&#xE7BA;"
                             ToolTipService.ToolTip="{x:Bind SharedMacTooltip, Mode=OneWay}"
                             Visibility="{x:Bind SharedMacVisibility, Mode=OneWay}" />
-                    </StackPanel>
+                    </Grid>
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"

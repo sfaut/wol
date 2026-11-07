@@ -11,10 +11,12 @@ namespace Wol.Desktop.Models;
 /// <param name="Interfaces">Network interfaces, MAC addresses normalized.</param>
 /// <param name="Broadcast">Broadcast address; null for the default.</param>
 /// <param name="Port">UDP port; null for the default.</param>
+/// <param name="AutoWake">Whether the machine is woken whenever it is found offline.</param>
 public sealed record MachineForm(
     string Name,
     string? Group,
     bool CreateGroup,
     IReadOnlyList<InterfaceDto> Interfaces,
     string? Broadcast,
-    int? Port);
+    int? Port,
+    bool AutoWake);

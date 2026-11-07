@@ -94,6 +94,9 @@ enum Command {
     ///
     /// Prints the state of every machine, then one line per change, until stopped (Ctrl+C).
     /// Changes made to the configuration file meanwhile are taken into account.
+    ///
+    /// Machines set to wake automatically (`wol add --auto-wake`) are woken whenever they
+    /// are found offline: at once, then every 2 minutes while they stay offline.
     Watch {
         /// Machines to monitor.
         #[command(flatten)]
@@ -185,6 +188,14 @@ struct AddArgs {
     /// Network cards accept any port; some routers or firewalls only let port 7 or 9 through.
     #[arg(long)]
     port: Option<u16>,
+
+    /// Wake the machine whenever `wol watch` finds it offline
+    ///
+    /// Magic packets are sent as soon as the machine is found offline, then every 2 minutes
+    /// while it stays offline, as long as `wol watch` runs (the desktop app runs it). A
+    /// machine shut down on purpose is started again.
+    #[arg(long)]
+    auto_wake: bool,
 }
 
 /// Arguments of `wol edit`: only the given options change.
@@ -239,6 +250,16 @@ struct EditArgs {
     /// Go back to the default UDP port (9)
     #[arg(long)]
     no_port: bool,
+
+    /// Wake the machine whenever `wol watch` finds it offline
+    ///
+    /// See `wol add --help`.
+    #[arg(long, conflicts_with = "no_auto_wake")]
+    auto_wake: bool,
+
+    /// Stop waking the machine automatically
+    #[arg(long)]
+    no_auto_wake: bool,
 }
 
 /// Parses a `MAC[=LABEL]` argument; the label is checked with the rest of the machine.
@@ -509,6 +530,7 @@ fn execute(command: &Command, json: bool, file: &mut ConfigFile) -> Result<Outco
                 interfaces: args.interfaces.clone(),
                 broadcast: args.broadcast,
                 port: args.port,
+                auto_wake: args.auto_wake,
             };
             let machine = file.add_machine(&machine)?;
             file.save()?;
@@ -545,6 +567,7 @@ fn execute(command: &Command, json: bool, file: &mut ConfigFile) -> Result<Outco
                 } else {
                     args.port.or(current.port)
                 },
+                auto_wake: args.auto_wake || (current.auto_wake && !args.no_auto_wake),
             };
             let machine = file.edit_machine(&args.name, &machine)?;
             file.save()?;
@@ -666,17 +689,32 @@ fn list(file: &ConfigFile) -> Outcome {
         .map(|machine| machine.name.chars().count())
         .max()
         .unwrap_or(0);
-    // One line per interface; the machine name only on the first one.
+    let label_width = config
+        .machines
+        .iter()
+        .flat_map(|machine| &machine.interfaces)
+        .filter_map(|interface| interface.label.as_deref())
+        .map(|label| label.chars().count())
+        .max()
+        .unwrap_or(0);
+    // One line per interface; the machine name and its auto-wake tag only on the first one.
     let line = |machine: &Machine| {
         let mut lines = String::new();
         for (index, interface) in machine.interfaces.iter().enumerate() {
-            let name = if index == 0 {
-                machine.name.as_str()
+            let (name, tag) = if index == 0 {
+                (
+                    machine.name.as_str(),
+                    if machine.auto_wake { "auto-wake" } else { "" },
+                )
             } else {
-                ""
+                ("", "")
             };
             let label = interface.label.as_deref().unwrap_or_default();
-            let _ = writeln!(lines, "  {name:<width$}  {}  {label}", interface.mac);
+            let _ = writeln!(
+                lines,
+                "  {name:<width$}  {}  {label:<label_width$}  {tag}",
+                interface.mac
+            );
         }
         lines
     };

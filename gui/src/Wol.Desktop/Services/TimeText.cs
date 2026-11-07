@@ -8,14 +8,17 @@ namespace Wol.Desktop.Services;
 internal static class TimeText
 {
     /// <summary>
-    /// Formats a duration as a clock, e.g. <c>2:05</c> (minutes and seconds).
+    /// Formats a duration as a clock, e.g. <c>2:05</c> (minutes and seconds), or
+    /// <c>1:02:05</c> from one hour.
     /// </summary>
     /// <param name="duration">Duration to format.</param>
     /// <returns>The formatted duration.</returns>
     public static string Clock(TimeSpan duration)
     {
         var seconds = (int)Math.Max(0, duration.TotalSeconds);
-        return string.Create(CultureInfo.CurrentCulture, $"{seconds / 60}:{seconds % 60:00}");
+        return seconds < 3600
+            ? string.Create(CultureInfo.CurrentCulture, $"{seconds / 60}:{seconds % 60:00}")
+            : string.Create(CultureInfo.CurrentCulture, $"{seconds / 3600}:{seconds / 60 % 60:00}:{seconds % 60:00}");
     }
 
     /// <summary>

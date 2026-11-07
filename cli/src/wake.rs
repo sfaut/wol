@@ -120,15 +120,21 @@ pub fn wake(file: &ConfigFile, options: &Options<'_>) -> Result<Outcome> {
     })
 }
 
+/// Destination of the magic packets of a machine: its broadcast address and UDP port, or
+/// the defaults.
+pub(crate) fn target(machine: &Machine) -> SocketAddrV4 {
+    SocketAddrV4::new(
+        machine.broadcast.unwrap_or(magic::DEFAULT_BROADCAST),
+        machine.port.unwrap_or(magic::DEFAULT_PORT),
+    )
+}
+
 /// Sends magic packets to every interface of a machine.
 ///
 /// Returns the JSON result, and the text line to print: on `stdout` when sent (`Ok`), on
 /// `stderr` when failed (`Err`).
-fn send(machine: &Machine) -> (Value, std::result::Result<String, String>) {
-    let target = SocketAddrV4::new(
-        machine.broadcast.unwrap_or(magic::DEFAULT_BROADCAST),
-        machine.port.unwrap_or(magic::DEFAULT_PORT),
-    );
+pub(crate) fn send(machine: &Machine) -> (Value, std::result::Result<String, String>) {
+    let target = target(machine);
     let macs: Vec<String> = machine
         .interfaces
         .iter()

@@ -248,6 +248,7 @@
 .r-tw{display:flex;align-items:center;gap:6px;min-width:0}
 .r-tn{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .warn-ic{color:var(--caution);flex:none}
+.auto-ic{color:var(--text2);flex:none}                /* Wake automatically: U+E8EE RepeatAll, TextFillColorSecondary */
 
 /* ---------- state badge (Border, CornerRadius 10) ---------- */
 .badge{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;height:20px;box-sizing:border-box;padding:0 8px 0 4px;border-radius:10px;

@@ -92,6 +92,19 @@ public sealed class AppSettings
     public bool NotifyError { get; set; } = true;
 
     /// <summary>
+    /// Tells whether notifications of a kind are turned on (master switch included).
+    /// </summary>
+    /// <param name="kind">What happened.</param>
+    /// <returns>True when such notifications are shown.</returns>
+    public bool Wants(Models.AlertKind kind) => Notify && kind switch
+    {
+        Models.AlertKind.Online => NotifyOnline,
+        Models.AlertKind.Offline => NotifyOffline,
+        Models.AlertKind.TimedOut => NotifyTimedOut,
+        _ => NotifyError,
+    };
+
+    /// <summary>
     /// Whether the "still running" notification was already shown, the first time the window
     /// was closed to the notification area.
     /// </summary>

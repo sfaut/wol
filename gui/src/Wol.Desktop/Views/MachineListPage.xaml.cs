@@ -60,6 +60,7 @@ public sealed partial class MachineListPage : UserControl
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
                 _viewModel.StatesChanged -= ViewModel_StatesChanged;
                 _viewModel.Notified -= ViewModel_Notified;
+                _viewModel.NotificationWithdrawn -= ViewModel_NotificationWithdrawn;
             }
 
             _viewModel = value;
@@ -68,6 +69,7 @@ public sealed partial class MachineListPage : UserControl
                 _viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 _viewModel.StatesChanged += ViewModel_StatesChanged;
                 _viewModel.Notified += ViewModel_Notified;
+                _viewModel.NotificationWithdrawn += ViewModel_NotificationWithdrawn;
             }
             Show(null);
         }
@@ -263,7 +265,7 @@ public sealed partial class MachineListPage : UserControl
         menu.Items.Add(Item("RowMenu_Wake", "\uE7E8", () => _ = viewModel.WakeAsync([machine]),
             machine.State is not (MachineState.Online or MachineState.Waking or MachineState.Error)));
         menu.Items.Add(Item("RowMenu_CheckNow", "\uE72C", () => _ = viewModel.CheckAsync([machine]),
-            machine.State != MachineState.Waking));
+            machine.WakeRun is null));
         menu.Items.Add(new MenuFlyoutSeparator());
         menu.Items.Add(Item("RowMenu_Edit", "\uE70F", () => _ = EditAsync(machine)));
         menu.Items.Add(Item("RowMenu_Duplicate", "\uE8C8", () => _ = new MachineDialog(viewModel, editing: null, machine.Definition)
@@ -507,6 +509,20 @@ public sealed partial class MachineListPage : UserControl
     /// <param name="notification">Notification to show.</param>
     private void ShowNotification(Notification notification)
     {
+        // A bar with the same key is updated in place.
+        if (FindNotification(notification.Key) is { } shown)
+        {
+            shown.Title = notification.Title;
+            shown.Message = notification.Message;
+            shown.Severity = notification.Severity;
+            SetLiveSetting(shown, notification.Severity);
+            if (notification.AutoClose)
+            {
+                CloseLater(shown);
+            }
+            return;
+        }
+
         var bar = new InfoBar
         {
             Title = notification.Title,
@@ -514,6 +530,7 @@ public sealed partial class MachineListPage : UserControl
             Severity = notification.Severity,
             IsClosable = true,
             IsOpen = true,
+            Tag = notification.Key,
         };
         if (notification is { ActionText: { } text, Action: { } action })
         {
@@ -524,11 +541,7 @@ public sealed partial class MachineListPage : UserControl
             });
         }
         bar.Closed += (_, _) => NotificationHost.Children.Remove(bar);
-        Microsoft.UI.Xaml.Automation.AutomationProperties.SetLiveSetting(
-            bar,
-            notification.Severity == InfoBarSeverity.Success
-                ? Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Polite
-                : Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Assertive);
+        SetLiveSetting(bar, notification.Severity);
 
         while (NotificationHost.Children.Count >= MaxNotifications)
         {
@@ -538,24 +551,59 @@ public sealed partial class MachineListPage : UserControl
 
         if (notification.AutoClose)
         {
-            var hovered = false;
-            bar.PointerEntered += (_, _) => hovered = true;
-            bar.PointerExited += (_, _) => hovered = false;
-            var timer = DispatcherQueue.CreateTimer();
-            timer.Interval = AutoCloseDelay;
-            timer.IsRepeating = false;
-            timer.Tick += (_, _) =>
-            {
-                // Paused while the user is reading or using it.
-                if (hovered || bar.FocusState != FocusState.Unfocused)
-                {
-                    timer.Start();
-                    return;
-                }
-                NotificationHost.Children.Remove(bar);
-            };
-            timer.Start();
+            CloseLater(bar);
         }
+    }
+
+    /// <summary>
+    /// Finds the bar shown with a key.
+    /// </summary>
+    /// <param name="key">Key of the notification; null finds nothing.</param>
+    /// <returns>The bar, or null.</returns>
+    private InfoBar? FindNotification(string? key) => key is null
+        ? null
+        : NotificationHost.Children.OfType<InfoBar>().FirstOrDefault(bar => bar.Tag as string == key);
+
+    /// <summary>
+    /// Announces errors and warnings at once, successes and information politely.
+    /// </summary>
+    /// <param name="bar">The bar.</param>
+    /// <param name="severity">Its severity.</param>
+    private static void SetLiveSetting(InfoBar bar, InfoBarSeverity severity) =>
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetLiveSetting(
+            bar,
+            severity is InfoBarSeverity.Success or InfoBarSeverity.Informational
+                ? Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Polite
+                : Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Assertive);
+
+    /// <summary>
+    /// Removes a bar after a few seconds, waiting while the user points at it or uses it.
+    /// </summary>
+    /// <param name="bar">The bar.</param>
+    private void CloseLater(InfoBar bar)
+    {
+        var hovered = false;
+        bar.PointerEntered += (_, _) => hovered = true;
+        bar.PointerExited += (_, _) => hovered = false;
+        var timer = DispatcherQueue.CreateTimer();
+        timer.Interval = AutoCloseDelay;
+        timer.IsRepeating = false;
+        timer.Tick += (_, _) =>
+        {
+            // Paused while the user is reading or using it; a bar updated since to another
+            // severity stays.
+            if (bar.Severity != InfoBarSeverity.Success)
+            {
+                return;
+            }
+            if (hovered || bar.FocusState != FocusState.Unfocused)
+            {
+                timer.Start();
+                return;
+            }
+            NotificationHost.Children.Remove(bar);
+        };
+        timer.Start();
     }
 
     /// <summary>
@@ -582,6 +630,19 @@ public sealed partial class MachineListPage : UserControl
     /// <param name="sender">The view model.</param>
     /// <param name="notification">Notification to show.</param>
     private void ViewModel_Notified(object? sender, Notification notification) => ShowNotification(notification);
+
+    /// <summary>
+    /// Removes the bar of a notification the view model withdrew.
+    /// </summary>
+    /// <param name="sender">The view model.</param>
+    /// <param name="key">Key of the notification.</param>
+    private void ViewModel_NotificationWithdrawn(object? sender, string key)
+    {
+        if (FindNotification(key) is { } bar)
+        {
+            NotificationHost.Children.Remove(bar);
+        }
+    }
 
     /// <summary>
     /// Checks every machine now (F5).
@@ -637,9 +698,14 @@ public sealed partial class MachineListPage : UserControl
             return;
         }
 
-        if (machine.State == MachineState.Waking)
+        if (machine.WakeRun is not null)
         {
             _viewModel.CancelWake(machine);
+        }
+        else if (machine.State == MachineState.Waking)
+        {
+            // Waking automatically: there is nothing to cancel.
+            return;
         }
         else
         {

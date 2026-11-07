@@ -22,6 +22,7 @@ Everything here is exported from the Claude Design canvas “Wol — WinUI 3 des
 - **Add / Edit machine:** `ContentDialog`, because the form stays short and the list stays in view. Name and group come first, then the network interfaces — one row per interface with its MAC address, an optional label (Ethernet, Wi-Fi or free text) and a remove button — with **Add interface** and **Add from network…** (devices found on the network that no machine uses yet). Broadcast address and UDP port sit in a collapsed `Expander`.
 - **Validation:** an invalid MAC, a MAC repeated within the machine and a duplicate name (regardless of case) block saving; a MAC already used by another machine is only a warning that names it.
 - **Wake button:** accent when the machine is Offline or Timed out (labelled Retry after a timeout), standard when Unknown, disabled in Error, hidden when Online, replaced by Cancel while Waking. Waking sends the packet to every interface.
+- **Wake automatically:** a per-machine option, a CheckBox (it applies on Save) after the network interfaces in Add / Edit; its description says Wol also wakes a machine shut down on purpose, and only while Wol runs. A loop glyph (U+E8EE RepeatAll, secondary text colour) after the name marks these machines, before the shared MAC warning. When `wol watch` finds one offline, the row shows Waking, “Waking automatically · 1:12”, with no Wake or Cancel. One InfoBar per machine, and a balloon when the window is not in front, reports the start, the result and, once, a machine still offline after the wake timeout; retries notify nothing. The existing Notifications settings gate them, so Settings and the tray menu gain nothing.
 - **Group InfoBadge:** counts Offline + Timed out machines, in the default (accent) style for contrast.
 - **Feedback in the window:** a stack of InfoBars at the bottom of the content area; success closes after 5 s, warnings stay. Waking a group or a selection shows an InfoBar with a ProgressBar (“3 of 5 online”) and ends with Retry for the machines that timed out.
 - **Degraded states:** one InfoBar at the top of the page, with precedence CLI missing → CLI incompatible → configuration invalid → no local network to scan. Without a network to scan, every machine shows Error and Wake is disabled.
@@ -70,6 +71,6 @@ Claude maintains this folder from the Claude Design canvas and commits every upd
 
 ## About the exports
 
-- The PNGs were rendered in Chromium with Selawik, Microsoft’s open-source stand-in for Segoe UI. Open the HTML on Windows to see Segoe UI Variable.
+- The PNGs were rendered in Chromium with Inter standing in for Segoe UI, and DejaVu Sans Mono for Cascadia Mono. Open the HTML on Windows to see Segoe UI Variable.
 - Icons in the mockups are drawn approximations of the Segoe Fluent Icons glyphs named in the specs.
 - Values not known yet are left as placeholders, such as `[app version]` or `[path to the CLI]`.

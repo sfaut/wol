@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Add / Edit machine (design/specs/layout.md, "Add / Edit machine"): Name, Group, Network
-    interfaces, Advanced. Interface rows are built in code.
+    interfaces, Wake automatically, Advanced. Interface rows are built in code.
 -->
 <ContentDialog
     x:Class="Wol.Desktop.Views.MachineDialog"
@@ -110,6 +110,19 @@
                         </Button.Flyout>
                     </Button>
                 </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="0,4,0,0">
+                <CheckBox
+                    x:Name="AutoWakeBox"
+                    x:Uid="MachineDialog_AutoWake"
+                    MinHeight="32" />
+                <TextBlock
+                    x:Uid="MachineDialog_AutoWakeDescription"
+                    Margin="28,0,0,0"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    TextWrapping="Wrap" />
             </StackPanel>
 
             <Expander

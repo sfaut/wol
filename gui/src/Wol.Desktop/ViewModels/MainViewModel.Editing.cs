@@ -112,6 +112,10 @@ public sealed partial class MainViewModel
         {
             args.Add(string.Create(CultureInfo.InvariantCulture, $"--port={port}"));
         }
+        if (form.AutoWake)
+        {
+            args.Add("--auto-wake");
+        }
         return await TryChangeAsync([.. args, "--", form.Name]);
     }
 
@@ -140,6 +144,7 @@ public sealed partial class MainViewModel
         args.Add(form.Port is { } port
             ? string.Create(CultureInfo.InvariantCulture, $"--port={port}")
             : "--no-port");
+        args.Add(form.AutoWake ? "--auto-wake" : "--no-auto-wake");
         return await TryChangeAsync([.. args, "--", machine.Name]);
     }
 
