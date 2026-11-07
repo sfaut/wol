@@ -24,9 +24,9 @@ Everything in the codebase is in English: identifiers, comments, docs, commit me
 
 ## Status
 
-v1.0.0 was released on 2026-10-19 (GitHub release with the CLI for Windows, Linux and macOS,
-x64 and ARM64, and the desktop app for Windows x64). History of the versions:
-`docs/CHANGELOG.md`, newest first.
+v1.1.0 (wake automatically) was released on 2026-11-07, after v1.0.0 on 2026-10-19 (GitHub
+releases with the CLI for Windows, Linux and macOS, x64 and ARM64, and the desktop app for
+Windows x64). History of the versions: `docs/CHANGELOG.md`, newest first.
 
 Known gaps and planned work:
 
