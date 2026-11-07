@@ -274,25 +274,31 @@
     <value>Paramètres réseau</value>
   </data>
   <data name="Time_Seconds" xml:space="preserve">
-    <value>{0} s</value>
+    <value>{0}&#160;s</value>
+    <comment>No-break spaces (&amp;#160;) keep the number with its unit on one line.</comment>
   </data>
   <data name="Time_Minutes" xml:space="preserve">
-    <value>{0} min</value>
+    <value>{0}&#160;min</value>
+    <comment>No-break spaces (&amp;#160;) keep the number with its unit on one line.</comment>
   </data>
   <data name="Time_MinutesSeconds" xml:space="preserve">
-    <value>{0} min {1} s</value>
+    <value>{0}&#160;min&#160;{1}&#160;s</value>
+    <comment>No-break spaces (&amp;#160;) keep the number with its unit on one line.</comment>
   </data>
   <data name="Time_JustNow" xml:space="preserve">
     <value>à l’instant</value>
   </data>
   <data name="Time_MinutesAgo" xml:space="preserve">
-    <value>il y a {0} min</value>
+    <value>il y a {0}&#160;min</value>
+    <comment>No-break spaces (&amp;#160;) keep the number with its unit on one line.</comment>
   </data>
   <data name="Time_HoursAgo" xml:space="preserve">
-    <value>il y a {0} h</value>
+    <value>il y a {0}&#160;h</value>
+    <comment>No-break spaces (&amp;#160;) keep the number with its unit on one line.</comment>
   </data>
   <data name="Time_DaysAgo" xml:space="preserve">
-    <value>il y a {0} j</value>
+    <value>il y a {0}&#160;j</value>
+    <comment>No-break spaces (&amp;#160;) keep the number with its unit on one line.</comment>
   </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>Ajouter une machine</value>
