@@ -16,7 +16,7 @@ public static class Contract
     /// <summary>
     /// Oldest CLI version providing <see cref="Schema"/> and every command this app uses.
     /// </summary>
-    public const string MinimumCliVersion = "0.1.0";
+    public const string MinimumCliVersion = "1.1.0";
 }
 
 /// <summary>
@@ -41,12 +41,14 @@ public sealed record InterfaceDto(string Mac, string? Label);
 /// <param name="Interfaces">Network interfaces (at least one).</param>
 /// <param name="Broadcast">Destination address of the magic packet; default when null.</param>
 /// <param name="Port">UDP port of the magic packet; default when null.</param>
+/// <param name="AutoWake">Whether <c>wol watch</c> wakes the machine whenever it finds it offline.</param>
 public sealed record MachineDto(
     string Name,
     string? Group,
     List<InterfaceDto> Interfaces,
     string? Broadcast,
-    int? Port);
+    int? Port,
+    bool AutoWake);
 
 /// <summary>
 /// Group of machines.
@@ -127,14 +129,20 @@ public sealed record VersionDocument(int Schema, string? Version);
 /// <summary>
 /// NDJSON event of <c>wol watch</c>.
 /// </summary>
-/// <param name="Event"><c>snapshot</c>, <c>state_changed</c> or <c>error</c>.</param>
+/// <param name="Event"><c>snapshot</c>, <c>state_changed</c>, <c>auto_wake</c> or <c>error</c>.</param>
 /// <param name="Machines">State of every machine, for <c>snapshot</c>.</param>
 /// <param name="Machine">New state of a machine, for <c>state_changed</c>.</param>
+/// <param name="Attempt">
+///     Number of sends since the machine was last online (1 for the first), for <c>auto_wake</c>.
+/// </param>
+/// <param name="Result">Result of sending the magic packets, for <c>auto_wake</c>.</param>
 /// <param name="Error">The error, for <c>error</c>.</param>
 public sealed record WatchEvent(
     string Event,
     List<MachineStateDto>? Machines,
     MachineStateDto? Machine,
+    int? Attempt,
+    WakeResultDto? Result,
     ErrorDto? Error);
 
 /// <summary>

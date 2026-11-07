@@ -63,6 +63,9 @@
   <data name="State_Waking_Detail" xml:space="preserve">
     <value>{0} · en attente de réponse</value>
   </data>
+  <data name="State_Waking_Auto" xml:space="preserve">
+    <value>Réveil automatique · {0}</value>
+  </data>
   <data name="State_TimedOut_Detail" xml:space="preserve">
     <value>Pas de réponse après {0}</value>
   </data>
@@ -98,6 +101,12 @@
   </data>
   <data name="Row_SharedMac_Name" xml:space="preserve">
     <value>Partage son adresse MAC avec {0}</value>
+  </data>
+  <data name="Row_AutoWake_Tooltip" xml:space="preserve">
+    <value>Réveil automatique activé : Wol réveille cette machine chaque fois qu’elle est hors ligne, même si vous l’avez éteinte volontairement.</value>
+  </data>
+  <data name="Row_AutoWake_Name" xml:space="preserve">
+    <value>Se réveille automatiquement</value>
   </data>
   <data name="Row_Wake" xml:space="preserve">
     <value>Réveiller</value>
@@ -203,6 +212,27 @@
   </data>
   <data name="Wake_Result_Retry_Other" xml:space="preserve">
     <value>Réessayer {0} machines</value>
+  </data>
+  <data name="AutoWake_Started_Title" xml:space="preserve">
+    <value>Réveil automatique de {0}</value>
+  </data>
+  <data name="AutoWake_Started_Message" xml:space="preserve">
+    <value>Elle est hors ligne. Wol réessaie toutes les 2 minutes jusqu’à ce qu’elle réponde.</value>
+  </data>
+  <data name="AutoWake_Online_Message" xml:space="preserve">
+    <value>Réveillée automatiquement en {0}.</value>
+  </data>
+  <data name="AutoWake_StillOffline_Title" xml:space="preserve">
+    <value>{0} est toujours hors ligne</value>
+  </data>
+  <data name="AutoWake_StillOffline_Message" xml:space="preserve">
+    <value>Aucune réponse après {0}. Wol continue d’essayer toutes les 2 minutes.</value>
+  </data>
+  <data name="AutoWake_SendFailed_Title" xml:space="preserve">
+    <value>Impossible de réveiller {0} automatiquement</value>
+  </data>
+  <data name="AutoWake_SendFailed_Message" xml:space="preserve">
+    <value>{0} Wol réessaie dans 2 minutes.</value>
   </data>
   <data name="Error_CliMissing_Title" xml:space="preserve">
     <value>Outil en ligne de commande introuvable</value>
@@ -431,6 +461,15 @@
   </data>
   <data name="MachineDialog_AddFromNetwork.Content" xml:space="preserve">
     <value>Ajouter depuis le réseau…</value>
+  </data>
+  <data name="MachineDialog_AutoWake.Content" xml:space="preserve">
+    <value>Réveiller automatiquement</value>
+  </data>
+  <data name="MachineDialog_AutoWake.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.HelpText" xml:space="preserve">
+    <value>Wol réveille cette machine chaque fois qu’elle est hors ligne et réessaie toutes les 2 minutes jusqu’à ce qu’elle réponde, même si vous l’avez éteinte volontairement. Wol doit être en cours d’exécution, ouvert ou dans la zone de notification.</value>
+  </data>
+  <data name="MachineDialog_AutoWakeDescription.Text" xml:space="preserve">
+    <value>Wol réveille cette machine chaque fois qu’elle est hors ligne et réessaie toutes les 2 minutes jusqu’à ce qu’elle réponde, même si vous l’avez éteinte volontairement. Wol doit être en cours d’exécution, ouvert ou dans la zone de notification.</value>
   </data>
   <data name="Discovery_Title.Text" xml:space="preserve">
     <value>Appareils de votre réseau</value>

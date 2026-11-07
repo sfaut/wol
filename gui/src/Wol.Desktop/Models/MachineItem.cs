@@ -75,6 +75,23 @@ public sealed partial class MachineItem : ObservableObject
     public object? WakeRun { get; set; }
 
     /// <summary>
+    /// When <c>wol watch</c> first sent the magic packets of this auto-wake machine during the
+    /// current offline period; null when it is not being woken automatically.
+    /// </summary>
+    public DateTimeOffset? AutoWakeSince { get; set; }
+
+    /// <summary>
+    /// Whether the user was told that the current automatic wake-up still had no reply after
+    /// the wake timeout.
+    /// </summary>
+    public bool AutoWakeWarned { get; set; }
+
+    /// <summary>
+    /// Whether the machine is Waking because Wol wakes it automatically (no wake run).
+    /// </summary>
+    public bool IsAutoWaking => State == MachineState.Waking && WakeRun is null;
+
+    /// <summary>
     /// Whether a check is running ("Checking…").
     /// </summary>
     public bool IsChecking { get; set; }
@@ -102,6 +119,9 @@ public sealed partial class MachineItem : ObservableObject
     {
         MachineState.Offline when LastSeen is { } seen =>
             Strings.Format("State_Offline_Detail", TimeText.Ago(seen)),
+        MachineState.Waking when IsAutoWaking => Strings.Format(
+            "State_Waking_Auto",
+            TimeText.Clock(DateTimeOffset.Now - (AutoWakeSince ?? WakeStartedAt))),
         MachineState.Waking => Strings.Format(
             "State_Waking_Detail",
             TimeText.Clock(DateTimeOffset.Now - WakeStartedAt)),
@@ -151,6 +171,16 @@ public sealed partial class MachineItem : ObservableObject
             : item.Mac));
 
     /// <summary>
+    /// Visibility of the Wake automatically indicator.
+    /// </summary>
+    public Visibility AutoWakeVisibility => Definition.AutoWake ? Visibility.Visible : Visibility.Collapsed;
+
+    /// <summary>
+    /// Tooltip of the Wake automatically indicator.
+    /// </summary>
+    public string AutoWakeTooltip => Strings.Get("Row_AutoWake_Tooltip");
+
+    /// <summary>
     /// Visibility of the shared MAC address warning.
     /// </summary>
     public Visibility SharedMacVisibility =>
@@ -189,10 +219,12 @@ public sealed partial class MachineItem : ObservableObject
     public string MoreName => Strings.Format("Row_More_Name", Name);
 
     /// <summary>
-    /// Visibility of the standard button: Wake when unknown or in error, Cancel while waking.
+    /// Visibility of the standard button: Wake when unknown or in error, Cancel while waking
+    /// (none when waking automatically: there is nothing to cancel).
     /// </summary>
     public Visibility StandardWakeVisibility =>
-        State is MachineState.Unknown or MachineState.Error or MachineState.Waking
+        State is MachineState.Unknown or MachineState.Error
+        || (State == MachineState.Waking && !IsAutoWaking)
             ? Visibility.Visible
             : Visibility.Collapsed;
 
@@ -213,13 +245,18 @@ public sealed partial class MachineItem : ObservableObject
     public bool IsStandardWakeEnabled => State != MachineState.Error && !CliUnavailable;
 
     /// <summary>
-    /// Name read by screen readers: "{name}, {state}, {detail}", plus the shared MAC address.
+    /// Name read by screen readers: "{name}, {state}, {detail}", plus Wake automatically and
+    /// the shared MAC address.
     /// </summary>
     public string AutomationName
     {
         get
         {
             var name = Strings.Format("Row_AutomationName", Name, StateLabel, Detail);
+            if (Definition.AutoWake)
+            {
+                name = $"{name}, {Strings.Get("Row_AutoWake_Name")}";
+            }
             return SharedWith.Count > 0
                 ? $"{name}, {Strings.Format("Row_SharedMac_Name", string.Join(", ", SharedWith))}"
                 : name;

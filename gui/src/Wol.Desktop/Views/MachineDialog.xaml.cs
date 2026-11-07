@@ -92,6 +92,7 @@ public sealed partial class MachineDialog : ContentDialog
                 PortBox.Value = port;
             }
             AdvancedExpander.IsExpanded = source.Broadcast is not null || source.Port is not null;
+            AutoWakeBox.IsChecked = source.AutoWake;
         }
         else
         {
@@ -358,7 +359,14 @@ public sealed partial class MachineDialog : ContentDialog
 
         IsPrimaryButtonEnabled = valid;
         return valid
-            ? new MachineForm(name, group ?? (createGroup ? groupText : null), createGroup, interfaces, broadcast.Length > 0 ? broadcast : null, port)
+            ? new MachineForm(
+                name,
+                group ?? (createGroup ? groupText : null),
+                createGroup,
+                interfaces,
+                broadcast.Length > 0 ? broadcast : null,
+                port,
+                AutoWakeBox.IsChecked == true)
             : null;
     }
 

@@ -99,6 +99,11 @@ public sealed partial class MainViewModel : ObservableObject
     public event EventHandler<Notification>? Notified;
 
     /// <summary>
+    /// Raised to remove the message shown with a key (<see cref="Notification.Key"/>), if any.
+    /// </summary>
+    public event EventHandler<string>? NotificationWithdrawn;
+
+    /// <summary>
     /// Sections of the machine list: groups in their order, then the machines without a group.
     /// </summary>
     public ObservableCollection<GroupSection> Sections { get; } = [];
@@ -393,6 +398,10 @@ public sealed partial class MainViewModel : ObservableObject
             machine.Definition = definition;
             machine.SharedWith = shared.TryGetValue(definition.Name, out var others) ? others : [];
             machine.CliUnavailable = false;
+            if (machine.AutoWakeSince is not null && !definition.AutoWake)
+            {
+                StopAutoWake(machine);
+            }
             machine.Refresh();
             _machines[definition.Name] = machine;
         }
@@ -538,12 +547,125 @@ public sealed partial class MainViewModel : ObservableObject
             case { Event: "state_changed", Machine: { } state }:
                 Apply([state]);
                 break;
+            case { Event: "auto_wake", Result: { } result }:
+                OnAutoWake(result, watchEvent.Attempt ?? 1);
+                break;
             case { Event: "error", Error: { } error }:
                 HandleError(error);
                 break;
         }
         return false;
     }
+
+    /// <summary>
+    /// Shows the magic packets <c>wol watch</c> sent to an auto-wake machine found offline: the
+    /// machine is Waking until it answers (design/specs/interaction.md, "Wake automatically").
+    /// Only the first send of an offline period is told; the retries every 2 minutes are not.
+    /// </summary>
+    /// <param name="result">Result of the send.</param>
+    /// <param name="attempt">Number of sends since the machine was last online.</param>
+    private void OnAutoWake(WakeResultDto result, int attempt)
+    {
+        // A wake run of this app already follows the machine.
+        if (!_machines.TryGetValue(result.Machine, out var machine) || machine.WakeRun is not null)
+        {
+            return;
+        }
+
+        if (result.Status != "sent")
+        {
+            if (attempt == 1)
+            {
+                var reason = result.Error?.Message.Trim() ?? string.Empty;
+                if (reason.Length > 0 && !reason.EndsWith('.'))
+                {
+                    reason += ".";
+                }
+                Notify(new Notification(
+                    InfoBarSeverity.Error,
+                    Strings.Format("AutoWake_SendFailed_Title", machine.Name),
+                    Strings.Format("AutoWake_SendFailed_Message", reason).Trim(),
+                    Key: AutoWakeKey(machine)));
+            }
+            return;
+        }
+
+        if (machine.IsAutoWaking)
+        {
+            return;
+        }
+
+        // After an error, the same offline period goes on with the same count.
+        var resumed = machine.AutoWakeSince is not null;
+        if (!resumed)
+        {
+            machine.AutoWakeSince = DateTimeOffset.Now;
+            machine.AutoWakeWarned = false;
+        }
+        machine.IsChecking = false;
+        machine.State = MachineState.Waking;
+        machine.Address = null;
+        machine.AnsweringLabel = null;
+        machine.Refresh();
+
+        if (attempt == 1 && !resumed)
+        {
+            var title = Strings.Format("AutoWake_Started_Title", machine.Name);
+            var message = Strings.Get("AutoWake_Started_Message");
+            Alert(AlertKind.Offline, title, message);
+            if (AppSettings.Current.Wants(AlertKind.Offline))
+            {
+                Notify(new Notification(InfoBarSeverity.Informational, title, message, Key: AutoWakeKey(machine)));
+            }
+        }
+        OnStatesChanged();
+    }
+
+    /// <summary>
+    /// Tells that an auto-wake machine answered: its bar turns Success, or goes when
+    /// "Comes online" notifications are off.
+    /// </summary>
+    /// <param name="machine">Machine now online.</param>
+    /// <param name="elapsed">Time since the first packet of the offline period.</param>
+    private void NotifyAutoWoken(MachineItem machine, TimeSpan elapsed)
+    {
+        var message = Strings.Format("AutoWake_Online_Message", TimeText.Words(elapsed));
+        Alert(AlertKind.Online, Strings.Format("Balloon_Online_Title", machine.Name), message);
+        if (AppSettings.Current.Wants(AlertKind.Online))
+        {
+            Notify(new Notification(
+                InfoBarSeverity.Success,
+                Strings.Format("Wake_Success_Title", machine.Name),
+                message,
+                Key: AutoWakeKey(machine)));
+        }
+        else
+        {
+            NotificationWithdrawn?.Invoke(this, AutoWakeKey(machine));
+        }
+    }
+
+    /// <summary>
+    /// Stops waking a machine automatically, when its option is turned off: it goes back to
+    /// Offline and its bar goes.
+    /// </summary>
+    /// <param name="machine">Machine no longer set to wake automatically.</param>
+    private void StopAutoWake(MachineItem machine)
+    {
+        if (machine.IsAutoWaking)
+        {
+            machine.State = MachineState.Offline;
+        }
+        machine.AutoWakeSince = null;
+        NotificationWithdrawn?.Invoke(this, AutoWakeKey(machine));
+    }
+
+    /// <summary>
+    /// Key of the bar telling about the automatic wake-up of a machine (one bar per machine).
+    /// </summary>
+    /// <param name="machine">The machine.</param>
+    /// <returns>The key.</returns>
+    private static string AutoWakeKey(MachineItem machine) => $"auto-wake:{machine.Name.ToUpperInvariant()}";
 
     /// <summary>
     /// Applies one <c>wol wake --wait</c> event.
@@ -680,28 +802,35 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Applies states found by a scan; machines waking are left to their wake run.
+    /// Applies states found by a scan; machines in a wake run are left to it.
     /// </summary>
     /// <param name="states">States from <c>wol status</c> or <c>wol watch</c>.</param>
     private void Apply(IEnumerable<MachineStateDto> states)
     {
         foreach (var state in states)
         {
-            if (!_machines.TryGetValue(state.Machine, out var machine) || machine.State == MachineState.Waking)
+            if (!_machines.TryGetValue(state.Machine, out var machine) || machine.WakeRun is not null)
             {
                 continue;
             }
 
             machine.IsChecking = false;
             var previous = machine.State;
+            var autoWakeSince = machine.AutoWakeSince;
             switch (state.State)
             {
                 case "online":
                     ApplyOnline(machine, state);
                     break;
                 case "offline":
-                    // A timed-out machine stays timed out until it answers or is woken again.
-                    if (machine.State != MachineState.TimedOut)
+                    // An automatic wake-up interrupted by an error resumes; a timed-out machine
+                    // stays timed out until it answers or is woken again; one waking
+                    // automatically goes on waiting.
+                    if (autoWakeSince is not null && machine.Definition.AutoWake)
+                    {
+                        machine.State = MachineState.Waking;
+                    }
+                    else if (machine.State is not (MachineState.TimedOut or MachineState.Waking))
                     {
                         machine.State = MachineState.Offline;
                     }
@@ -714,7 +843,14 @@ public sealed partial class MainViewModel : ObservableObject
                     break;
             }
             machine.Refresh();
-            AlertTransition(machine, previous);
+            if (autoWakeSince is { } since && machine.State == MachineState.Online)
+            {
+                NotifyAutoWoken(machine, DateTimeOffset.Now - since);
+            }
+            else
+            {
+                AlertTransition(machine, previous);
+            }
         }
 
         UpdateBanner();
@@ -723,7 +859,8 @@ public sealed partial class MainViewModel : ObservableObject
 
     /// <summary>
     /// Raises an alert when a scan shows a machine coming online or going offline by itself.
-    /// The first state of a machine (from Unknown) is not a change worth telling.
+    /// The first state of a machine (from Unknown) is not a change worth telling, nor an
+    /// auto-wake machine going offline: the automatic wake-up that follows tells it.
     /// </summary>
     /// <param name="machine">Machine whose state was applied.</param>
     /// <param name="previous">State before the scan.</param>
@@ -733,7 +870,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             Alert(AlertKind.Online, Strings.Format("Balloon_Online_Title", machine.Name), Strings.Get("Balloon_Online_Passive"));
         }
-        else if (machine.State == MachineState.Offline && previous == MachineState.Online)
+        else if (machine.State == MachineState.Offline && previous == MachineState.Online && !machine.Definition.AutoWake)
         {
             Alert(
                 AlertKind.Offline,
@@ -751,12 +888,14 @@ public sealed partial class MainViewModel : ObservableObject
     private void Alert(AlertKind kind, string title, string text) => Alerted?.Invoke(this, new Alert(kind, title, text));
 
     /// <summary>
-    /// Shows a machine online, with the interface that answered.
+    /// Shows a machine online, with the interface that answered; this ends its automatic
+    /// wake-up, if any.
     /// </summary>
     /// <param name="machine">Machine.</param>
     /// <param name="state">Its online state.</param>
     private static void ApplyOnline(MachineItem machine, MachineStateDto state)
     {
+        machine.AutoWakeSince = null;
         machine.State = MachineState.Online;
         machine.Address = state.Address;
         machine.AnsweringLabel = state.Label;
@@ -777,7 +916,8 @@ public sealed partial class MainViewModel : ObservableObject
                 ConfigPath = ConfigErrorPath ?? ConfigPath;
                 break;
             case "no_local_network" or "scan_failed":
-                foreach (var machine in _machines.Values.Where(machine => machine.State != MachineState.Waking))
+                // An automatic wake-up keeps its offline period, to resume once scans work.
+                foreach (var machine in _machines.Values.Where(machine => machine.WakeRun is null))
                 {
                     machine.State = MachineState.Error;
                     machine.Refresh();
@@ -845,7 +985,8 @@ public sealed partial class MainViewModel : ObservableObject
             : null;
 
     /// <summary>
-    /// Refreshes elapsed times every second and relative times every 30 seconds.
+    /// Refreshes elapsed times every second and relative times every 30 seconds; tells once
+    /// about an automatic wake-up still without reply after the wake timeout.
     /// </summary>
     private void Tick()
     {
@@ -854,6 +995,19 @@ public sealed partial class MainViewModel : ObservableObject
             machine.State == MachineState.Waking || _ticks % 30 == 0))
         {
             machine.Refresh();
+        }
+
+        foreach (var machine in _machines.Values.Where(machine => machine is { IsAutoWaking: true, AutoWakeWarned: false, AutoWakeSince: { } since }
+            && DateTimeOffset.Now - since >= WakeTimeout))
+        {
+            machine.AutoWakeWarned = true;
+            var title = Strings.Format("AutoWake_StillOffline_Title", machine.Name);
+            var message = Strings.Format("AutoWake_StillOffline_Message", TimeText.Words(WakeTimeout));
+            Alert(AlertKind.TimedOut, title, message);
+            if (AppSettings.Current.Wants(AlertKind.TimedOut))
+            {
+                Notify(new Notification(InfoBarSeverity.Warning, title, message, Key: AutoWakeKey(machine)));
+            }
         }
     }
 
