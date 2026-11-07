@@ -131,6 +131,9 @@ public sealed record VersionDocument(int Schema, string? Version);
 /// </summary>
 /// <param name="Event"><c>snapshot</c>, <c>state_changed</c>, <c>auto_wake</c> or <c>error</c>.</param>
 /// <param name="Machines">State of every machine, for <c>snapshot</c>.</param>
+/// <param name="AutoWakeRetryS">
+///     Seconds between two automatic wake-ups of a machine that stays offline, for <c>snapshot</c>.
+/// </param>
 /// <param name="Machine">New state of a machine, for <c>state_changed</c>.</param>
 /// <param name="Attempt">
 ///     Number of sends since the machine was last online (1 for the first), for <c>auto_wake</c>.
@@ -140,6 +143,7 @@ public sealed record VersionDocument(int Schema, string? Version);
 public sealed record WatchEvent(
     string Event,
     List<MachineStateDto>? Machines,
+    int? AutoWakeRetryS,
     MachineStateDto? Machine,
     int? Attempt,
     WakeResultDto? Result,

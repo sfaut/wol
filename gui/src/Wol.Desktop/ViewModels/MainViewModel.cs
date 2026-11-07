@@ -157,6 +157,12 @@ public sealed partial class MainViewModel : ObservableObject
     public TimeSpan WakeTimeout { get; set; } = TimeSpan.FromSeconds(120);
 
     /// <summary>
+    /// Time between two automatic wake-ups of a machine that stays offline, as told by
+    /// <c>wol watch</c> (it depends on the check interval).
+    /// </summary>
+    public TimeSpan AutoWakeRetry { get; private set; } = TimeSpan.FromMinutes(1);
+
+    /// <summary>
     /// Version of the companion CLI, once checked.
     /// </summary>
     public string? CliVersion { get; private set; }
@@ -538,6 +544,10 @@ public sealed partial class MainViewModel : ObservableObject
         switch (watchEvent)
         {
             case { Event: "snapshot", Machines: var states }:
+                if (watchEvent.AutoWakeRetryS is { } retry and > 0)
+                {
+                    AutoWakeRetry = TimeSpan.FromSeconds(retry);
+                }
                 if (reload || _configError is not null)
                 {
                     await ReloadAsync();
@@ -560,7 +570,8 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>
     /// Shows the magic packets <c>wol watch</c> sent to an auto-wake machine found offline: the
     /// machine is Waking until it answers (design/specs/interaction.md, "Wake automatically").
-    /// Only the first send of an offline period is told; the retries every 2 minutes are not.
+    /// Only the first send of an offline period is told; the retries (every
+    /// <see cref="AutoWakeRetry"/>) are not.
     /// </summary>
     /// <param name="result">Result of the send.</param>
     /// <param name="attempt">Number of sends since the machine was last online.</param>
@@ -584,7 +595,7 @@ public sealed partial class MainViewModel : ObservableObject
                 Notify(new Notification(
                     InfoBarSeverity.Error,
                     Strings.Format("AutoWake_SendFailed_Title", machine.Name),
-                    Strings.Format("AutoWake_SendFailed_Message", reason).Trim(),
+                    Strings.Format("AutoWake_SendFailed_Message", reason, TimeText.Words(AutoWakeRetry)).Trim(),
                     Key: AutoWakeKey(machine)));
             }
             return;
@@ -611,7 +622,7 @@ public sealed partial class MainViewModel : ObservableObject
         if (attempt == 1 && !resumed)
         {
             var title = Strings.Format("AutoWake_Started_Title", machine.Name);
-            var message = Strings.Get("AutoWake_Started_Message");
+            var message = Strings.Format("AutoWake_Started_Message", TimeText.Words(AutoWakeRetry));
             Alert(AlertKind.Offline, title, message);
             if (AppSettings.Current.Wants(AlertKind.Offline))
             {
@@ -1002,7 +1013,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             machine.AutoWakeWarned = true;
             var title = Strings.Format("AutoWake_StillOffline_Title", machine.Name);
-            var message = Strings.Format("AutoWake_StillOffline_Message", TimeText.Words(WakeTimeout));
+            var message = Strings.Format("AutoWake_StillOffline_Message", TimeText.Words(WakeTimeout), TimeText.Words(AutoWakeRetry));
             Alert(AlertKind.TimedOut, title, message);
             if (AppSettings.Current.Wants(AlertKind.TimedOut))
             {

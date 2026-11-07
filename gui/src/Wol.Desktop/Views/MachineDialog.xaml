@@ -118,7 +118,7 @@
                     x:Uid="MachineDialog_AutoWake"
                     MinHeight="32" />
                 <TextBlock
-                    x:Uid="MachineDialog_AutoWakeDescription"
+                    x:Name="AutoWakeDescription"
                     Margin="28,0,0,0"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Style="{StaticResource CaptionTextBlockStyle}"
