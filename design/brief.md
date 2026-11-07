@@ -52,9 +52,10 @@ A **machine** has:
 - **Broadcast address** and **UDP port** for the magic packet (optional, advanced)
 - **Wake automatically** (optional, off by default): to keep a machine on (a server, a NAS).
   While Wol runs, including from the notification area, the machine is woken whenever it is
-  found offline: at once, then again every 2 minutes until it answers. A machine shut down on
-  purpose is started again, so the UI must make this clear. Nothing is sent while the local
-  network cannot be scanned.
+  found offline: at once, then again every minute until it answers (at the first check a
+  minute or more after the previous attempt, so longer check intervals space the attempts
+  further; the UI states the actual delay). A machine shut down on purpose is started again,
+  so the UI must make this clear. Nothing is sent while the local network cannot be scanned.
 
 Wol works on the **local network only**. It finds machines by scanning the network for their MAC
 addresses, which also gives their current IP address even when DHCP changes it. **Wake** sends the
@@ -119,7 +120,7 @@ States, each needing a distinct, colour-blind-safe indicator (icon + label, colo
      Retry for the ones that timed out.
    - Automatic wake-up of a machine found offline: started, online ("woken automatically after
      48 s"), still no reply after the wake timeout (Wol keeps trying), packet not sent. The
-     retries every 2 minutes are not notified.
+     start is always shown, whatever the notification settings; the retries are not notified.
    - Show how this appears both in the rows and as a transient notification inside the window.
 
 5. **Settings** (Windows 11 Settings style, `SettingsCard` / `SettingsExpander`)

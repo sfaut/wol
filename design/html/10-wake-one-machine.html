@@ -82,7 +82,7 @@ a{color:#005fb8}a:hover{color:#003e92}
     </div></div>
     <div class="bar" role="status">
       <span class="bar-ic"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)"></circle><path d="M8 7.2v4.2" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="4.9" r=".9" fill="var(--on-status)"></circle></svg></span>
-      <div class="bar-tx"><span class="bar-t">Waking Backup server automatically</span><span>It’s offline. Wol tries again every 2 minutes until it answers.</span></div>
+      <div class="bar-tx"><span class="bar-t">Waking Backup server automatically</span><span>It’s offline. Wol tries again every 1 min until it answers.</span></div>
       <button class="btn sub ico bar-x" aria-label="Close"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button>
     </div>
   </div>
@@ -102,7 +102,7 @@ a{color:#005fb8}a:hover{color:#003e92}
   <div class="cap-t" style="margin-top: 8px">Timing</div>
   <p class="help" style="margin: 0; font-size: 12px">Status is polled every 2 s while waking. Elapsed time counts up (m:ss). Timeout comes from Settings › Monitoring (default 2:00). Cancel stops waiting only — the packet is already sent — and returns the row to its last checked state.</p>
   <div class="cap-t" style="margin-top: 8px">Automatic wake</div>
-  <p class="help" style="margin: 0; font-size: 12px">Wol wakes the machine by itself when it finds it offline, then every 2 minutes; the time counts from the first packet. No Wake or Cancel: the option is turned off in Edit. The InfoBar is then replaced by “… is online” or, after the wake timeout, “… is still offline”.</p>
+  <p class="help" style="margin: 0; font-size: 12px">Wol wakes the machine by itself when it finds it offline, then again at the first check 1 min or more later (every 1 min by default); the time counts from the first packet. No Wake or Cancel: the option is turned off in Edit. This InfoBar always shows, whatever the notification settings; it is then replaced by “… is online” or, after the wake timeout, “… is still offline”.</p>
 </div>
 </div>
 </div>
@@ -177,7 +177,7 @@ a{color:#005fb8}a:hover{color:#003e92}
     </div></div>
     <div class="bar" role="status">
       <span class="bar-ic"><svg class="st" viewbox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)"></circle><path d="M8 7.2v4.2" stroke="var(--on-status)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="8" cy="4.9" r=".9" fill="var(--on-status)"></circle></svg></span>
-      <div class="bar-tx"><span class="bar-t">Waking Backup server automatically</span><span>It’s offline. Wol tries again every 2 minutes until it answers.</span></div>
+      <div class="bar-tx"><span class="bar-t">Waking Backup server automatically</span><span>It’s offline. Wol tries again every 1 min until it answers.</span></div>
       <button class="btn sub ico bar-x" aria-label="Close"><svg class="ic s12" viewbox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button>
     </div>
   </div>
@@ -197,7 +197,7 @@ a{color:#005fb8}a:hover{color:#003e92}
   <div class="cap-t" style="margin-top: 8px">Timing</div>
   <p class="help" style="margin: 0; font-size: 12px">Status is polled every 2 s while waking. Elapsed time counts up (m:ss). Timeout comes from Settings › Monitoring (default 2:00). Cancel stops waiting only — the packet is already sent — and returns the row to its last checked state.</p>
   <div class="cap-t" style="margin-top: 8px">Automatic wake</div>
-  <p class="help" style="margin: 0; font-size: 12px">Wol wakes the machine by itself when it finds it offline, then every 2 minutes; the time counts from the first packet. No Wake or Cancel: the option is turned off in Edit. The InfoBar is then replaced by “… is online” or, after the wake timeout, “… is still offline”.</p>
+  <p class="help" style="margin: 0; font-size: 12px">Wol wakes the machine by itself when it finds it offline, then again at the first check 1 min or more later (every 1 min by default); the time counts from the first packet. No Wake or Cancel: the option is turned off in Edit. This InfoBar always shows, whatever the notification settings; it is then replaced by “… is online” or, after the wake timeout, “… is still offline”.</p>
 </div>
 </div>
 </div>

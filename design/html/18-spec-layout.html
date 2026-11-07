@@ -180,7 +180,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Group or selection</td><td><span class="code">InfoBar + ProgressBar</span></td><td>IsClosable false while running, Severity Informational, Content = ProgressBar (Maximum = machines in the run, Value = online). ActionButton Cancel. Replaced by the result InfoBar with “Retry n machines”.</td></tr>
           
-          <tr><td>Waking automatically</td><td><span class="code">InfoBar</span></td><td>One bar per machine, updated in place: Informational “Waking … automatically” (stays) → Success “… is online”, “Woken automatically after …” (auto-close after 5 s) or, once after the wake timeout, Warning “… is still offline” (stays until closed or the machine answers). Error “Couldn’t wake … automatically” when sending fails, once per offline period. No action buttons. Each follows its Notifications setting (Goes offline, Comes online, Doesn’t wake up); the error always shows. Turning the option off closes the bar.</td></tr>
+          <tr><td>Waking automatically</td><td><span class="code">InfoBar</span></td><td>One bar per machine, updated in place: Informational “Waking … automatically” (stays) → Success “… is online”, “Woken automatically after …” (auto-close after 5 s) or, once after the wake timeout, Warning “… is still offline” (stays until closed or the machine answers). Error “Couldn’t wake … automatically” when sending fails, once per offline period. No action buttons. The start and the error always show; “… is online” and “… is still offline” follow their Notifications setting (Comes online, Doesn’t wake up). Turning the option off closes the bar.</td></tr>
           
           <tr><td>Notification host</td><td><span class="code">StackPanel</span></td><td>Bottom-aligned in the content grid, margins 36 / 32 / 16, Spacing 4, at most 3 bars (InfoBar MinHeight 40), ChildrenTransitions: EntranceThemeTransition + RepositionThemeTransition.</td></tr>
           
@@ -202,7 +202,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Monitoring</td><td><span class="code">SettingsCard + NumberBox</span></td><td>Check interval 1–3600 s (default 10, passed to wol watch --interval), Wake timeout 30–900 s (default 120). SpinButtonPlacementMode Inline, SmallChange 5, LargeChange 30, Width 132, unit TextBlock after.</td></tr>
           
-          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off. They also gate the Wake automatically notifications.</td></tr>
+          <tr><td>Notifications</td><td><span class="code">SettingsExpander</span></td><td>Header toggle = master switch. Items: SettingsCard with CheckBox per state (Comes online, Goes offline, Doesn’t wake up, Can’t be checked); items disabled when the master is off. They also gate the Wake automatically notifications, except its start.</td></tr>
           
           <tr><td>About</td><td><span class="code">SettingsExpander</span></td><td>Header: app icon, “Wol”, version, Copy button. Items: Author (header “Sébastien Faut”, Description “Author”, HyperlinkButton mailto:sebastien.faut@gmail.com — name and address are not localized), Companion CLI (version, path, status glyph + label, Check again), Configuration file (path, Open file location), HyperlinkButtons.</td></tr>
           
@@ -220,7 +220,7 @@ a{color:#005fb8}a:hover{color:#003e92}
           
           <tr><td>Menu</td><td><span class="code">MenuFlyout</span></td><td>Open Wol (default item, bold), separator, MenuFlyoutSubItem Wake ▸ group ▸ “Wake all offline (n)” + offline machines, Refresh, separator, Quit. Machines waking automatically count as waking: listed disabled as “… — waking…”, left out of Wake all offline.</td></tr>
           
-          <tr><td>Balloons</td><td><span class="code">NOTIFYICONDATA NIF_INFO</span></td><td>Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it. Wake automatically: “Waking … automatically” (NIIF_INFO, replaces “… went offline”), “… is online” with “Woken automatically after …”, “… is still offline” (NIIF_WARNING). Retries notify nothing.</td></tr>
+          <tr><td>Balloons</td><td><span class="code">NOTIFYICONDATA NIF_INFO</span></td><td>Title + text only (NIIF_INFO, NIIF_WARNING for timed out). Title ≤ 63 chars, text ≤ 255. Respect the Notifications settings; skipped while the window is in the foreground — the in-window InfoBar covers it. Wake automatically: “Waking … automatically” (NIIF_INFO, replaces “… went offline”; no setting of its own, shown whenever the master switch is on), “… is online” with “Woken automatically after …”, “… is still offline” (NIIF_WARNING). Retries notify nothing.</td></tr>
           
         </tbody>
       </table>
