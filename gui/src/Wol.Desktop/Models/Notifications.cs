@@ -29,7 +29,8 @@ public sealed record Notification(
 }
 
 /// <summary>
-/// Kind of event worth a Windows notification (each one can be turned off in Settings).
+/// Kind of event worth a Windows notification (each one but <see cref="AutoWake"/> can be
+/// turned off in Settings; the master switch turns them all off).
 /// </summary>
 public enum AlertKind
 {
@@ -52,6 +53,11 @@ public enum AlertKind
     /// Machines cannot be checked (no local network).
     /// </summary>
     Error,
+
+    /// <summary>
+    /// A machine set to wake automatically was found offline and is being woken.
+    /// </summary>
+    AutoWake,
 }
 
 /// <summary>

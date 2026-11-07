@@ -570,8 +570,8 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>
     /// Shows the magic packets <c>wol watch</c> sent to an auto-wake machine found offline: the
     /// machine is Waking until it answers (design/specs/interaction.md, "Wake automatically").
-    /// Only the first send of an offline period is told; the retries (every
-    /// <see cref="AutoWakeRetry"/>) are not.
+    /// Only the first send of an offline period is told, whatever the notification settings;
+    /// the retries (every <see cref="AutoWakeRetry"/>) are not.
     /// </summary>
     /// <param name="result">Result of the send.</param>
     /// <param name="attempt">Number of sends since the machine was last online.</param>
@@ -623,11 +623,8 @@ public sealed partial class MainViewModel : ObservableObject
         {
             var title = Strings.Format("AutoWake_Started_Title", machine.Name);
             var message = Strings.Format("AutoWake_Started_Message", TimeText.Words(AutoWakeRetry));
-            Alert(AlertKind.Offline, title, message);
-            if (AppSettings.Current.Wants(AlertKind.Offline))
-            {
-                Notify(new Notification(InfoBarSeverity.Informational, title, message, Key: AutoWakeKey(machine)));
-            }
+            Alert(AlertKind.AutoWake, title, message);
+            Notify(new Notification(InfoBarSeverity.Informational, title, message, Key: AutoWakeKey(machine)));
         }
         OnStatesChanged();
     }
